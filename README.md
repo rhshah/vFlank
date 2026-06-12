@@ -32,13 +32,23 @@ emit formats. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ## Install
 
 ```bash
-pip install git+https://github.com/rhshah/vFlank.git
+pip install vflank                                   # from PyPI (released versions)
+pip install git+https://github.com/rhshah/vFlank.git # latest from GitHub
 # development:
 git clone https://github.com/rhshah/vFlank.git && cd vFlank
 pip install -e ".[dev]"
 ```
 
 Requires Python ≥ 3.10 (Linux/macOS) and `pysam`, `pandas`, `typer`, `rich`.
+
+### Docker
+
+Images are published to GHCR on each release:
+
+```bash
+docker run --rm -v "$PWD:/data" ghcr.io/rhshah/vflank \
+    small run /data/variants.maf -r /data/GRCh37.fasta -g hg19 -o /data/out.fasta
+```
 
 ## Quick start
 
