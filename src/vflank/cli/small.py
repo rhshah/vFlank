@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from collections import Counter
 from pathlib import Path
 
 import typer
@@ -19,9 +20,11 @@ from rich.table import Table
 from ..core.chrom import detect_series_chr_style
 from ..core.flanks import ReferenceFlankSource
 from ..core.popfreq import GnomadStore, build_chrom_vcf_map
+from ..core.skips import categorize_skip
 from ..errors import VflankError
 from ..io import fasta as fasta_io
 from ..io import maf as maf_io
+from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
 from ..io.reference import ReferenceFasta
 from ..logging import console
@@ -71,6 +74,10 @@ def run(
     output: Path = typer.Option(
         Path("flanking_sequences.fasta"), "--output", "-o", help="Output FASTA file."
     ),
+    report: Path | None = typer.Option(
+        None, "--report",
+        help="Write a per-variant TSV run report (stats + table) to this path.",
+    ),
     samples: str | None = typer.Option(
         None, "--samples", "-s",
         help="Comma-separated Tumor_Sample_Barcode IDs to include.",
@@ -101,7 +108,7 @@ def run(
     try:
         _run(
             maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-            output, samples, samples_file,
+            output, report, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
             uppercase,
@@ -112,7 +119,7 @@ def run(
 
 
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-         output, samples, samples_file, cols: MafColumns, uppercase: bool):
+         output, report, samples, samples_file, cols: MafColumns, uppercase: bool):
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
 
@@ -212,7 +219,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             # right (or shorter than the position allows on the left) is a contig
             # boundary the user should know about — the record is still emitted.
             exp_left = min(flank, variant.start - 1)
-            if len(fr.left) < exp_left or len(fr.right) < flank:
+            truncated = len(fr.left) < exp_left or len(fr.right) < flank
+            if truncated:
                 flank_warnings.append(
                     f"row {row_idx} {variant.gene} {variant.raw_chrom}:{variant.start} — "
                     f"flank truncated near contig boundary "
@@ -228,9 +236,10 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             records.extend(fasta_io.format_records(variant, fr, ref, alt))
             summary_rows.append({
                 "Sample": variant.sample[:32], "Gene": variant.gene,
-                "Chrom": variant.raw_chrom, "Pos": f"{variant.start}-{variant.end}",
+                "Chrom": variant.raw_chrom, "Start": variant.start, "End": variant.end,
                 "Ref": ref[:8], "Alt": alt[:8],
-                "Left": len(fr.left), "Right": len(fr.right), "N": fr.n_masked,
+                "LeftLen": len(fr.left), "RightLen": len(fr.right),
+                "NMasked": fr.n_masked, "Truncated": truncated,
             })
 
     reference.close()
@@ -247,32 +256,41 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         for col in ("Sample", "Gene", "Chrom", "Pos", "Ref", "Alt", "Left", "Right", "N"):
             table.add_column(col, no_wrap=col in ("Sample", "Gene", "Chrom", "Pos"))
         for r in summary_rows[:50]:
-            n_str = f"[yellow]{r['N']}[/yellow]" if r["N"] else "[dim]0[/dim]"
-            table.add_row(r["Sample"], r["Gene"], r["Chrom"], r["Pos"], r["Ref"],
-                          r["Alt"], str(r["Left"]), str(r["Right"]), n_str)
+            n_str = f"[yellow]{r['NMasked']}[/yellow]" if r["NMasked"] else "[dim]0[/dim]"
+            table.add_row(
+                r["Sample"], r["Gene"], r["Chrom"], f"{r['Start']}-{r['End']}",
+                r["Ref"], r["Alt"], str(r["LeftLen"]), str(r["RightLen"]), n_str,
+            )
         console.print(table)
         if len(summary_rows) > 50:
             console.print(f"  [dim]… and {len(summary_rows) - 50} more[/dim]")
 
+    # Categorise skips so a large, uniform skip set (e.g. 91 missing chromosomes)
+    # reads as one line per category instead of a wall of identical messages.
+    skip_breakdown = Counter(categorize_skip(r) for r in skip_reasons)
     if skip_reasons:
-        console.print(f"\n[bold yellow]Skipped {skipped}:[/bold yellow]")
-        for reason in skip_reasons[:20]:
-            console.print(f"  • {reason}")
-        if len(skip_reasons) > 20:
-            console.print(f"  [dim]… and {len(skip_reasons) - 20} more[/dim]")
+        console.print(f"\n[bold yellow]Skipped {skipped} — by reason:[/bold yellow]")
+        for category, count in skip_breakdown.most_common():
+            console.print(f"  [yellow]{count:>5,}[/yellow]  {category}")
+        console.print("  [dim]examples:[/dim]")
+        for reason in skip_reasons[:5]:
+            console.print(f"    • {reason}")
+        if len(skip_reasons) > 5:
+            console.print(f"    [dim]… {len(skip_reasons) - 5} more (see --report)[/dim]")
 
     if flank_warnings:
         console.print(
             f"\n[bold yellow]Truncated flanks {len(flank_warnings)} "
             "(emitted, but shorter than requested):[/bold yellow]"
         )
-        for reason in flank_warnings[:20]:
+        for reason in flank_warnings[:10]:
             console.print(f"  • {reason}")
-        if len(flank_warnings) > 20:
-            console.print(f"  [dim]… and {len(flank_warnings) - 20} more[/dim]")
+        if len(flank_warnings) > 10:
+            console.print(f"  [dim]… and {len(flank_warnings) - 10} more[/dim]")
 
+    n_truncated = len(flank_warnings)
     truncated_line = (
-        f"[bold]Truncated flanks:[/bold] {len(flank_warnings):>6,}\n" if flank_warnings else ""
+        f"[bold]Truncated flanks:[/bold] {n_truncated:>6,}\n" if n_truncated else ""
     )
     console.print(
         f"\n[bold]Total in MAF:[/bold]     {n_total:>6,}\n"
@@ -283,6 +301,19 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  [dim]({elapsed:.1f}s)[/dim]"
     )
+
+    # --- Optional machine-readable report ---
+    if report is not None:
+        stats = {
+            "total_in_maf": n_total,
+            "processed": len(summary_rows),
+            "skipped": skipped,
+            "truncated_flanks": n_truncated,
+            "bases_masked": n_masked_total,
+            "fasta_records": len(records),
+        }
+        report_io.write_report(report, summary_rows, stats, dict(skip_breakdown))
+        console.print(f"[bold]Report:[/bold] [cyan]{report.resolve()}[/cyan]")
 
 
 @app.command()

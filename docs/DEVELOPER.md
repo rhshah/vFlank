@@ -63,7 +63,8 @@ vflank small run variants.maf \
     --pop-vcf-dir /path/gnomad_v4/ \
     --genome-build hg38 \
     --flank 200 \
-    --output flanking_sequences.fasta
+    --output flanking_sequences.fasta \
+    --report run_report.tsv          # optional: per-variant TSV + stats + skip breakdown
 
 # Preview MAF columns before a run (catches column-name mismatches)
 vflank small inspect variants.maf

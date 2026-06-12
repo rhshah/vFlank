@@ -38,16 +38,24 @@ def test_run_produces_expected_fasta(tmp_path):
     maf = _write_maf(tmp_path)
     out = tmp_path / "out.fasta"
 
+    report = tmp_path / "report.tsv"
     result = runner.invoke(app, [
         "small", "run", str(maf),
         "--ref-genome", str(fasta),
         "--genome-build", "hg38",
         "--flank", "5",
         "--output", str(out),
+        "--report", str(report),
     ])
 
     assert result.exit_code == 0, result.output
     assert out.exists()
+
+    # The run report is written and records the single processed variant.
+    assert report.exists()
+    rtext = report.read_text()
+    assert "# processed\t1" in rtext
+    assert "TP53" in rtext.splitlines()[-1]
 
     lines = out.read_text().splitlines()
     # Two records (raw + masked) = 4 lines.
