@@ -9,11 +9,18 @@ description = "Variant-aware flanking-sequence extraction and masking for ddPCR 
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "vFlank contributors" }]
-keywords = ["bioinformatics", "ddPCR", "primer-design", "flanking-sequence", "gnomAD", "MAF"]
+authors = [{ name = "Ronak Shah" }]
+keywords = ["bioinformatics", "ddPCR", "primer-design", "flanking-sequence", "gnomAD", "MAF", "fusion"]
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
@@ -23,9 +30,13 @@ dependencies = [
     "pandas>=2.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/rhshah/vFlank"
+Documentation = "https://rhshah.github.io/vFlank/"
+Repository = "https://github.com/rhshah/vFlank"
+Issues = "https://github.com/rhshah/vFlank/issues"
+
 [project.optional-dependencies]
-# Fusion/SV path needs BioPython + an external EMBOSS/Primer3 binary.
-fusion = ["biopython>=1.80"]
 dev = [
     "pytest>=8",
     "pytest-cov",
@@ -33,8 +44,12 @@ dev = [
     "mypy",
 ]
 docs = [
-    "mkdocs-material",
-    "mkdocstrings[python]",
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.25",
+    "mike>=2.1",
+    "mkdocs-typer2>=0.1",
+    "mkdocs-git-revision-date-localized-plugin>=1.2",
+    "mkdocs-section-index>=0.3",
 ]
 
 [project.scripts]

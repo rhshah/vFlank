@@ -3,7 +3,7 @@
 How to set up, run, test, extend, and reuse `vflank`. For the *why* (design and
 roadmap) see [ARCHITECTURE.md](ARCHITECTURE.md); for the biology see the
 `ddpcr-conventions` skill; for the user-facing quickstart see the top-level
-[README](../README.md).
+[README](https://github.com/rhshah/vFlank/blob/main/README.md).
 
 ---
 
@@ -88,7 +88,7 @@ vflank -v small run ...
 ## 4. The quality gate
 
 Run all three before considering any change done (this is enforced expectation,
-see [CLAUDE.md](../CLAUDE.md)):
+see [CLAUDE.md](https://github.com/rhshah/vFlank/blob/main/CLAUDE.md)):
 
 ```bash
 python -m ruff check src tests          # lint + import order + pyupgrade

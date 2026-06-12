@@ -1,0 +1,98 @@
+site_name: vflank
+site_description: Variant-aware flanking-sequence extraction and masking for ddPCR assay design
+site_url: https://rhshah.github.io/vFlank/
+repo_url: https://github.com/rhshah/vFlank
+repo_name: rhshah/vFlank
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 Ronak Shah
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+  - section-index
+  - git-revision-date-localized:
+      enable_creation_date: true
+      fallback_to_build_date: true
+      enable_git_follow: false
+  - mkdocs-typer2
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_source: true
+            members_order: source
+            separate_signature: true
+            docstring_section_style: table
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: ["."]
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - getting-started/installation.md
+      - getting-started/quickstart.md
+  - User Guide:
+      - user-guide/small-variants.md
+      - user-guide/fusions.md
+      - user-guide/masking.md
+  - Reference:
+      - CLI: reference/cli.md
+      - API: reference/api.md
+  - Developer:
+      - DEVELOPER.md
+      - ARCHITECTURE.md
+      - Research notes:
+          - research/gnomad-api.md
+          - research/sv-vcf-input.md
+  - Changelog: changelog.md

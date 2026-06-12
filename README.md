@@ -1,37 +1,44 @@
 # vflank
 
+[![CI](https://github.com/rhshah/vFlank/actions/workflows/ci.yml/badge.svg)](https://github.com/rhshah/vFlank/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://rhshah.github.io/vFlank/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
+
 **Variant-aware flanking-sequence extraction and masking for ddPCR assay design.**
 
 `vflank` is the *front-end* of a ddPCR assay-design pipeline. It takes genomic
-variants, extracts the reference (and, soon, patient-specific) sequence flanking
-each one, masks positions that would sabotage a primer/probe (common germline
-SNPs, and — soon — patient-specific heterozygous sites observed in a BAM), and
-emits clean target sequences. Primer/probe design itself is delegated downstream
-to established tools (Olivar for small-variant amplicons, Primer3 for
-fusion-junction probes).
+variants — small variants (SNPs/indels) and structural variants (fusions) — and
+emits the sequence an assay is designed around: the masked flanks of each variant
+or the chimeric junction of a fusion. Primer/probe design itself is delegated
+downstream to established tools.
 
-## Status
+📖 **Documentation: <https://rhshah.github.io/vFlank/>**
 
-Early development. Implemented today:
+## Features
 
-- `vflank small run` — extract ± *N* bp flanks for every variant in a MAF, mask
-  common gnomAD SNPs (AF ≥ threshold), write a raw + masked FASTA per variant.
-- `vflank small inspect` — preview MAF columns.
-- `vflank small list-vcf` — verify gnomAD per-chromosome coverage.
+- **Small variants** (`vflank small`) — ±N bp flanks from a MAF, raw + masked
+  FASTA, deduplicated per unique variant (`CHR_POS_REF_ALT`).
+- **Fusions / SVs** (`vflank fusion`) — reverse-complement-aware junction
+  sequences from an iCallSV / iAnnotateSV breakpoint table (columns by name).
+- **SNP masking, two backends** — local gnomAD VCFs *or* the gnomAD GraphQL API
+  (no download), each with `--pop-data {genome,exome,both}`.
+- **No silent failures** — genome-build guard, flank-truncation detection, and a
+  categorised skip summary + optional TSV report.
 
-Planned: BAM consensus flanks (modes C/D), fusion-junction rewrite (Python 3 +
-Pydantic config), `--emit-olivar`/`--emit-primer3` outputs, and a Nextflow
-pipeline wrapping the CLIs in containers. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Planned: BAM consensus flanks, VCF input (small + BND SV), and downstream
+emit formats. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## Install (development)
+## Install
 
 ```bash
-pip install -e ".[dev]"     # needs the hatchling build backend
-# or run tests without installing:
-python -m pytest
+pip install git+https://github.com/rhshah/vFlank.git
+# development:
+git clone https://github.com/rhshah/vFlank.git && cd vFlank
+pip install -e ".[dev]"
 ```
 
-Requires Python ≥ 3.10 and `pysam`, `pandas`, `typer`, `rich`.
+Requires Python ≥ 3.10 (Linux/macOS) and `pysam`, `pandas`, `typer`, `rich`.
 
 ## Quick start
 
