@@ -34,3 +34,6 @@ flanking_sequences.fasta
 *.swp
 .idea/
 .vscode/
+
+# Claude Code local (per-user) settings
+.claude/settings.local.json
