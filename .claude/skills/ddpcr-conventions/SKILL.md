@@ -124,17 +124,14 @@ that silently break a primer for one specific patient.
 
 A gene fusion is defined by two breakpoints on (possibly) different chromosomes.
 The chimeric **junction sequence** is the only fusion-specific template, so the
-ddPCR probe must **span the junction**. Assembly: fetch each partner's flank,
-orient by transcript strand (reverse-complement the `-` partner), concatenate
-across the breakpoint — **without inserting any non-ACGT separator into the
-sequence** (the legacy script's `"-"` join corrupted the junction base; do not
-reproduce it). Probe design over the junction is delegated to Primer3, honouring
-the config's GC/Tm/length (the legacy script ignored its own GC settings).
-
-Config (`config_ES_CTDNA_03.cfg`) is hg19/GRCh37 and describes one fusion per
-run (e.g. EWSR1–WT1 for Ewing/DSRCT). The breakpoint orientation semantics in
-the legacy script are ambiguous and must be recovered from a domain expert before
-re-implementation.
+ddPCR probe must **span the junction**. vflank builds it in `core/fusion.py`:
+fetch each partner's flank, orient per the strand bit (`0`=plus, `1`=minus),
+concatenate across the breakpoint with **no separator** (an early `"-"` join
+corrupted the junction base — never insert non-ACGT). Masking is applied in
+genomic space *before* reverse-complement (`revcomp(N)=N`). The corrected
+junction model and the iCallSV `CT`→strand mapping are in
+docs/research/sv-vcf-input.md. Probe design over the junction is delegated to
+Primer3 (not implemented yet).
 
 ## Downstream emit formats (where vflank stops)
 

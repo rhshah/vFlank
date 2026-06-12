@@ -17,20 +17,20 @@ for the full plan, scope boundary, and milestone roadmap.
 
 ```
 src/vflank/
-├── core/   chrom · variant · flanks · popfreq   ← pure, testable domain logic
-├── io/     maf · reference · fasta              ← file access
-├── cli/    app (root) · small (run/inspect/list-vcf)
+├── core/   chrom · variant · flanks · popfreq · popfreq_api · fusion · skips
+├── io/     maf · reference · fasta · breakpoints · report   ← file access
+├── cli/    app (root) · small (run/inspect/list-vcf) · fusion (run)
 ├── logging.py · errors.py
 tests/      unit/ · integration/
 docs/ARCHITECTURE.md                              ← design & roadmap
-get_flanking_sequence.py, design_fusion_primers.py, config_ES_CTDNA_03.cfg
-                                                  ← ORIGINAL scripts: behavioural spec, do not edit
+docs/research/                                     ← gnomAD-API & SV/VCF design notes
 ```
 
-The two scripts at the repo root are the **behavioural specification**, kept for
-reference. `get_flanking_sequence.py` is fully ported. `design_fusion_primers.py`
-is legacy Python 2 and is to be **re-implemented** (it does not run and contains
-bugs) — treat it as untrusted intent, not working code.
+The original reference scripts (`get_flanking_sequence.py`,
+`design_fusion_primers.py`, `config_ES_CTDNA_03.cfg`) have been fully ported /
+re-implemented and removed. The conventions extracted from them live in
+[docs/research/](docs/research/) (corrected fusion-junction model, iCallSV
+strand mapping, etc.).
 
 ## Quality gate — run before declaring any change done
 

@@ -78,13 +78,15 @@ functions over plain iterables — the natural seam to later accelerate with Rus
 (rust-htslib for consensus parity with samtools; noodles for pure-Rust gnomAD
 scanning). Lock correctness in Python first; port the proven bottleneck only.
 
-## Source references
+## Origin
 
-The original scripts remain at the repo root as the behavioural spec:
-- `get_flanking_sequence.py` — fully ported (M2). Output format preserved.
-- `design_fusion_primers.py` + `config_ES_CTDNA_03.cfg` — to be **re-implemented**
-  (Python 2, doesn't run, embeds a junction-corrupting `"-"`, ignores its GC
-  config). Treat as untrusted; recover intent before M4.
+vflank began as two scripts: `get_flanking_sequence.py` (small variants, fully
+ported in M2 with the output format preserved) and `design_fusion_primers.py` +
+`config_ES_CTDNA_03.cfg` (a legacy Python-2 fusion script that didn't run and
+embedded a junction-corrupting `"-"`). Both have been ported / re-implemented and
+removed; the conventions recovered from them (the corrected fusion-junction
+model, iCallSV strand mapping) are captured in
+[research/sv-vcf-input.md](research/sv-vcf-input.md).
 
 ## Roadmap
 
