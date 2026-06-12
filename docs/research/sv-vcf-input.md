@@ -88,9 +88,36 @@ variant**; header = `Position_REF_ALT` + gene/HGVS, **no sample tag** (optionall
 `samples=N`). NB: BAM-consensus modes (C/D), being sample-specific, will instead
 dedup per `(variant, sample)`.
 
+## Column handling — name-driven, never positional
+
+The simple SV TSV reader picks columns **by header name, not by position**. An
+`SvColumns` dataclass holds the logical→header mapping with defaults
+(`chr1 pos1 str1 chr2 pos2 str2`, plus optional `name`/`sample`); each is
+overridable (mirrors `io/maf.MafColumns` + `--chrom-col` etc.). A row is usable
+as long as the header contains the (configured) names — column order is
+irrelevant and extra columns are ignored. A missing required column is a clear
+error, not a silent positional guess.
+
+## BND parser strategy (phase 2, deferred)
+
+- **Read** VCF with `pysam.VariantFile` (already a dependency; no new dep).
+- **Delly path:** read `INFO.CT`/`CHR2`/`END` directly (mirrors iCallSV); no
+  library needed.
+- **BND-bracket path (Manta/GRIDSS):** implement the ~20-line VCF-spec parser
+  ourselves, mapping the 4 forms straight to our `str`, so the mapping stays
+  unified with the CT convention and fully unit-tested. Use **vcfpy** /
+  **PyVCF** `BreakEnd` and **svtools `vcftobedpe`** as *test oracles*
+  (validate against, don't depend on). Crux test: a Manta BND equivalent to a
+  deletion must yield `str1=0, str2=1` (= Delly `CT=3to5`).
+
 ## Build order
 
-1. **M4 fusion core** — `Breakpoint` + corrected junction + iCallSV-TSV reader +
-   golden test.
-2. **Small-variant dedup + header change.**
-3. **M4.6 VCF readers** — small-variant VCF, then Delly-CT / BND SV VCF.
+**Phase 1 (now): simple format only.** SV input = the iCallSV/iAnnotateSV TSV,
+parsed by column name (above).
+1. `core/fusion.py` — `Breakpoint`/`Fusion` + corrected junction model.
+2. `io/breakpoints.py` — name-driven TSV reader.
+3. `vflank fusion` sub-app + golden test.
+4. Small-variant dedup + `Position_REF_ALT` header change.
+
+**Phase 2 (later): VCF.** Small-variant VCF, then Delly-CT / BND SV VCF
+(per the BND strategy above).
