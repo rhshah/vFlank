@@ -152,6 +152,29 @@ def test_float_typed_chromosome_column_is_processed(tmp_path):
     assert lines[1] == f"{seq[34:39].upper()}[A/T]{seq[40:45].upper()}"
 
 
+def test_pop_data_exome_without_files_errors(tmp_path):
+    # --pop-data exome but the dir has no exome VCFs -> fail fast, do not
+    # silently mask with genome-only (or nothing).
+    fasta, _ = _write_reference(tmp_path)  # contig 'chr1'
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    maf = tmp_path / "v.maf"
+    maf.write_text(header + "\n" + "\t".join(["G", "1", "30", "30", "A", "T", "S1"]) + "\n")
+    empty_dir = tmp_path / "gnomad"
+    empty_dir.mkdir()
+    out = tmp_path / "out.fasta"
+
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta), "--genome-build", "hg38",
+        "--pop-vcf-dir", str(empty_dir), "--pop-data", "exome",
+        "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 1
+    assert "exome" in result.output
+
+
 def test_missing_required_column_errors(tmp_path):
     fasta, _ = _write_reference(tmp_path)
     bad = tmp_path / "bad.maf"

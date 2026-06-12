@@ -17,3 +17,7 @@ class ReferenceError(VflankError):
 
 class MafError(VflankError):
     """Problem reading or validating the input MAF."""
+
+
+class PopFreqError(VflankError):
+    """Problem locating or reading population-frequency (gnomAD) data."""

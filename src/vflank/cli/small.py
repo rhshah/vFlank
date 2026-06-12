@@ -17,9 +17,9 @@ from rich.progress import (
 )
 from rich.table import Table
 
-from ..core.chrom import detect_series_chr_style
+from ..core.chrom import detect_series_chr_style, normalise_chrom
 from ..core.flanks import ReferenceFlankSource
-from ..core.popfreq import GnomadStore, build_chrom_vcf_map
+from ..core.popfreq import GnomadStore, build_chrom_vcf_map, kinds_for
 from ..core.skips import categorize_skip
 from ..errors import VflankError
 from ..io import fasta as fasta_io
@@ -72,6 +72,10 @@ def run(
     af_threshold: float = typer.Option(
         0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP."
     ),
+    pop_data: str = typer.Option(
+        "genome", "--pop-data",
+        help="gnomAD data to mask against: genome (default), exome, or both (union).",
+    ),
     output: Path = typer.Option(
         Path("flanking_sequences.fasta"), "--output", "-o", help="Output FASTA file."
     ),
@@ -109,7 +113,7 @@ def run(
     try:
         _run(
             maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-            output, report, samples, samples_file,
+            pop_data, output, report, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
             uppercase,
@@ -120,12 +124,14 @@ def run(
 
 
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-         output, report, samples, samples_file, cols: MafColumns, uppercase: bool):
+         pop_data, output, report, samples, samples_file, cols: MafColumns, uppercase: bool):
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
 
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
+    if pop_data not in ("genome", "exome", "both"):
+        raise VflankError(f"--pop-data must be 'genome', 'exome', or 'both', got '{pop_data}'")
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
 
@@ -170,9 +176,17 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     # --- Population VCF store (optional) ---
     gnomad = None
     if pop_vcf_dir is not None:
-        gnomad = GnomadStore(pop_vcf_dir, genome_build)
+        gnomad = GnomadStore(pop_vcf_dir, genome_build, pop_data)
+        # Fail fast if a requested data kind is wholly absent for the MAF's
+        # chromosomes (no silent fall-back to genome-only when exome/both asked).
+        maf_chroms = {
+            b for b, _err in (normalise_chrom(c) for c in df[MAF_CHR].dropna().unique()) if b
+        }
+        if maf_chroms:
+            gnomad.preflight(sorted(maf_chroms))
         console.print(
-            f"[bold]Population VCF dir:[/bold] {pop_vcf_dir}  [dim](AF ≥ {af_threshold})[/dim]"
+            f"[bold]Population VCF dir:[/bold] {pop_vcf_dir}  "
+            f"[dim](pop-data={pop_data}, AF ≥ {af_threshold})[/dim]"
         )
     else:
         console.print("[yellow]⚠ No --pop-vcf-dir — SNP masking skipped.[/yellow]")
@@ -361,24 +375,42 @@ def list_vcf(
         ..., help="Directory of gnomAD per-chromosome VCF bgz files.", exists=True
     ),
     genome_build: str = typer.Option("hg19", "--genome-build", "-g", help="hg19 or hg38"),
+    pop_data: str = typer.Option(
+        "genome", "--pop-data", help="Coverage to check: genome, exome, or both."
+    ),
 ):
-    """Show which per-chromosome VCFs were found (and which are missing)."""
+    """Show which per-chromosome VCFs were found (and which are missing) per data kind."""
+    if pop_data not in ("genome", "exome", "both"):
+        console.print(
+            f"[bold red]ERROR:[/bold red] --pop-data must be genome|exome|both, got '{pop_data}'"
+        )
+        raise typer.Exit(1)
+
     chroms = [str(i) for i in range(1, 23)] + ["X", "Y"]
-    vcf_map = build_chrom_vcf_map(pop_vcf_dir, genome_build, chroms)
+    kinds = kinds_for(pop_data)
+    kind_maps = {k: build_chrom_vcf_map(pop_vcf_dir, genome_build, chroms, k) for k in kinds}
+
     table = Table(show_header=True, header_style="bold cyan",
-                  title=f"VCFs in {pop_vcf_dir}  [dim]({genome_build})[/dim]")
-    table.add_column("Chrom", width=8)
-    table.add_column("File found", overflow="fold")
-    table.add_column("TBI", justify="center", width=10)
-    found = 0
+                  title=f"VCFs in {pop_vcf_dir}  [dim]({genome_build}, {pop_data})[/dim]")
+    table.add_column("Chrom", width=6)
+    for kind in kinds:
+        table.add_column(kind, overflow="fold")
+        table.add_column(f"{kind} TBI", justify="center", width=10)
+
+    found = {k: 0 for k in kinds}
     for chrom in chroms:
-        path = vcf_map.get(chrom)
-        if path:
-            tbi = Path(str(path) + ".tbi")
-            tbi_str = "[green]✓[/green]" if tbi.exists() else "[red]✗[/red]"
-            table.add_row(chrom, path.name, tbi_str)
-            found += 1
-        else:
-            table.add_row(chrom, "[dim]not found[/dim]", "[dim]—[/dim]")
+        cells: list[str] = [chrom]
+        for kind in kinds:
+            path = kind_maps[kind].get(chrom)
+            if path:
+                tbi_ok = Path(str(path) + ".tbi").exists()
+                cells.append(path.name)
+                cells.append("[green]✓[/green]" if tbi_ok else "[red]✗[/red]")
+                found[kind] += 1
+            else:
+                cells.append("[dim]not found[/dim]")
+                cells.append("[dim]—[/dim]")
+        table.add_row(*cells)
     console.print(table)
-    console.print(f"\n{found}/{len(chroms)} chromosomes have a matching VCF.")
+    for kind in kinds:
+        console.print(f"{found[kind]}/{len(chroms)} chromosomes have a matching {kind} VCF.")
