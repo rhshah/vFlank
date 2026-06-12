@@ -38,10 +38,22 @@ class ReferenceFasta:
         except Exception as exc:  # noqa: BLE001
             raise ReferenceError(f"Could not open FASTA: {exc}") from exc
 
+        self._refs = set(self.fa.references)
         self.has_chr = contigs_have_chr(self.fa.references)
 
     def contig(self, bare: str) -> str:
-        return chrom_for_contigs(bare, self.has_chr)
+        """Resolve a bare chromosome to this FASTA's actual contig name.
+
+        Auto-detection of ``chr`` prefixing is best-effort (it probes chr1-5).
+        If the detected form is absent but the other form is present — which can
+        happen with unusual or single-contig references — fall back to it rather
+        than letting pysam raise a confusing KeyError for every variant.
+        """
+        primary = chrom_for_contigs(bare, self.has_chr)
+        if primary in self._refs:
+            return primary
+        alternate = bare if self.has_chr else f"chr{bare}"
+        return alternate if alternate in self._refs else primary
 
     def fetch(self, bare: str, start_0based: int, end_0based: int) -> str:
         return self.fa.fetch(self.contig(bare), start_0based, end_0based)

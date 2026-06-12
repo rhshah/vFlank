@@ -88,6 +88,32 @@ def test_truncated_flank_is_emitted_not_dropped(tmp_path):
     assert raw.split("[", 1)[0] == seq[47:57].upper()  # full 10 bp left flank
 
 
+def test_bare_named_single_contig_fasta_resolves(tmp_path):
+    # A FASTA whose only contig is bare '7' defeats best-effort chr detection
+    # (which probes chr1-5). ReferenceFasta.contig must fall back to the form
+    # that actually exists rather than KeyError-ing on every variant.
+    seq = "".join("ACGT"[i % 4] for i in range(80))
+    fasta = tmp_path / "ref7.fasta"
+    fasta.write_text(f">7\n{seq}\n")
+    pysam.faidx(str(fasta))
+
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    maf = tmp_path / "v.maf"
+    maf.write_text(header + "\n" + "\t".join(["BRAF", "7", "40", "40", "A", "T", "S1"]) + "\n")
+    out = tmp_path / "out.fasta"
+
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta),
+        "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+    raw = out.read_text().splitlines()[1]
+    assert raw == f"{seq[34:39].upper()}[A/T]{seq[40:45].upper()}"
+
+
 def test_missing_required_column_errors(tmp_path):
     fasta, _ = _write_reference(tmp_path)
     bad = tmp_path / "bad.maf"
