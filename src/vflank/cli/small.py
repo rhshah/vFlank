@@ -63,7 +63,8 @@ def run(
         help="Directory of per-chromosome gnomAD VCF bgz files. Omit to skip masking.",
     ),
     genome_build: str = typer.Option(
-        "hg38", "--genome-build", "-g", help="hg38 (GRCh38) or hg19 (GRCh37)."
+        "hg19", "--genome-build", "-g",
+        help="hg19 (GRCh37, gnomAD v2.1.1) or hg38 (GRCh38, gnomAD v4).",
     ),
     flank: int = typer.Option(
         200, "--flank", "-f", min=1, max=10_000, help="Bases on each side of the variant."
@@ -359,7 +360,7 @@ def list_vcf(
     pop_vcf_dir: Path = typer.Argument(
         ..., help="Directory of gnomAD per-chromosome VCF bgz files.", exists=True
     ),
-    genome_build: str = typer.Option("hg38", "--genome-build", "-g", help="hg38 or hg19"),
+    genome_build: str = typer.Option("hg19", "--genome-build", "-g", help="hg19 or hg38"),
 ):
     """Show which per-chromosome VCFs were found (and which are missing)."""
     chroms = [str(i) for i in range(1, 23)] + ["X", "Y"]

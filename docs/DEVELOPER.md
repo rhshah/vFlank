@@ -59,9 +59,9 @@ makes `core` unit-testable without pysam, pandas, or Typer.
 ```bash
 # Main pipeline: extract + mask flanks for every variant in a MAF
 vflank small run variants.maf \
-    --ref-genome /path/GRCh38.fasta \
-    --pop-vcf-dir /path/gnomad_v4/ \
-    --genome-build hg38 \
+    --ref-genome /path/GRCh37.fasta \
+    --pop-vcf-dir /path/gnomad_v2.1.1/ \
+    --genome-build hg19 \            # default; gnomAD v2.1.1. Use -g hg38 for GRCh38/v4.
     --flank 200 \
     --output flanking_sequences.fasta \
     --report run_report.tsv          # optional: per-variant TSV + stats + skip breakdown

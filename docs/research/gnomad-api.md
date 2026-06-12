@@ -165,10 +165,22 @@ flank). Mitigations bring this down:
   small cohorts."
 - User-facing guidance everywhere: **API = small/no-download; VCF = bulk/reproducible/HPC.**
 
-## Open decisions for sign-off
+## Resolved decisions
 
-1. Default `--pop-source`: keep `vcf` as default (recommended), `api` opt-in.
-2. For v4, use `max(genome, exome)` (consistent with v2) or prefer `joint`? Proposed:
-   start with `max(genome, exome)` for one code path; revisit `joint` later.
-3. Throttle: hard cap at 10/60 s with backoff, or also expose `--api-rate` to let
-   power users with a whitelisted IP go faster? Proposed: fixed safe default now.
+1. **Default genome build = `hg19` (GRCh37 / gnomAD v2.1.1).** gnomAD v4 is
+   **GRCh38-only** — there is no v4 GRCh37. This deployment's data is `assembly19`
+   (hg19 ctDNA) and the existing tool is hg19, so hg19 is the right default. CLI
+   default (`small run`, `list-vcf`) changed hg38 → hg19; hg38 users pass `-g hg38`
+   and the build-mismatch guard catches a wrong choice.
+2. **Default population data = `genome`**, exposed as `--pop-data {genome,exome,both}`.
+   Flanks routinely fall in non-coding regions where **exomes have no data**;
+   genomes cover the whole genome uniformly; and this matches the existing
+   genomes-VCF behaviour. Verified on TP53 P72R (GRCh37): genome af=0.621 (AN 31k),
+   exome af=0.668 (AN 251k) — both agree it's common. Exome's larger N only helps
+   for *rare* coding variants near the threshold; `both` (union/max) is the safest
+   near exons.
+3. **AF within the chosen dataset:** `af = max(seq.af, max(ac/an over populations))`,
+   SNPs only — mirrors the VCF source's max(AF, AF_grpmax).
+4. **Default `--pop-source = vcf`** (api opt-in). Both sources default to genome
+   for parity.
+5. **Fixed safe throttle** (≤10 req/60 s + backoff); no `--api-rate` knob initially.

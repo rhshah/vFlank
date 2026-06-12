@@ -37,12 +37,15 @@ Requires Python ≥ 3.10 and `pysam`, `pandas`, `typer`, `rich`.
 
 ```bash
 vflank small run variants.maf \
-    --ref-genome /path/to/GRCh38.fasta \
-    --pop-vcf-dir /path/to/gnomad_v4/ \
-    --genome-build hg38 \
+    --ref-genome /path/to/GRCh37.fasta \
+    --pop-vcf-dir /path/to/gnomad_v2.1.1/ \
+    --genome-build hg19 \
     --flank 200 \
     --output flanking_sequences.fasta
 ```
+
+`--genome-build` defaults to **hg19** (GRCh37 / gnomAD v2.1.1); pass `-g hg38`
+for GRCh38 / gnomAD v4. gnomAD v4 has no GRCh37 build.
 
 Each variant yields two FASTA records:
 
