@@ -12,6 +12,7 @@ jobs:
     name: Publish to PyPI
     runs-on: ubuntu-latest
     permissions:
+      contents: read   # required for actions/checkout (permissions: block is exhaustive)
       id-token: write  # OIDC for PyPI Trusted Publishing (no API token needed)
     steps:
       - uses: actions/checkout@v4
