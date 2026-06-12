@@ -1,0 +1,99 @@
+"""End-to-end test: build a tiny indexed FASTA and run `vflank small run`."""
+
+from __future__ import annotations
+
+import pytest
+from typer.testing import CliRunner
+
+pysam = pytest.importorskip("pysam")
+
+from vflank.cli.app import app  # noqa: E402
+
+runner = CliRunner()
+
+
+def _write_reference(tmp_path):
+    # 60 bp single contig named 'chr1' (FASTA uses chr-prefixed notation).
+    seq = "".join("ACGT"[i % 4] for i in range(60))
+    fasta = tmp_path / "ref.fasta"
+    fasta.write_text(f">chr1\n{seq}\n")
+    pysam.faidx(str(fasta))  # creates ref.fasta.fai
+    return fasta, seq
+
+
+def _write_maf(tmp_path):
+    # MAF uses bare '1' notation to exercise normalisation against a chr FASTA.
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    row = "\t".join(["TP53", "1", "30", "30", "A", "T", "SAMPLE_1"])
+    maf = tmp_path / "variants.maf"
+    maf.write_text(header + "\n" + row + "\n")
+    return maf
+
+
+def test_run_produces_expected_fasta(tmp_path):
+    fasta, seq = _write_reference(tmp_path)
+    maf = _write_maf(tmp_path)
+    out = tmp_path / "out.fasta"
+
+    result = runner.invoke(app, [
+        "small", "run", str(maf),
+        "--ref-genome", str(fasta),
+        "--genome-build", "hg38",
+        "--flank", "5",
+        "--output", str(out),
+    ])
+
+    assert result.exit_code == 0, result.output
+    assert out.exists()
+
+    lines = out.read_text().splitlines()
+    # Two records (raw + masked) = 4 lines.
+    assert len(lines) == 4
+    assert lines[0].startswith(">SAMPLE_1__TP53")
+    assert lines[2].startswith(">Masked__SAMPLE_1__TP53")
+
+    # Variant at 1-based pos 30 (index 29). flank=5.
+    expected_left = seq[24:29]   # positions 25..29
+    expected_right = seq[30:35]  # positions 31..35
+    assert lines[1] == f"{expected_left}[A/T]{expected_right}"
+    # No gnomAD dir -> masked record identical to raw.
+    assert lines[3].endswith(f"{expected_left}[A/T]{expected_right}")
+
+
+def test_truncated_flank_is_emitted_not_dropped(tmp_path):
+    # 60 bp contig; variant near the end with a flank that runs off the contig.
+    fasta, seq = _write_reference(tmp_path)
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    # pos 58 of a 60 bp contig: right flank can only be 2 bp, not the requested 10.
+    maf = tmp_path / "edge.maf"
+    maf.write_text(header + "\n" + "\t".join(["TP53", "1", "58", "58", "A", "T", "S1"]) + "\n")
+    out = tmp_path / "out.fasta"
+
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta),
+        "--flank", "10", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+
+    # The record must still be emitted (truncation warns, never silently drops).
+    raw = out.read_text().splitlines()[1]
+    right = raw.split("]", 1)[1]
+    assert len(right) == 2  # only 2 bp available past position 58
+    assert raw.split("[", 1)[0] == seq[47:57].upper()  # full 10 bp left flank
+
+
+def test_missing_required_column_errors(tmp_path):
+    fasta, _ = _write_reference(tmp_path)
+    bad = tmp_path / "bad.maf"
+    bad.write_text("Hugo_Symbol\tChromosome\nTP53\t1\n")
+    out = tmp_path / "out.fasta"
+    result = runner.invoke(app, [
+        "small", "run", str(bad), "--ref-genome", str(fasta), "--output", str(out),
+    ])
+    assert result.exit_code == 1

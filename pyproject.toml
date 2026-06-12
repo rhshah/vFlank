@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vflank"
+dynamic = ["version"]
+description = "Variant-aware flanking-sequence extraction and masking for ddPCR assay design"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "vFlank contributors" }]
+keywords = ["bioinformatics", "ddPCR", "primer-design", "flanking-sequence", "gnomAD", "MAF"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13",
+    "pysam>=0.22",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+# Fusion/SV path needs BioPython + an external EMBOSS/Primer3 binary.
+fusion = ["biopython>=1.80"]
+dev = [
+    "pytest>=8",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+docs = [
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
+
+[project.scripts]
+vflank = "vflank.cli.app:app"
+
+[tool.hatch.version]
+path = "src/vflank/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vflank"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+# Typer's documented idiom puts typer.Argument()/Option() in parameter defaults.
+extend-immutable-calls = ["typer.Argument", "typer.Option"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
