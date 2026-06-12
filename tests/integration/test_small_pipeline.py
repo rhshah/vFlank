@@ -114,6 +114,36 @@ def test_bare_named_single_contig_fasta_resolves(tmp_path):
     assert raw == f"{seq[34:39].upper()}[A/T]{seq[40:45].upper()}"
 
 
+def test_float_typed_chromosome_column_is_processed(tmp_path):
+    # When a MAF's Chromosome column contains any blank, pandas types the whole
+    # column as float, turning "17" into 17.0. The valid row must still process
+    # (regression for a real MSK MAF where this lost every variant).
+    seq = "".join("ACGT"[i % 4] for i in range(100))
+    fasta = tmp_path / "ref17.fasta"
+    fasta.write_text(f">17\n{seq}\n")
+    pysam.faidx(str(fasta))
+
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    maf = tmp_path / "mixed.maf"
+    maf.write_text(
+        header + "\n"
+        + "\t".join(["TP53", "17", "40", "40", "A", "T", "S1"]) + "\n"  # valid
+        + "\t".join(["", "", "50", "50", "", "", ""]) + "\n"            # blanks -> float column
+    )
+    out = tmp_path / "out.fasta"
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta),
+        "--genome-build", "hg19", "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+    lines = out.read_text().splitlines()
+    assert len(lines) == 4  # exactly one variant processed (raw + masked records)
+    assert lines[1] == f"{seq[34:39].upper()}[A/T]{seq[40:45].upper()}"
+
+
 def test_missing_required_column_errors(tmp_path):
     fasta, _ = _write_reference(tmp_path)
     bad = tmp_path / "bad.maf"

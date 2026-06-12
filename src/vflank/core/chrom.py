@@ -38,9 +38,19 @@ def normalise_chrom(raw_chrom: object) -> tuple[str | None, str | None]:
     if isinstance(raw_chrom, float) and math.isnan(raw_chrom):
         return None, "chromosome is NaN (missing value)"
 
+    # Pandas types any chromosome column containing a NaN as float, turning
+    # "17" into 17.0 (and numpy.float64 subclasses float). Recover the integer
+    # form so numeric chromosomes normalise instead of being rejected as "17.0".
+    if isinstance(raw_chrom, float):
+        raw_chrom = int(raw_chrom)
+
     chrom = str(raw_chrom).strip()
     if not chrom or chrom.lower() in ("nan", "none", ".", ""):
         return None, f"chromosome is empty or missing (got {raw_chrom!r})"
+
+    # Same artifact surviving as a string, e.g. "17.0" read from a text cell.
+    if chrom.endswith(".0") and chrom[:-2].isdigit():
+        chrom = chrom[:-2]
 
     upper = chrom.upper()
 

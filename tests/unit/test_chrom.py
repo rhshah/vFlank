@@ -24,6 +24,14 @@ def test_normalise_sex_and_mito():
     assert normalise_chrom("MT") == ("MT", None)
 
 
+def test_normalise_float_chromosome_from_pandas():
+    # A NaN-containing column makes pandas store "17" as float 17.0.
+    assert normalise_chrom(17.0) == ("17", None)
+    assert normalise_chrom("17.0") == ("17", None)
+    assert normalise_chrom(23.0) == ("X", None)  # float numeric sex encoding
+    assert normalise_chrom(24.0) == ("Y", None)
+
+
 def test_normalise_invalid():
     assert normalise_chrom(None)[0] is None
     assert normalise_chrom(float("nan"))[0] is None
