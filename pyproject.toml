@@ -8,13 +8,13 @@ dynamic = ["version"]
 description = "Variant-aware flanking-sequence extraction and masking for ddPCR assay design"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
+license = "Apache-2.0"
 authors = [{ name = "Ronak Shah" }]
 keywords = ["bioinformatics", "ddPCR", "primer-design", "flanking-sequence", "gnomAD", "MAF", "fusion"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS",
     "Programming Language :: Python :: 3",

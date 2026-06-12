@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/rhshah/vFlank/actions/workflows/ci.yml/badge.svg)](https://github.com/rhshah/vFlank/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://rhshah.github.io/vFlank/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 
 **Variant-aware flanking-sequence extraction and masking for ddPCR assay design.**
