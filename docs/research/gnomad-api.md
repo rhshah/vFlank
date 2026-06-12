@@ -119,6 +119,43 @@ flank). Mitigations bring this down:
 - Even so: ~10 *distinct* variant windows/min. ≤~50 distinct variants is comfortable;
   hundreds means minutes of throttled waiting → prefer local VCF.
 
+## `--pop-data {genome,exome,both}` across both sources
+
+`--pop-data` selects which gnomAD dataset(s) to consult; the masking rule is the
+same regardless of source.
+
+- **API source:** free — one region query returns both `genome{}` and `exome{}`;
+  `both` = `max(genome.af, exome.af, per-pop ac/an)`.
+- **VCF source:** maps to which file set is opened in `--pop-vcf-dir`:
+  - `genome` → `gnomad.genomes.*` (the current behaviour / what the original tool used)
+  - `exome`  → `gnomad.exomes.*`
+  - `both`   → open both per chromosome, mask the **union** of positions (a position
+    is masked if AF ≥ threshold in *either* cohort).
+
+gnomAD ships **per-chromosome files for both genomes and exomes**, both builds
+(verified): e.g. GRCh37 chr17 genomes 14.5 GB, exomes 3.9 GB (a 63 GB combined
+exome file also exists but we use per-chrom). So the VCF source can support all
+three — it just needs the corresponding files present.
+
+Asymmetry to respect: the API gets all three for free; the VCF source needs the
+files downloaded. **If `--pop-data exome`/`both` is requested on the VCF source
+without the required files, raise a clear error — never silently fall back to
+genome-only.** Today the package ships only genome patterns; adding exome
+patterns (per-chrom, both builds) + union logic is required to enable
+exome/both on the VCF source.
+
+`both` combine = **max AF across cohorts** (conservative, primer-safe). The
+statistically pooled combine is gnomAD's `joint` dataset, which exists **only for
+v4 (GRCh38)** — a future v4 refinement; ship max-based `both` first.
+
+Filename patterns needed (split genome/exome):
+```
+hg19 genome: gnomad.genomes.r2.1.1.sites.{chrom}.vcf.bgz
+hg19 exome:  gnomad.exomes.r2.1.1.sites.{chrom}.vcf.bgz
+hg38 genome: gnomad.genomes.v4.1.sites.chr{chrom}.vcf.bgz
+hg38 exome:  gnomad.exomes.v4.1.sites.chr{chrom}.vcf.bgz
+```
+
 ## Proposed design (implementation pending)
 
 - New `core/popfreq_api.py::GnomadApiSource` implementing the **same duck-typed
