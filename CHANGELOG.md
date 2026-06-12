@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-12
+
 ### Added
 - Small-variant flank extraction from MAF (`vflank small run`), with `inspect`
   and `list-vcf` helpers.
@@ -20,4 +22,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   categorised skip summary + optional TSV run report.
 - Documentation site (MkDocs Material) and GitHub Actions CI.
 
-[Unreleased]: https://github.com/rhshah/vFlank/commits/main
+[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/rhshah/vFlank/releases/tag/v0.1.0
