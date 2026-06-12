@@ -21,3 +21,7 @@ class MafError(VflankError):
 
 class PopFreqError(VflankError):
     """Problem locating or reading population-frequency (gnomAD) data."""
+
+
+class SvError(VflankError):
+    """Problem reading or validating structural-variant / breakpoint input."""

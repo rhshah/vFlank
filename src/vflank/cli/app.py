@@ -12,7 +12,7 @@ import typer
 
 from .. import __version__
 from ..logging import setup_logging
-from . import small
+from . import fusion, small
 
 app = typer.Typer(
     name="vflank",
@@ -21,6 +21,7 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(small.app, name="small", help="Small-variant (SNP/indel) flank extraction.")
+app.add_typer(fusion.app, name="fusion", help="Structural-variant junction extraction.")
 
 
 @app.callback()
