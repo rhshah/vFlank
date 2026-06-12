@@ -152,6 +152,43 @@ def test_float_typed_chromosome_column_is_processed(tmp_path):
     assert lines[1] == f"{seq[34:39].upper()}[A/T]{seq[40:45].upper()}"
 
 
+def test_pop_source_api_masks_via_monkeypatched_transport(tmp_path, monkeypatch):
+    # Drive `--pop-source api` end to end with a fake transport (no network):
+    # flag one genomic position as a common SNP and assert it is N-masked.
+    import vflank.core.popfreq_api as api
+
+    fasta, seq = _write_reference(tmp_path)  # contig 'chr1', 60 bp
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    maf = tmp_path / "v.maf"
+    maf.write_text(header + "\n" + "\t".join(["G", "1", "30", "30", "A", "T", "S1"]) + "\n")
+    out = tmp_path / "out.fasta"
+
+    # Variant at pos 30, flank 5 -> left window genomic 25..29, right 31..35.
+    # Flag pos 27 (in the left flank) as a common SNP.
+    def fake_transport(url, query, timeout):
+        return {"data": {"region": {"variants": [
+            {"pos": 27, "ref": "A", "alt": "G",
+             "genome": {"af": 0.5, "populations": []}, "exome": None},
+        ]}}}
+
+    monkeypatch.setattr(api, "_http_transport", fake_transport)
+    monkeypatch.setattr(api, "sleep", lambda _s: None)  # skip the rate-limit throttle
+
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta), "--genome-build", "hg38",
+        "--pop-source", "api", "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+    lines = out.read_text().splitlines()
+    masked_left = lines[3].split("[", 1)[0]   # masked record, left flank
+    # left window starts at 0-based 24; pos 27 -> index (27 - 24 - 1) = 2 -> 'N'.
+    assert masked_left[2] == "N"
+    assert "API requests" in result.output
+
+
 def test_pop_data_exome_without_files_errors(tmp_path):
     # --pop-data exome but the dir has no exome VCFs -> fail fast, do not
     # silently mask with genome-only (or nothing).

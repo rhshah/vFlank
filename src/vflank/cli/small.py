@@ -20,6 +20,7 @@ from rich.table import Table
 from ..core.chrom import detect_series_chr_style, normalise_chrom
 from ..core.flanks import ReferenceFlankSource
 from ..core.popfreq import GnomadStore, build_chrom_vcf_map, kinds_for
+from ..core.popfreq_api import GnomadApiSource
 from ..core.skips import categorize_skip
 from ..errors import VflankError
 from ..io import fasta as fasta_io
@@ -76,6 +77,10 @@ def run(
         "genome", "--pop-data",
         help="gnomAD data to mask against: genome (default), exome, or both (union).",
     ),
+    pop_source: str = typer.Option(
+        "vcf", "--pop-source",
+        help="Masking backend: vcf (local gnomAD VCFs) or api (gnomAD GraphQL, no download).",
+    ),
     output: Path = typer.Option(
         Path("flanking_sequences.fasta"), "--output", "-o", help="Output FASTA file."
     ),
@@ -113,7 +118,7 @@ def run(
     try:
         _run(
             maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-            pop_data, output, report, samples, samples_file,
+            pop_data, pop_source, output, report, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
             uppercase,
@@ -124,7 +129,8 @@ def run(
 
 
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-         pop_data, output, report, samples, samples_file, cols: MafColumns, uppercase: bool):
+         pop_data, pop_source, output, report, samples, samples_file,
+         cols: MafColumns, uppercase: bool):
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
 
@@ -132,6 +138,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
     if pop_data not in ("genome", "exome", "both"):
         raise VflankError(f"--pop-data must be 'genome', 'exome', or 'both', got '{pop_data}'")
+    if pop_source not in ("vcf", "api"):
+        raise VflankError(f"--pop-source must be 'vcf' or 'api', got '{pop_source}'")
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
 
@@ -173,9 +181,22 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"MAF: {'chr-prefixed' if maf_style else 'bare' if maf_style is False else 'unknown'}[/dim]"
     )
 
-    # --- Population VCF store (optional) ---
+    # --- Masking source (optional) ---
     gnomad = None
-    if pop_vcf_dir is not None:
+    if pop_source == "api":
+        gnomad = GnomadApiSource(genome_build, pop_data)
+        if pop_vcf_dir is not None:
+            console.print("  [yellow]⚠ --pop-vcf-dir ignored with --pop-source api[/yellow]")
+        if len(df) > 50:
+            console.print(
+                f"  [yellow]⚠ {len(df):,} variants over the rate-limited API "
+                f"(~10 req/min) — consider --pop-source vcf for bulk.[/yellow]"
+            )
+        console.print(
+            f"[bold]Masking:[/bold] gnomAD API  "
+            f"[dim](pop-data={pop_data}, dataset={gnomad.dataset}, AF ≥ {af_threshold})[/dim]"
+        )
+    elif pop_vcf_dir is not None:
         gnomad = GnomadStore(pop_vcf_dir, genome_build, pop_data)
         # Fail fast if a requested data kind is wholly absent for the MAF's
         # chromosomes (no silent fall-back to genome-only when exome/both asked).
@@ -189,7 +210,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             f"[dim](pop-data={pop_data}, AF ≥ {af_threshold})[/dim]"
         )
     else:
-        console.print("[yellow]⚠ No --pop-vcf-dir — SNP masking skipped.[/yellow]")
+        console.print(
+            "[yellow]⚠ No masking source (--pop-source vcf without --pop-vcf-dir).[/yellow]"
+        )
     console.print(f"[bold]Flank:[/bold] ±{flank} bp\n")
 
     source = ReferenceFlankSource(reference, gnomad, flank=flank, af_threshold=af_threshold)
@@ -258,6 +281,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             })
 
     reference.close()
+    api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
     if gnomad is not None:
         gnomad.close()
 
@@ -307,12 +331,16 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     truncated_line = (
         f"[bold]Truncated flanks:[/bold] {n_truncated:>6,}\n" if n_truncated else ""
     )
+    api_line = (
+        f"[bold]API requests:[/bold]     {api_requests:>6,}\n" if api_requests is not None else ""
+    )
     console.print(
         f"\n[bold]Total in MAF:[/bold]     {n_total:>6,}\n"
         f"[bold]Processed:[/bold]        {len(summary_rows):>6,}\n"
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
         + truncated_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
+        + api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  [dim]({elapsed:.1f}s)[/dim]"
     )
@@ -326,7 +354,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             "truncated_flanks": n_truncated,
             "bases_masked": n_masked_total,
             "fasta_records": len(records),
+            "pop_source": pop_source,
+            "pop_data": pop_data,
         }
+        if api_requests is not None:
+            stats["api_requests"] = api_requests
         report_io.write_report(report, summary_rows, stats, dict(skip_breakdown))
         console.print(f"[bold]Report:[/bold] [cyan]{report.resolve()}[/cyan]")
 

@@ -15,7 +15,7 @@ _COLUMNS = ["Sample", "Gene", "Chrom", "Start", "End", "Ref", "Alt",
 def write_report(
     path: Path,
     summary_rows: list[dict],
-    stats: dict[str, int],
+    stats: dict[str, object],
     skip_breakdown: dict[str, int],
 ) -> None:
     """Write the run report TSV. Raises OSError on write failure (never silent)."""

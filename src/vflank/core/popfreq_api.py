@@ -132,8 +132,8 @@ class GnomadApiSource:
         timeout: float = 30.0,
         min_interval: float = 6.0,   # ~10 requests / 60 s
         max_retries: int = 3,
-        transport: Callable[[str, str, float], dict] = _http_transport,
-        sleep_fn: Callable[[float], None] = sleep,
+        transport: Callable[[str, str, float], dict] | None = None,
+        sleep_fn: Callable[[float], None] | None = None,
         clock: Callable[[], float] = monotonic,
     ) -> None:
         self.reference_genome, self.dataset = dataset_for_build(genome_build)
@@ -142,8 +142,10 @@ class GnomadApiSource:
         self.timeout = timeout
         self.min_interval = min_interval
         self.max_retries = max_retries
-        self._transport = transport
-        self._sleep = sleep_fn
+        # Resolve defaults at init time (not as bound defaults) so tests can
+        # monkeypatch the module-level transport/sleep.
+        self._transport = transport if transport is not None else _http_transport
+        self._sleep = sleep_fn if sleep_fn is not None else sleep
         self._clock = clock
         self._cache: dict[tuple[str, int, int], list[dict]] = {}
         self._last_call: float | None = None
