@@ -13,6 +13,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .flanks import mask_sequence
+
 _COMPLEMENT = str.maketrans("ACGTacgtNn", "TGCAtgcaNn")
 
 
@@ -42,40 +44,62 @@ class Fusion:
 @dataclass(slots=True)
 class JunctionResult:
     sequence: str
+    masked_sequence: str
     junction_index: int  # 0-based index where partner 2 begins (= len(partner1))
+    n_masked: int = 0
 
 
-def _segment(reference, bp: Breakpoint, flank: int, *, donor: bool) -> str:
-    """One partner segment of up to ``flank`` bases, oriented to meet the junction.
+def _segment(
+    reference, bp: Breakpoint, flank: int, *, donor: bool, gnomad=None, af_threshold: float = 0.001
+) -> tuple[str, str]:
+    """Return ``(raw, masked)`` for one partner segment, oriented to the junction.
 
     ``donor=True``  -> partner 1: its 3' end sits at the junction (ends there).
     ``donor=False`` -> partner 2: its 5' end sits at the junction (starts there).
 
-    Coordinate map (1-based inclusive -> 0-based half-open pysam fetch):
-      ``ref[pos-L+1 .. pos]`` = ``fetch(pos-L, pos)``;
-      ``ref[pos .. pos+L-1]`` = ``fetch(pos-1, pos-1+L)``.
+    Strand 0 takes ``ref[pos-L+1 .. pos]``; strand 1 takes ``ref[pos .. pos+L-1]``;
+    whether the partner is reverse-complemented depends on its role (see table in
+    docs/research/sv-vcf-input.md). Masking is applied in **genomic (plus-strand)
+    space before any reverse-complement** — since ``revcomp(N) == N`` this equals
+    masking the oriented segment, and reuses ``get_positions`` + ``mask_sequence``.
     """
     pos, L = bp.pos, flank
-    if donor:
-        if bp.strand == 0:  # plus strand, ending at pos
-            seq = reference.fetch(bp.chrom, pos - L, pos)
-        else:               # minus strand: revcomp of the bases at/after pos
-            seq = reverse_complement(reference.fetch(bp.chrom, pos - 1, pos - 1 + L))
+    if bp.strand == 0:
+        start0, end0 = max(0, pos - L), pos
+        rc = not donor
     else:
-        if bp.strand == 0:  # revcomp of the bases at/before pos
-            seq = reverse_complement(reference.fetch(bp.chrom, pos - L, pos))
-        else:               # plus strand, starting at pos
-            seq = reference.fetch(bp.chrom, pos - 1, pos - 1 + L)
-    return seq.upper()
+        start0, end0 = pos - 1, pos - 1 + L
+        rc = donor
+
+    raw = reference.fetch(bp.chrom, start0, end0).upper()
+    masked = raw
+    if gnomad is not None:
+        snps = gnomad.get_positions(bp.chrom, start0, end0, af_threshold)
+        masked = mask_sequence(raw, start0, snps)
+    if rc:
+        raw, masked = reverse_complement(raw), reverse_complement(masked)
+    return raw, masked
 
 
-def build_junction(reference, fusion: Fusion, flank: int) -> JunctionResult:
+def build_junction(
+    reference, fusion: Fusion, flank: int, gnomad=None, af_threshold: float = 0.001
+) -> JunctionResult:
     """Construct the fusion junction sequence (partner1 + partner2).
 
     ``flank`` is the bases taken from each partner, so the junction is up to
     ``2*flank`` bp (shorter if a partner runs off a contig end). The probe is
-    designed to span ``junction_index``.
+    designed to span ``junction_index``. When ``gnomad`` is given, common SNPs in
+    the partner flanks are masked to 'N' in ``masked_sequence``.
     """
-    p1 = _segment(reference, fusion.bp1, flank, donor=True)
-    p2 = _segment(reference, fusion.bp2, flank, donor=False)
-    return JunctionResult(sequence=p1 + p2, junction_index=len(p1))
+    raw1, masked1 = _segment(reference, fusion.bp1, flank, donor=True,
+                             gnomad=gnomad, af_threshold=af_threshold)
+    raw2, masked2 = _segment(reference, fusion.bp2, flank, donor=False,
+                             gnomad=gnomad, af_threshold=af_threshold)
+    sequence = raw1 + raw2
+    masked_sequence = masked1 + masked2
+    return JunctionResult(
+        sequence=sequence,
+        masked_sequence=masked_sequence,
+        junction_index=len(raw1),
+        n_masked=masked_sequence.count("N") - sequence.count("N"),
+    )

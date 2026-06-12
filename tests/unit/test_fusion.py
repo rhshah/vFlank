@@ -65,3 +65,33 @@ def test_interchromosomal_uses_both_contigs():
     res = build_junction(ref, fus, flank=5)
     assert res.sequence[:5] == SEQ[15:20].upper()           # partner1 from chrom 1
     assert res.sequence[5:] == ref.seqs["2"][29:34].upper()  # partner2 from chrom 2
+
+
+class _FakeGnomad:
+    """get_positions returning 1-based positions that fall in [start0, end0)."""
+
+    def __init__(self, positions):
+        self.positions = positions
+
+    def get_positions(self, chrom, start0, end0, af):
+        return [p for p in self.positions if start0 < p <= end0]
+
+
+def test_build_junction_masks_partner_flanks():
+    ref = _ref()
+    # bp1 donor, str0 (not revcomp): window 0-based [15,20); mask 1-based pos 17.
+    fus = Fusion(Breakpoint("1", 20, 0), Breakpoint("1", 40, 1))
+    res = build_junction(ref, fus, flank=5, gnomad=_FakeGnomad([17]))
+    assert res.masked_sequence[1] == "N"          # idx 17-15-1 = 1
+    assert res.sequence[1] != "N"                 # raw is unchanged
+    assert res.n_masked == 1
+
+
+def test_masking_survives_reverse_complement():
+    # bp1 donor str1 -> the partner IS reverse-complemented; masking (done in
+    # genomic space before revcomp) must still land an N, since revcomp(N)=N.
+    ref = _ref()
+    fus = Fusion(Breakpoint("1", 20, 1), Breakpoint("1", 40, 1))
+    res = build_junction(ref, fus, flank=5, gnomad=_FakeGnomad([22]))
+    assert res.masked_sequence.count("N") == 1
+    assert res.n_masked == 1

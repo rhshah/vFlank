@@ -19,8 +19,8 @@ from rich.table import Table
 
 from ..core.chrom import detect_series_chr_style, normalise_chrom
 from ..core.flanks import ReferenceFlankSource
-from ..core.popfreq import GnomadStore, build_chrom_vcf_map, kinds_for
-from ..core.popfreq_api import GnomadApiSource
+from ..core.popfreq import build_chrom_vcf_map, kinds_for
+from ..core.popfreq_api import dataset_for_build
 from ..core.skips import categorize_skip
 from ..errors import VflankError
 from ..io import fasta as fasta_io
@@ -29,6 +29,7 @@ from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
 from ..io.reference import ReferenceFasta
 from ..logging import console
+from ._masking import make_pop_source, validate_pop_options
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -140,10 +141,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
-    if pop_data not in ("genome", "exome", "both"):
-        raise VflankError(f"--pop-data must be 'genome', 'exome', or 'both', got '{pop_data}'")
-    if pop_source not in ("vcf", "api"):
-        raise VflankError(f"--pop-source must be 'vcf' or 'api', got '{pop_source}'")
+    validate_pop_options(pop_source, pop_data)
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
 
@@ -186,9 +184,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     )
 
     # --- Masking source (optional) ---
-    gnomad = None
+    maf_chroms = {
+        b for b, _err in (normalise_chrom(c) for c in df[MAF_CHR].dropna().unique()) if b
+    }
+    gnomad = make_pop_source(pop_source, pop_vcf_dir, genome_build, pop_data, maf_chroms)
     if pop_source == "api":
-        gnomad = GnomadApiSource(genome_build, pop_data)
         if pop_vcf_dir is not None:
             console.print("  [yellow]⚠ --pop-vcf-dir ignored with --pop-source api[/yellow]")
         if len(df) > 50:
@@ -196,19 +196,12 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 f"  [yellow]⚠ {len(df):,} variants over the rate-limited API "
                 f"(~10 req/min) — consider --pop-source vcf for bulk.[/yellow]"
             )
+        dataset = dataset_for_build(genome_build)[1]
         console.print(
             f"[bold]Masking:[/bold] gnomAD API  "
-            f"[dim](pop-data={pop_data}, dataset={gnomad.dataset}, AF ≥ {af_threshold})[/dim]"
+            f"[dim](pop-data={pop_data}, dataset={dataset}, AF ≥ {af_threshold})[/dim]"
         )
-    elif pop_vcf_dir is not None:
-        gnomad = GnomadStore(pop_vcf_dir, genome_build, pop_data)
-        # Fail fast if a requested data kind is wholly absent for the MAF's
-        # chromosomes (no silent fall-back to genome-only when exome/both asked).
-        maf_chroms = {
-            b for b, _err in (normalise_chrom(c) for c in df[MAF_CHR].dropna().unique()) if b
-        }
-        if maf_chroms:
-            gnomad.preflight(sorted(maf_chroms))
+    elif gnomad is not None:
         console.print(
             f"[bold]Population VCF dir:[/bold] {pop_vcf_dir}  "
             f"[dim](pop-data={pop_data}, AF ≥ {af_threshold})[/dim]"

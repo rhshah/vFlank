@@ -13,13 +13,16 @@ from pathlib import Path
 import typer
 from rich.table import Table
 
+from ..core.chrom import normalise_chrom
 from ..core.fusion import build_junction
+from ..core.popfreq_api import dataset_for_build
 from ..errors import VflankError
 from ..io import breakpoints as bp_io
 from ..io import fasta as fasta_io
 from ..io.breakpoints import SvColumns
 from ..io.reference import ReferenceFasta
 from ..logging import console
+from ._masking import make_pop_source, validate_pop_options
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -36,6 +39,19 @@ def run(
     flank: int = typer.Option(
         200, "--flank", "-f", min=1, max=10_000,
         help="Bases taken from each partner (junction is up to 2x this).",
+    ),
+    pop_vcf_dir: Path | None = typer.Option(
+        None, "--pop-vcf-dir", "-d",
+        help="Directory of gnomAD VCFs to mask junction flanks. Omit to skip masking.",
+    ),
+    pop_data: str = typer.Option(
+        "genome", "--pop-data", help="gnomAD data to mask against: genome, exome, or both."
+    ),
+    pop_source: str = typer.Option(
+        "vcf", "--pop-source", help="Masking backend: vcf or api (no download)."
+    ),
+    af_threshold: float = typer.Option(
+        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP."
     ),
     output: Path = typer.Option(
         Path("fusion_junctions.fasta"), "--output", "-o", help="Output FASTA file."
@@ -54,17 +70,22 @@ def run(
         chr1_col, pos1_col, str1_col, chr2_col, pos2_col, str2_col, name_col, sample_col
     )
     try:
-        _run(sv_file, ref_genome, genome_build, flank, output, cols)
+        _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
+             pop_source, af_threshold, output, cols)
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
         raise typer.Exit(1) from exc
 
 
-def _run(sv_file, ref_genome, genome_build, flank, output, cols: SvColumns):
+def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
+         pop_source, af_threshold, output, cols: SvColumns):
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
+    validate_pop_options(pop_source, pop_data)
+    if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
+        raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
 
     console.print(f"[bold]Loading breakpoints:[/bold] {sv_file}")
     df = bp_io.load_sv_table(sv_file, cols)
@@ -75,10 +96,25 @@ def _run(sv_file, ref_genome, genome_build, flank, output, cols: SvColumns):
     build_warn = reference.check_build(genome_build)
     if build_warn:
         console.print(f"  [bold yellow]⚠ {build_warn}[/bold yellow]")
+
+    # --- Masking source (optional) — masks the junction flanks ---
+    bp_chroms = {
+        b
+        for col in (cols.chr1, cols.chr2)
+        for b, _err in (normalise_chrom(v) for v in df[col].dropna().unique())
+        if b
+    }
+    gnomad = make_pop_source(pop_source, pop_vcf_dir, genome_build, pop_data, bp_chroms)
+    if pop_source == "api":
+        dataset = dataset_for_build(genome_build)[1]
+        console.print(f"[bold]Masking:[/bold] gnomAD API  [dim]({pop_data}, {dataset})[/dim]")
+    elif gnomad is not None:
+        console.print(f"[bold]Masking:[/bold] {pop_vcf_dir}  [dim](pop-data={pop_data})[/dim]")
     console.print(f"[bold]Flank:[/bold] {flank} bp/partner (junction ≤ {2 * flank} bp)\n")
 
     records: list[str] = []
     skipped = 0
+    n_masked_total = 0
     skip_reasons: list[str] = []
     summary_rows: list[dict] = []
 
@@ -89,7 +125,7 @@ def _run(sv_file, ref_genome, genome_build, flank, output, cols: SvColumns):
             skipped += 1
             continue
         try:
-            jr = build_junction(reference, fusion, flank)
+            jr = build_junction(reference, fusion, flank, gnomad=gnomad, af_threshold=af_threshold)
         except Exception as exc:  # noqa: BLE001
             skip_reasons.append(f"row {row_idx} {fusion.name} — junction error: {exc}")
             skipped += 1
@@ -101,27 +137,32 @@ def _run(sv_file, ref_genome, genome_build, flank, output, cols: SvColumns):
         prefix = f"{fasta_io.safe_header(fusion.sample)}__" if fusion.sample else ""
         header = f"{prefix}{label}__{bp}__j{jr.junction_index}"
         records.append(f">{header}\n{jr.sequence}\n")
+        records.append(f">Masked__{header}\n{jr.masked_sequence}\n")
+        n_masked_total += jr.n_masked
 
         truncated = len(jr.sequence) < 2 * flank
         summary_rows.append({
             "Name": fusion.name or ".", "BP1": f"{fusion.bp1.chrom}:{fusion.bp1.pos}",
             "BP2": f"{fusion.bp2.chrom}:{fusion.bp2.pos}",
             "Len": len(jr.sequence), "Junction": jr.junction_index,
-            "Trunc": truncated,
+            "N": jr.n_masked, "Trunc": truncated,
         })
 
     reference.close()
+    if gnomad is not None:
+        gnomad.close()
     fasta_io.write_fasta(output, records)
 
     console.rule("[bold green]Results[/bold green]")
     if summary_rows:
         table = Table(show_header=True, header_style="bold cyan")
-        for col in ("Name", "BP1", "BP2", "Len", "Junction", "Trunc"):
+        for col in ("Name", "BP1", "BP2", "Len", "Junction", "N", "Trunc"):
             table.add_column(col)
         for r in summary_rows[:50]:
+            n_str = f"[yellow]{r['N']}[/yellow]" if r["N"] else "[dim]0[/dim]"
             table.add_row(
                 r["Name"], r["BP1"], r["BP2"], str(r["Len"]),
-                str(r["Junction"]), "[yellow]yes[/yellow]" if r["Trunc"] else "no",
+                str(r["Junction"]), n_str, "[yellow]yes[/yellow]" if r["Trunc"] else "no",
             )
         console.print(table)
 
@@ -130,10 +171,12 @@ def _run(sv_file, ref_genome, genome_build, flank, output, cols: SvColumns):
         for reason in skip_reasons[:20]:
             console.print(f"  • {reason}")
 
+    mask_line = f"[bold]Bases masked:[/bold] {n_masked_total:>6,}\n" if n_masked_total else ""
     console.print(
         f"\n[bold]Fusions:[/bold]   {len(df):>6,}\n"
-        f"[bold]Junctions:[/bold] {len(records):>6,}\n"
+        f"[bold]Records:[/bold]   {len(records):>6,} [dim](raw + masked per fusion)[/dim]\n"
         f"[bold]Skipped:[/bold]   {skipped:>6,}\n"
+        + mask_line +
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  "
         f"[dim]({time.time() - t0:.1f}s)[/dim]"
     )
