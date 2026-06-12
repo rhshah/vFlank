@@ -64,3 +64,11 @@ src/vflank/
 ├── io/     maf · reference · fasta              (file access)
 └── cli/    app · small                          (Typer commands)
 ```
+
+## Documentation
+
+- [docs/DEVELOPER.md](docs/DEVELOPER.md) — setup, running, testing, using vflank
+  as a library, and extending it (new flank sources, CLI commands).
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — design, scope boundary, and the
+  milestone roadmap.
+- `CLAUDE.md` — repository conventions and the quality gate.
