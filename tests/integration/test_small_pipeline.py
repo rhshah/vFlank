@@ -60,8 +60,9 @@ def test_run_produces_expected_fasta(tmp_path):
     lines = out.read_text().splitlines()
     # Two records (raw + masked) = 4 lines.
     assert len(lines) == 4
-    assert lines[0].startswith(">SAMPLE_1__TP53")
-    assert lines[2].startswith(">Masked__SAMPLE_1__TP53")
+    # Header keyed on CHR_POS_REF_ALT (no sample), gene + blank HGVS fields.
+    assert lines[0] == ">TP53__.__.__1_30_A_T"
+    assert lines[2] == ">Masked__TP53__.__.__1_30_A_T"
 
     # Variant at 1-based pos 30 (index 29). flank=5.
     expected_left = seq[24:29]   # positions 25..29
@@ -69,6 +70,37 @@ def test_run_produces_expected_fasta(tmp_path):
     assert lines[1] == f"{expected_left}[A/T]{expected_right}"
     # No gnomAD dir -> masked record identical to raw.
     assert lines[3].endswith(f"{expected_left}[A/T]{expected_right}")
+
+
+def test_dedup_collapses_same_variant_across_samples(tmp_path):
+    fasta, seq = _write_reference(tmp_path)
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    # Same variant (1:30 A>T) in three samples.
+    rows = "\n".join("\t".join(["TP53", "1", "30", "30", "A", "T", s]) for s in ("S1", "S2", "S3"))
+    maf = tmp_path / "v.maf"
+    maf.write_text(header + "\n" + rows + "\n")
+    out = tmp_path / "out.fasta"
+
+    # Default: dedup -> one record (4 lines), two duplicates collapsed.
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta), "-g", "hg38",
+        "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+    assert len(out.read_text().splitlines()) == 4
+    assert "Dup. collapsed" in result.output
+
+    # --no-dedup -> three records (12 lines).
+    out2 = tmp_path / "out2.fasta"
+    result2 = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-genome", str(fasta), "-g", "hg38",
+        "--flank", "5", "--no-dedup", "--output", str(out2),
+    ])
+    assert result2.exit_code == 0, result2.output
+    assert len(out2.read_text().splitlines()) == 12
 
 
 def test_truncated_flank_is_emitted_not_dropped(tmp_path):

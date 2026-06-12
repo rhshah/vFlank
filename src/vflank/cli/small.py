@@ -108,6 +108,10 @@ def run(
     uppercase: bool = typer.Option(
         True, "--uppercase/--no-uppercase", help="Uppercase flanking sequences."
     ),
+    dedup: bool = typer.Option(
+        True, "--dedup/--no-dedup",
+        help="Emit one record per unique variant (CHR_POS_REF_ALT), collapsing samples.",
+    ),
 ):
     """Extract flanking sequences for every variant in a MAF and write a FASTA.
 
@@ -121,7 +125,7 @@ def run(
             pop_data, pop_source, output, report, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
-            uppercase,
+            uppercase, dedup,
         )
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
@@ -130,7 +134,7 @@ def run(
 
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
          pop_data, pop_source, output, report, samples, samples_file,
-         cols: MafColumns, uppercase: bool):
+         cols: MafColumns, uppercase: bool, dedup: bool):
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
 
@@ -220,7 +224,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     # --- Process variants ---
     records: list[str] = []
     skipped = 0
+    n_duplicate = 0
     n_masked_total = 0
+    seen_variants: set[tuple] = set()
     summary_rows: list[dict] = []
     skip_reasons: list[str] = []
     flank_warnings: list[str] = []
@@ -240,6 +246,17 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 skip_reasons.append(f"row {row_idx} {reason}")
                 skipped += 1
                 continue
+
+            # Collapse the same variant seen across multiple samples: the flank
+            # and mask are sample-independent here, so one record per unique
+            # CHR_POS_REF_ALT. (Consensus modes C/D will key on variant+sample.)
+            if dedup:
+                key = (variant.chrom, variant.start, variant.end,
+                       variant.ref.upper(), variant.alt.upper())
+                if key in seen_variants:
+                    n_duplicate += 1
+                    continue
+                seen_variants.add(key)
 
             try:
                 fr = source.fetch(variant)
@@ -334,11 +351,15 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     api_line = (
         f"[bold]API requests:[/bold]     {api_requests:>6,}\n" if api_requests is not None else ""
     )
+    dup_line = (
+        f"[bold]Dup. collapsed:[/bold]   {n_duplicate:>6,} [dim](other samples)[/dim]\n"
+        if n_duplicate else ""
+    )
     console.print(
         f"\n[bold]Total in MAF:[/bold]     {n_total:>6,}\n"
         f"[bold]Processed:[/bold]        {len(summary_rows):>6,}\n"
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
-        + truncated_line +
+        + dup_line + truncated_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
         + api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
@@ -351,6 +372,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             "total_in_maf": n_total,
             "processed": len(summary_rows),
             "skipped": skipped,
+            "duplicates_collapsed": n_duplicate,
             "truncated_flanks": n_truncated,
             "bases_masked": n_masked_total,
             "fasta_records": len(records),

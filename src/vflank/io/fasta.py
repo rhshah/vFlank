@@ -21,14 +21,16 @@ def safe_header(s: str) -> str:
 def format_records(variant: Variant, flanks: FlankResult, ref: str, alt: str) -> list[str]:
     """Two FASTA records per variant: raw and masked.
 
-    >{SAMPLE}__{GENE}__{HGVSp}__{HGVSc}
+    The record is keyed on the variant identity (CHR_POS_REF_ALT), not the
+    sample, so the same variant across samples deduplicates to one record:
+
+    >{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}
     {left}[REF/ALT]{right}
-    >Masked__{SAMPLE}__{GENE}__{HGVSp}__{HGVSc}
+    >Masked__{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}
     {masked_left}[REF/ALT]{masked_right}
     """
-    base = "__".join(
-        safe_header(s) for s in (variant.sample, variant.gene, variant.protein, variant.cdna)
-    )
+    key = f"{variant.chrom}_{variant.start}_{ref}_{alt}"
+    base = "__".join(safe_header(s) for s in (variant.gene, variant.protein, variant.cdna, key))
     return [
         f">{base}\n{flanks.left}[{ref}/{alt}]{flanks.right}\n",
         f">Masked__{base}\n{flanks.masked_left}[{ref}/{alt}]{flanks.masked_right}\n",
