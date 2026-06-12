@@ -2,7 +2,9 @@
 
 Investigation of whether/how to use the public gnomAD API as an alternative
 population-frequency masking source (vs downloading per-chromosome VCFs).
-Status: **research complete; implementation not started** (awaiting go-ahead).
+Status: **implemented** — `core/popfreq_api.GnomadApiSource`, selected via
+`--pop-source api`. The VCF source (`core/popfreq.GnomadStore`) and the API
+source are symmetric across `--pop-data {genome,exome,both}`.
 
 All facts below were verified against the live endpoint and the gnomAD docs on
 2026-06-12.

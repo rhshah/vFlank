@@ -45,7 +45,12 @@ patient. Consensus will be built on `bcftools mpileup→call→consensus
 --iupac-codes` (or pysam pileup), validated against `samtools consensus`, with
 kindel's indel reconciliation as a reference for the hard CIGAR cases.
 
-Implemented today: `ReferenceFlankSource` (modes A + B).
+Implemented today: `ReferenceFlankSource` (modes A + B). The population-mask
+backend is pluggable behind a duck-typed `get_positions` interface, with two
+interchangeable implementations selected by `--pop-source`:
+`GnomadStore` (local VCFs) and `GnomadApiSource` (gnomAD GraphQL API, no
+download, rate-limited). Both honour `--pop-data {genome,exome,both}` (union for
+`both`). See [research/gnomad-api.md](research/gnomad-api.md).
 
 ## Module map
 
@@ -55,7 +60,8 @@ src/vflank/
 │   ├── chrom.py     notation detect/normalise (pure)
 │   ├── variant.py   Variant dataclass + validation (pure)
 │   ├── flanks.py    FlankSource protocol, ReferenceFlankSource, mask_sequence
-│   └── popfreq.py   gnomAD resolve + parse_common_snp_positions (pure) + GnomadStore
+│   ├── popfreq.py   gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
+│   └── popfreq_api.py  gnomAD GraphQL API source (GnomadApiSource) + pure parser
 ├── io/
 │   ├── maf.py       load/remap/validate, row → Variant
 │   ├── reference.py ReferenceFasta + genome-build guard

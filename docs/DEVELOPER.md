@@ -60,11 +60,15 @@ makes `core` unit-testable without pysam, pandas, or Typer.
 # Main pipeline: extract + mask flanks for every variant in a MAF
 vflank small run variants.maf \
     --ref-genome /path/GRCh37.fasta \
-    --pop-vcf-dir /path/gnomad_v2.1.1/ \
+    --pop-vcf-dir /path/gnomad_v2.1.1/ \  # local VCFs (--pop-source vcf, default)
     --genome-build hg19 \            # default; gnomAD v2.1.1. Use -g hg38 for GRCh38/v4.
+    --pop-data genome \              # genome (default) | exome | both (union)
     --flank 200 \
     --output flanking_sequences.fasta \
     --report run_report.tsv          # optional: per-variant TSV + stats + skip breakdown
+
+# No-download masking via the gnomAD API instead of local VCFs:
+vflank small run variants.maf -r /path/GRCh37.fasta -g hg19 --pop-source api
 
 # Preview MAF columns before a run (catches column-name mismatches)
 vflank small inspect variants.maf
@@ -191,10 +195,19 @@ against `samtools consensus` (see the `ddpcr-conventions` skill).
 
 ### Add a new population-frequency source
 
-`GnomadStore.get_positions(bare, start_0based, end_0based, af_threshold) -> list[int]`
-is the masking interface `ReferenceFlankSource` depends on (duck-typed). Provide
-the same method for dbSNP/1000G; reuse the pure `parse_common_snp_positions` if
-the records are VCF lines. New filename patterns go in `GNOMAD_PATTERNS`.
+`get_positions(bare, start_0based, end_0based, af_threshold) -> list[int]` is the
+masking interface `ReferenceFlankSource` depends on (duck-typed). Two
+implementations already exist and are interchangeable:
+
+- `core/popfreq.GnomadStore` — local gnomAD VCFs (`--pop-source vcf`). New VCF
+  filename patterns go in `GNOMAD_PATTERNS` (keyed by build then `genome`/`exome`);
+  reuse the pure `parse_common_snp_positions`.
+- `core/popfreq_api.GnomadApiSource` — gnomAD GraphQL API (`--pop-source api`).
+  Pure parser `parse_api_variants`; HTTP/throttle/clock are injected for offline
+  tests. Honours the rate limit (region cache + throttle + backoff).
+
+Both honour `--pop-data` via `kinds_for(...)`. To add another source (dbSNP,
+1000G), implement the same `get_positions` and add a `--pop-source` branch.
 
 ### Add a new CLI subcommand or sub-app
 

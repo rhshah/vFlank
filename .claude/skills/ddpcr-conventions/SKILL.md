@@ -71,8 +71,30 @@ AF fields differ by build/release:
 - Guard against `.` and `NaN` AF tokens (the parser rejects `NaN` via `f == f`).
 
 Files are per-chromosome bgzipped VCFs + tabix index; resolution is by known
-filename patterns (`core/popfreq.GNOMAD_PATTERNS`). A contig legitimately absent
-from a VCF (e.g. MT) is logged at DEBUG, not failed.
+filename patterns (`core/popfreq.GNOMAD_PATTERNS`, keyed by build then
+genome/exome). A contig legitimately absent from a VCF (e.g. MT) is logged at
+DEBUG, not failed.
+
+### Two backends and `--pop-data` (genome / exome / both)
+
+The mask comes from one of two interchangeable sources (same `get_positions`
+interface, selected by `--pop-source`):
+- **`vcf`** (`GnomadStore`) — local per-chromosome VCFs. Reproducible, bulk, HPC.
+- **`api`** (`GnomadApiSource`) — gnomAD GraphQL API, no download, rate-limited
+  to ~10 req/IP/60s → small cohorts only. Region cache + throttle + backoff.
+
+`--pop-data {genome,exome,both}` (default `genome`): flanks often fall in
+non-coding regions where **only genomes have data**, so genome is the default;
+`exome` adds power in coding regions; `both` masks the **union** (common in
+either cohort). gnomAD v4 (hg38) is the only build with a pooled `joint` set; we
+use max-AF union for `both` for one code path.
+
+API AF rule (no per-population `af` field): `af = max(seq.af, max(ac/an over
+populations))` across the chosen kinds; SNPs only. Build → dataset:
+hg19 → `gnomad_r2_1`/GRCh37, hg38 → `gnomad_r4`/GRCh38; region query is 1-based
+inclusive. Requesting `--pop-data exome`/`both` on the VCF source without the
+exome files **fails fast** (`GnomadStore.preflight`) — never a silent
+genome-only fallback.
 
 ## Flank source modes (the `FlankSource` strategy)
 

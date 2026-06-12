@@ -47,6 +47,25 @@ vflank small run variants.maf \
 `--genome-build` defaults to **hg19** (GRCh37 / gnomAD v2.1.1); pass `-g hg38`
 for GRCh38 / gnomAD v4. gnomAD v4 has no GRCh37 build.
 
+### Masking sources
+
+Common-SNP masking can come from local gnomAD VCFs or the gnomAD API:
+
+- `--pop-source vcf` (default) — local per-chromosome gnomAD VCFs in
+  `--pop-vcf-dir`. Reproducible, offline, unlimited scale.
+- `--pop-source api` — the public [gnomAD GraphQL API](https://gnomad.broadinstitute.org/api),
+  **no download**. Best for small cohorts (rate-limited to ~10 requests/min).
+
+```bash
+# No-download masking via the API (small cohorts):
+vflank small run variants.maf -r GRCh37.fasta -g hg19 --pop-source api
+```
+
+Either source honours `--pop-data {genome,exome,both}` (default `genome`).
+`both` masks a position if it is a common SNP in *either* the genome or exome
+cohort. Flanks often fall in non-coding regions where only genomes have data,
+so `genome` is the default.
+
 Each variant yields two FASTA records:
 
 ```
