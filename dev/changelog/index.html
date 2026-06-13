@@ -525,6 +525,8 @@
       
         
       
+        
+      
     
     
     
@@ -620,6 +622,34 @@
     
   
     SNP Masking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patient Consensus from a BAM
   
 
     
@@ -1065,6 +1095,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Unreleased">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1080,7 +1127,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#added_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1138,6 +1185,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Unreleased">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1153,7 +1217,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#added_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1193,8 +1257,16 @@
 <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project
 adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="unreleased"><a href="https://github.com/rhshah/vFlank/compare/v0.1.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
-<h2 id="010-2026-06-12"><a href="https://github.com/rhshah/vFlank/releases/tag/v0.1.0">0.1.0</a> - 2026-06-12<a class="headerlink" href="#010-2026-06-12" title="Permanent link">&para;</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Patient consensus from a BAM</strong> (<code>--bam</code> / <code>--bam-map</code>) for both <code>small</code> and
+  <code>fusion</code>: the masked record is the per-sample consensus (hom-ALT corrected,
+  het/low-coverage handled), via <code>samtools consensus</code>. With a BAM, output is one
+  record per (variant, sample) with the sample in the header; low coverage falls
+  back to reference + gnomAD masking.</li>
+</ul>
+<h2 id="010-2026-06-12"><a href="https://github.com/rhshah/vFlank/releases/tag/v0.1.0">0.1.0</a> - 2026-06-12<a class="headerlink" href="#010-2026-06-12" title="Permanent link">&para;</a></h2>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Small-variant flank extraction from MAF (<code>vflank small run</code>), with <code>inspect</code>
   and <code>list-vcf</code> helpers.</li>

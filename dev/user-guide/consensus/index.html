@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/ARCHITECTURE/">
+        <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/user-guide/consensus/">
       
       
-        <link rel="prev" href="../DEVELOPER/">
+        <link rel="prev" href="../masking/">
       
       
-        <link rel="next" href="../research/gnomad-api/">
+        <link rel="next" href="../../reference/cli/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
-        <title>vflank — Architecture & Roadmap - vflank</title>
+        <title>Patient Consensus from a BAM - vflank</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,9 +53,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vflank-architecture-roadmap" class="md-skip">
+        <a href="#patient-consensus-from-a-bam" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="vflank" class="md-header__button md-logo" aria-label="vflank" data-md-component="logo">
+    <a href="../.." title="vflank" class="md-header__button md-logo" aria-label="vflank" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              vflank — Architecture &amp; Roadmap
+              Patient Consensus from a BAM
             
           </span>
         </div>
@@ -231,7 +231,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -250,7 +250,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../getting-started/installation/" class="md-tabs__link">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
         
   
   
@@ -267,9 +267,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../user-guide/small-variants/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../small-variants/" class="md-tabs__link">
         
   
   
@@ -290,7 +292,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../reference/cli/" class="md-tabs__link">
+        <a href="../../reference/cli/" class="md-tabs__link">
           
   
   
@@ -308,11 +310,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="../DEVELOPER/" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../../DEVELOPER/" class="md-tabs__link">
         
   
   
@@ -331,7 +331,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../changelog/" class="md-tabs__link">
+      <a href="../../changelog/" class="md-tabs__link">
         
   
   
@@ -366,7 +366,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="vflank" class="md-nav__button md-logo" aria-label="vflank" data-md-component="logo">
+    <a href="../.." title="vflank" class="md-nav__button md-logo" aria-label="vflank" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -396,7 +396,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -444,7 +444,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../getting-started/installation/" class="md-nav__link ">
+            <a href="../../getting-started/installation/" class="md-nav__link ">
               
   
   
@@ -486,7 +486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/quickstart/" class="md-nav__link">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
         
   
   
@@ -518,8 +518,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -533,20 +535,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../user-guide/small-variants/" class="md-nav__link ">
+            <a href="../small-variants/" class="md-nav__link ">
               
   
   
@@ -564,13 +569,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -588,7 +593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../user-guide/fusions/" class="md-nav__link">
+      <a href="../fusions/" class="md-nav__link">
         
   
   
@@ -616,7 +621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../user-guide/masking/" class="md-nav__link">
+      <a href="../masking/" class="md-nav__link">
         
   
   
@@ -641,10 +646,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../user-guide/consensus/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patient Consensus from a BAM
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -660,6 +692,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#low-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Low coverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -737,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/cli/" class="md-nav__link">
+      <a href="../../reference/cli/" class="md-nav__link">
         
   
   
@@ -765,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/api/" class="md-nav__link">
+      <a href="../../reference/api/" class="md-nav__link">
         
   
   
@@ -797,10 +893,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -812,23 +906,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../DEVELOPER/" class="md-nav__link ">
+            <a href="../../DEVELOPER/" class="md-nav__link ">
               
   
   
@@ -846,13 +937,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -867,37 +958,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    vflank — Architecture &amp; Roadmap
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
         
   
   
@@ -913,98 +977,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-vflank-is-and-is-not" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What vflank is (and is not)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#flank-source-strategy-modes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flank source strategy (modes)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#module-map" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Module map
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#origin" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Origin
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#roadmap" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Roadmap
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Roadmap">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#top-risks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Top risks
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1029,13 +1001,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -1043,7 +1012,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../research/gnomad-api/" class="md-nav__link ">
+            <a href="../../research/gnomad-api/" class="md-nav__link ">
               
   
   
@@ -1061,7 +1030,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1085,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../research/sv-vcf-input/" class="md-nav__link">
+      <a href="../../research/sv-vcf-input/" class="md-nav__link">
         
   
   
@@ -1113,7 +1082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../research/bam-consensus/" class="md-nav__link">
+      <a href="../../research/bam-consensus/" class="md-nav__link">
         
   
   
@@ -1156,7 +1125,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../changelog/" class="md-nav__link">
+      <a href="../../changelog/" class="md-nav__link">
         
   
   
@@ -1203,10 +1172,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-vflank-is-and-is-not" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What vflank is (and is not)
+        How it works
       
     </span>
   </a>
@@ -1214,10 +1183,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flank-source-strategy-modes" class="md-nav__link">
+  <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Flank source strategy (modes)
+        Usage
       
     </span>
   </a>
@@ -1225,10 +1194,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#module-map" class="md-nav__link">
+  <a href="#low-coverage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Module map
+        Low coverage
       
     </span>
   </a>
@@ -1236,41 +1205,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#origin" class="md-nav__link">
+  <a href="#options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Origin
+        Options
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#roadmap" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Roadmap
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Roadmap">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#top-risks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Top risks
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1294,184 +1235,125 @@
   
 
 
-<h1 id="vflank-architecture-roadmap">vflank — Architecture &amp; Roadmap<a class="headerlink" href="#vflank-architecture-roadmap" title="Permanent link">&para;</a></h1>
-<h2 id="what-vflank-is-and-is-not">What vflank is (and is not)<a class="headerlink" href="#what-vflank-is-and-is-not" title="Permanent link">&para;</a></h2>
-<p>vflank is the <strong>variant-aware, optionally patient-specific, masked-flank
-front-end</strong> of a ddPCR assay-design pipeline. It extracts the sequence flanking
-each variant and masks positions that would compromise a primer/probe, then
-emits clean targets in designer-native formats.</p>
-<p>It is <strong>not</strong> a primer designer. Design is delegated downstream:</p>
+<h1 id="patient-consensus-from-a-bam">Patient Consensus from a BAM<a class="headerlink" href="#patient-consensus-from-a-bam" title="Permanent link">&para;</a></h1>
+<p>gnomAD masking is a <em>population</em> prior. If you have the patient's aligned reads,
+vflank can build the flank from the <strong>patient's own sequence</strong> — so a primer/probe
+matches the real template, and <code>N</code> is used only where the patient is genuinely
+ambiguous. This catches <strong>private / rare</strong> variants gnomAD never saw.</p>
+<p>Available for both <code>vflank small</code> and <code>vflank fusion</code> via the same flags.</p>
+<h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<p>For each flank position, vflank calls <code>samtools consensus</code> over the patient's
+reads and decides:</p>
 <table>
 <thead>
 <tr>
-<th>Path</th>
-<th>Designer</th>
-<th>Why</th>
+<th>Patient genotype (depth ≥ <code>--bam-min-depth</code>)</th>
+<th>Output base</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Small variants (SNP/indel)</td>
-<td><strong>Olivar</strong> (SADDLE, risk-array)</td>
-<td>Built for variant-aware multiplex/tiled amplicons.</td>
+<td>homozygous-reference</td>
+<td>reference base</td>
 </tr>
 <tr>
-<td>Fusion junction</td>
-<td><strong>Primer3</strong></td>
-<td>Single junction-spanning hybridisation probe.</td>
+<td><strong>homozygous-alt</strong></td>
+<td>the <strong>patient's base</strong> (consensus correction)</td>
+</tr>
+<tr>
+<td>heterozygous</td>
+<td><code>N</code> (or an IUPAC code)</td>
+</tr>
+<tr>
+<td><strong>low coverage</strong> (<code>&lt; --bam-min-depth</code>)</td>
+<td>reference + gnomAD masking (see below)</td>
 </tr>
 </tbody>
 </table>
-<p>Olivar is <strong>GPL-3.0</strong> and pulls in BLAST/MAFFT/NumPy&lt;2, so it is invoked
-<strong>out-of-process</strong> (CLI / container), keeping vflank permissively licensed and
-the dependency graph clean. Orchestration across samples/tools is a <strong>Nextflow</strong>
-layer that wraps the stable CLIs in per-process containers — added last, never a
-prerequisite for the standalone CLI.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>                 ┌── small variants ──► Olivar  ─┐
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>vflank front-end ─┤   (FASTA + SNP CSV)           ├─► ddPCR assays
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a> (flank + mask)   └── fusion junction ─► Primer3 ─┘
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        ▲
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>   ref FASTA  ·  gnomAD VCFs  ·  (optional) sample BAM
+<p>The patient consensus replaces the <code>Masked__</code> record; the raw record stays the
+reference for comparison.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Single sample</label><label for="__tabbed_1_2">Cohort</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-r<span class="w"> </span>GRCh37.fasta<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span>--bam<span class="w"> </span>sample.bam
 </code></pre></div>
-<h2 id="flank-source-strategy-modes">Flank source strategy (modes)<a class="headerlink" href="#flank-source-strategy-modes" title="Permanent link">&para;</a></h2>
-<p>A <code>FlankSource</code> decides <em>where each flank base comes from</em>:</p>
-<table>
-<thead>
-<tr>
-<th>Mode</th>
-<th>Inputs</th>
-<th>Source</th>
-<th>Masking</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A Reference</td>
-<td>MAF + FASTA</td>
-<td>reference</td>
-<td>none</td>
-</tr>
-<tr>
-<td>B Reference + pop-mask</td>
-<td>+ gnomAD</td>
-<td>reference</td>
-<td>common SNPs → N</td>
-</tr>
-<tr>
-<td>C Consensus</td>
-<td>+ BAM</td>
-<td>patient consensus, ref fallback</td>
-<td>het / low-cov → N/IUPAC</td>
-</tr>
-<tr>
-<td>D Consensus + pop-mask</td>
-<td>all</td>
-<td>patient consensus</td>
-<td>gnomAD ∪ observed-het</td>
-</tr>
-</tbody>
-</table>
-<p>Mode C/D is the differentiator: patient consensus catches <strong>private/rare</strong>
-variants gnomAD never sees — the ones that silently break a primer for one
-patient. Consensus will be built on <code>bcftools mpileup→call→consensus
---iupac-codes</code> (or pysam pileup), validated against <code>samtools consensus</code>, with
-kindel's indel reconciliation as a reference for the hard CIGAR cases.</p>
-<p>Implemented today: <code>ReferenceFlankSource</code> (modes A + B). The population-mask
-backend is pluggable behind a duck-typed <code>get_positions</code> interface, with two
-interchangeable implementations selected by <code>--pop-source</code>:
-<code>GnomadStore</code> (local VCFs) and <code>GnomadApiSource</code> (gnomAD GraphQL API, no
-download, rate-limited). Both honour <code>--pop-data {genome,exome,both}</code> (union for
-<code>both</code>). See <a href="../research/gnomad-api/">research/gnomad-api.md</a>.</p>
-<h2 id="module-map">Module map<a class="headerlink" href="#module-map" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>src/vflank/
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>├── core/
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>│   ├── chrom.py     notation detect/normalise (pure)
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>│   ├── variant.py   Variant dataclass + validation (pure)
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>│   ├── flanks.py    FlankSource protocol, ReferenceFlankSource, mask_sequence
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>│   ├── popfreq.py   gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>│   └── popfreq_api.py  gnomAD GraphQL API source (GnomadApiSource) + pure parser
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>├── io/
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>│   ├── maf.py       load/remap/validate, row → Variant
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>│   ├── reference.py ReferenceFasta + genome-build guard
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>│   └── fasta.py     header sanitise + record format/write
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>├── cli/
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>│   ├── app.py       root Typer, global -v/-q/--debug, version
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>│   └── small.py     run · inspect · list-vcf
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>├── logging.py       Rich console + logger
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>└── errors.py        VflankError hierarchy
+</div>
+<div class="tabbed-block">
+<p>A TSV mapping <code>Tumor_Sample_Barcode</code> to a BAM path:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>P-0001-T01-IM6  /data/P-0001-T01-IM6.bam
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>P-0002-T01-IM6  /data/P-0002-T01-IM6.bam
 </code></pre></div>
-<p>The hot kernels (<code>parse_common_snp_positions</code>, future consensus pileup) are pure
-functions over plain iterables — the natural seam to later accelerate with Rust
-(rust-htslib for consensus parity with samtools; noodles for pure-Rust gnomAD
-scanning). Lock correctness in Python first; port the proven bottleneck only.</p>
-<h2 id="origin">Origin<a class="headerlink" href="#origin" title="Permanent link">&para;</a></h2>
-<p>vflank began as two scripts: <code>get_flanking_sequence.py</code> (small variants, fully
-ported in M2 with the output format preserved) and <code>design_fusion_primers.py</code> +
-<code>config_ES_CTDNA_03.cfg</code> (a legacy Python-2 fusion script that didn't run and
-embedded a junction-corrupting <code>"-"</code>). Both have been ported / re-implemented and
-removed; the conventions recovered from them (the corrected fusion-junction
-model, iCallSV strand mapping) are captured in
-<a href="../research/sv-vcf-input/">research/sv-vcf-input.md</a>.</p>
-<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-r<span class="w"> </span>GRCh37.fasta<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span>--bam-map<span class="w"> </span>samples.tsv
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># fusion: identical flags; uses the breakpoint TSV&#39;s `sample` column</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>vflank<span class="w"> </span>fusion<span class="w"> </span>run<span class="w"> </span>breakpoints.tsv<span class="w"> </span>-r<span class="w"> </span>GRCh37.fasta<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span>--bam-map<span class="w"> </span>samples.tsv
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Output granularity changes with a BAM</p>
+<p>Because the consensus is <strong>patient-specific</strong>, the same variant in different
+samples is <em>not</em> collapsed: dedup keys on <code>(variant, sample)</code> and the
+<strong>sample is added to the FASTA header</strong>
+(<code>&gt;{SAMPLE}__{GENE}__…__{CHROM}_{POS}_{REF}_{ALT}</code>). A sample without a BAM
+falls back to reference + gnomAD masking (with a warning).</p>
+</div>
+<h2 id="low-coverage">Low coverage<a class="headerlink" href="#low-coverage" title="Permanent link">&para;</a></h2>
+<p>Below <code>--bam-min-depth</code> (default <strong>20×</strong>) we can't trust the reads, so vflank
+falls back to <strong>reference + gnomAD masking</strong> by default — an uncovered variant
+just behaves like a normal no-BAM run (it is <em>not</em> blanked to <code>N</code>). Combine with
+<code>--pop-source</code> to N-mask common SNPs in those low-coverage stretches:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-r<span class="w"> </span>GRCh37.fasta<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--bam-map<span class="w"> </span>samples.tsv<span class="w"> </span>--pop-source<span class="w"> </span>api<span class="w">      </span><span class="c1"># consensus where covered, REF+gnomAD where not</span>
+</code></pre></div>
+<p><code>--bam-lowcov</code> overrides this: <code>n</code> (mask), <code>reference</code>, or <code>gnomad</code> (default).</p>
+<h2 id="options">Options<a class="headerlink" href="#options" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>M</th>
-<th>Deliverable</th>
-<th>State</th>
+<th>Option</th>
+<th>Default</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>M1</td>
-<td>Scaffold (src-layout, pyproject/Hatch, Typer root, logging)</td>
-<td>✅ done</td>
+<td><code>--bam</code> / <code>--bam-map</code></td>
+<td>—</td>
+<td>single BAM / sample→BAM TSV</td>
 </tr>
 <tr>
-<td>M2</td>
-<td>Small-variant port (behaviour-preserving, testable)</td>
-<td>✅ done</td>
+<td><code>--bam-min-depth</code></td>
+<td>20</td>
+<td>minimum depth to trust a base</td>
 </tr>
 <tr>
-<td>M3</td>
-<td>Tests + provenance (unit + integration, build guard)</td>
-<td>🟡 in progress</td>
+<td><code>--bam-call-fract</code></td>
+<td>0.9</td>
+<td>fraction of reads to call a homozygous base</td>
 </tr>
 <tr>
-<td>M4</td>
-<td>Fusion rewrite (Python 3 + Pydantic config)</td>
-<td>⬜</td>
+<td><code>--bam-het-char</code></td>
+<td>N</td>
+<td>het output: <code>N</code> or <code>iupac</code></td>
 </tr>
 <tr>
-<td>M4.5</td>
-<td>Consensus (modes C/D) + <code>--emit-olivar</code> / <code>--emit-primer3</code></td>
-<td>⬜</td>
+<td><code>--bam-lowcov</code></td>
+<td>gnomad</td>
+<td>low-coverage base: <code>n</code> / <code>reference</code> / <code>gnomad</code></td>
 </tr>
 <tr>
-<td>M5</td>
-<td>MkDocs (Material + mkdocstrings)</td>
-<td>⬜</td>
-</tr>
-<tr>
-<td>M6</td>
-<td>Release (PyPI via OIDC; pysam wheel caveats)</td>
-<td>⬜</td>
-</tr>
-<tr>
-<td>M7</td>
-<td>Nextflow / nf-core pipeline (containerised)</td>
-<td>⬜</td>
+<td><code>--bam-min-baseq</code> / <code>--bam-min-mapq</code></td>
+<td>20 / 20</td>
+<td>quality filters</td>
 </tr>
 </tbody>
 </table>
-<h3 id="top-risks">Top risks<a class="headerlink" href="#top-risks" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Fusion script intent is undocumented/buggy — recover before M4.</li>
-<li>Reference build mismatch → silent wrong sequence — guarded in <code>reference.py</code>.</li>
-<li>pysam wheel fragility — CI matrix Linux+macOS; document WSL/conda.</li>
-<li>Indel coordinate edge cases — dedicated tests in M3.</li>
-<li>Olivar GPL/dep isolation — enforced by the out-of-process boundary.</li>
-</ol>
+<p>The BAM must be aligned to the same <code>--genome-build</code> as the reference and be
+indexed (<code>.bai</code>). The engine is <code>samtools consensus</code> (bundled with pysam; no
+external install). For large cohorts, parallelise per-sample or per-region with
+Nextflow rather than in one process.</p>
 
 
 
@@ -1494,7 +1376,7 @@ model, iCallSV strand mapping) are captured in
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 20:27:34 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 13, 2026 22:29:14 UTC">June 13, 2026</span>
   </span>
 
     
@@ -1504,7 +1386,7 @@ model, iCallSV strand mapping) are captured in
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 14:53:47 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 13, 2026 22:29:14 UTC">June 13, 2026</span>
   </span>
 
     
@@ -1539,7 +1421,7 @@ model, iCallSV strand mapping) are captured in
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../DEVELOPER/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Developer">
+          <a href="../masking/" class="md-footer__link md-footer__link--prev" aria-label="Previous: SNP Masking">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1549,20 +1431,20 @@ model, iCallSV strand mapping) are captured in
                 Previous
               </span>
               <div class="md-ellipsis">
-                Developer
+                SNP Masking
               </div>
             </div>
           </a>
         
         
           
-          <a href="../research/gnomad-api/" class="md-footer__link md-footer__link--next" aria-label="Next: Research notes">
+          <a href="../../reference/cli/" class="md-footer__link md-footer__link--next" aria-label="Next: CLI">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Research notes
+                CLI
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1603,10 +1485,10 @@ model, iCallSV strand mapping) are captured in
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

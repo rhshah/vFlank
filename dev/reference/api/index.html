@@ -527,6 +527,8 @@
       
         
       
+        
+      
     
     
     
@@ -622,6 +624,34 @@
     
   
     SNP Masking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patient Consensus from a BAM
   
 
     
@@ -5153,7 +5183,7 @@ partner2</code> with <strong>no separator</strong>; partner 1 <em>ends</em> at t
 
 
 <a href="#vflank.core.fusion.build_junction" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">build_junction</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="p">,</span> <span class="n">flank</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">build_junction</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="p">,</span> <span class="n">flank</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">bam_source</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5161,21 +5191,14 @@ partner2</code> with <strong>no separator</strong>; partner 1 <em>ends</em> at t
         <p>Construct the fusion junction sequence (partner1 + partner2).</p>
 <p><code>flank</code> is the bases taken from each partner, so the junction is up to
 <code>2*flank</code> bp (shorter if a partner runs off a contig end). The probe is
-designed to span <code>junction_index</code>. When <code>gnomad</code> is given, common SNPs in
-the partner flanks are masked to 'N' in <code>masked_sequence</code>.</p>
+designed to span <code>junction_index</code>. <code>masked_sequence</code> is the gnomAD-masked
+junction, or — when <code>bam_source</code> is given — the per-sample patient consensus
+(built in genomic space before reverse-complement).</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/core/fusion.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
-<span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
-<span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
-<span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
-<span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
-<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
-<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
-<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
-<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
 <span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
 <span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
 <span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
@@ -5188,28 +5211,40 @@ the partner flanks are masked to 'N' in <code>masked_sequence</code>.</p>
 <span class="normal"><a href="#__codelineno-0-102">102</a></span>
 <span class="normal"><a href="#__codelineno-0-103">103</a></span>
 <span class="normal"><a href="#__codelineno-0-104">104</a></span>
-<span class="normal"><a href="#__codelineno-0-105">105</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="k">def</span><span class="w"> </span><span class="nf">build_junction</span><span class="p">(</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="p">:</span> <span class="n">Fusion</span><span class="p">,</span> <span class="n">flank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">af_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JunctionResult</span><span class="p">:</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct the fusion junction sequence (partner1 + partner2).</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">    ``flank`` is the bases taken from each partner, so the junction is up to</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">    ``2*flank`` bp (shorter if a partner runs off a contig end). The probe is</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">    designed to span ``junction_index``. When ``gnomad`` is given, common SNPs in</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">    the partner flanks are masked to &#39;N&#39; in ``masked_sequence``.</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="n">raw1</span><span class="p">,</span> <span class="n">masked1</span> <span class="o">=</span> <span class="n">_segment</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="o">.</span><span class="n">bp1</span><span class="p">,</span> <span class="n">flank</span><span class="p">,</span> <span class="n">donor</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>                             <span class="n">gnomad</span><span class="o">=</span><span class="n">gnomad</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="n">af_threshold</span><span class="p">)</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="n">raw2</span><span class="p">,</span> <span class="n">masked2</span> <span class="o">=</span> <span class="n">_segment</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="o">.</span><span class="n">bp2</span><span class="p">,</span> <span class="n">flank</span><span class="p">,</span> <span class="n">donor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>                             <span class="n">gnomad</span><span class="o">=</span><span class="n">gnomad</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="n">af_threshold</span><span class="p">)</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="n">sequence</span> <span class="o">=</span> <span class="n">raw1</span> <span class="o">+</span> <span class="n">raw2</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="n">masked_sequence</span> <span class="o">=</span> <span class="n">masked1</span> <span class="o">+</span> <span class="n">masked2</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="k">return</span> <span class="n">JunctionResult</span><span class="p">(</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="n">masked_sequence</span><span class="o">=</span><span class="n">masked_sequence</span><span class="p">,</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>        <span class="n">junction_index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">raw1</span><span class="p">),</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="n">n_masked</span><span class="o">=</span><span class="n">masked_sequence</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">sequence</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">),</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="k">def</span><span class="w"> </span><span class="nf">build_junction</span><span class="p">(</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="p">:</span> <span class="n">Fusion</span><span class="p">,</span> <span class="n">flank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">af_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="n">bam_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JunctionResult</span><span class="p">:</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct the fusion junction sequence (partner1 + partner2).</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">    ``flank`` is the bases taken from each partner, so the junction is up to</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">    ``2*flank`` bp (shorter if a partner runs off a contig end). The probe is</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">    designed to span ``junction_index``. ``masked_sequence`` is the gnomAD-masked</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">    junction, or — when ``bam_source`` is given — the per-sample patient consensus</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">    (built in genomic space before reverse-complement).</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">raw1</span><span class="p">,</span> <span class="n">masked1</span> <span class="o">=</span> <span class="n">_segment</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="o">.</span><span class="n">bp1</span><span class="p">,</span> <span class="n">flank</span><span class="p">,</span> <span class="n">donor</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>                             <span class="n">gnomad</span><span class="o">=</span><span class="n">gnomad</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="n">af_threshold</span><span class="p">,</span> <span class="n">bam_source</span><span class="o">=</span><span class="n">bam_source</span><span class="p">)</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="n">raw2</span><span class="p">,</span> <span class="n">masked2</span> <span class="o">=</span> <span class="n">_segment</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fusion</span><span class="o">.</span><span class="n">bp2</span><span class="p">,</span> <span class="n">flank</span><span class="p">,</span> <span class="n">donor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>                             <span class="n">gnomad</span><span class="o">=</span><span class="n">gnomad</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="n">af_threshold</span><span class="p">,</span> <span class="n">bam_source</span><span class="o">=</span><span class="n">bam_source</span><span class="p">)</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="n">sequence</span> <span class="o">=</span> <span class="n">raw1</span> <span class="o">+</span> <span class="n">raw2</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>    <span class="n">masked_sequence</span> <span class="o">=</span> <span class="n">masked1</span> <span class="o">+</span> <span class="n">masked2</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="k">return</span> <span class="n">JunctionResult</span><span class="p">(</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>        <span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>        <span class="n">masked_sequence</span><span class="o">=</span><span class="n">masked_sequence</span><span class="p">,</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>        <span class="n">junction_index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">raw1</span><span class="p">),</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="n">n_masked</span><span class="o">=</span><span class="n">masked_sequence</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">sequence</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

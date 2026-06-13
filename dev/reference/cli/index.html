@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/reference/cli/">
       
       
-        <link rel="prev" href="../../user-guide/masking/">
+        <link rel="prev" href="../../user-guide/consensus/">
       
       
         <link rel="next" href="../api/">
@@ -527,6 +527,8 @@
       
         
       
+        
+      
     
     
     
@@ -622,6 +624,34 @@
     
   
     SNP Masking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patient Consensus from a BAM
   
 
     
@@ -1226,6 +1256,14 @@ $ vflank fusion run [OPTIONS] SV_FILE</code></p>
 <li><code>--pop-source TEXT</code>: Masking backend: vcf or api (no download).  [default: vcf]</li>
 <li><code>--af-threshold FLOAT RANGE</code>: Min population AF to mask a SNP.  [default: 0.001; 0.0&lt;=x&lt;=1.0]</li>
 <li><code>-o, --output PATH</code>: Output FASTA file.  [default: fusion_junctions.fasta]</li>
+<li><code>--bam PATH</code>: Single-sample BAM for patient consensus of the junction flanks.</li>
+<li><code>--bam-map PATH</code>: TSV (sample<TAB>bam_path) for per-fusion consensus.</li>
+<li><code>--bam-min-depth INTEGER</code>: [default: 20]</li>
+<li><code>--bam-call-fract FLOAT</code>: [default: 0.9]</li>
+<li><code>--bam-het-char TEXT</code>: Het output: N or iupac.  [default: N]</li>
+<li><code>--bam-lowcov TEXT</code>: Low-coverage base: n | reference | gnomad.  [default: gnomad]</li>
+<li><code>--bam-min-baseq INTEGER</code>: [default: 20]</li>
+<li><code>--bam-min-mapq INTEGER</code>: [default: 20]</li>
 <li><code>--chr1-col TEXT</code>: [default: chr1]</li>
 <li><code>--pos1-col TEXT</code>: [default: pos1]</li>
 <li><code>--str1-col TEXT</code>: [default: str1]</li>
@@ -1304,7 +1342,7 @@ $ vflank fusion run [OPTIONS] SV_FILE</code></p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../user-guide/masking/" class="md-footer__link md-footer__link--prev" aria-label="Previous: SNP Masking">
+          <a href="../../user-guide/consensus/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Patient Consensus from a BAM">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1314,7 +1352,7 @@ $ vflank fusion run [OPTIONS] SV_FILE</code></p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                SNP Masking
+                Patient Consensus from a BAM
               </div>
             </div>
           </a>
