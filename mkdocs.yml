@@ -95,4 +95,5 @@ nav:
       - Research notes:
           - research/gnomad-api.md
           - research/sv-vcf-input.md
+          - research/bam-consensus.md
   - Changelog: changelog.md
