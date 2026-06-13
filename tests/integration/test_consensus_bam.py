@@ -175,3 +175,41 @@ def test_small_run_with_bam_consensus(tmp_path):
     masked_left = lines[3].split("[", 1)[0]
     assert "N" in masked_left                          # het in left flank -> N in consensus
     assert "BAM consensus" in result.output
+
+
+def test_consensus_handles_deletion_reads_reference_length(tmp_path):
+    # Reads with a 3 bp deletion in the left flank must NOT change the consensus
+    # length (regression: samtools indel output broke window alignment).
+    from vflank.core.consensus import BamConsensusSource, ConsensusFlankSource
+    from vflank.core.variant import Variant
+    from vflank.io.reference import ReferenceFasta
+
+    ref_seq = "".join("ACGT"[i % 4] for i in range(100))
+    fasta = tmp_path / "ref.fasta"
+    fasta.write_text(f">1\n{ref_seq}\n")
+    pysam.faidx(str(fasta))
+
+    rs, a, d, b, nr = 25, 15, 3, 22, 24   # M15 D3 M22 -> ref span 40, covers [25,65)
+    query = ref_seq[rs:rs + a] + ref_seq[rs + a + d:rs + a + d + b]
+    bam = tmp_path / "del.bam"
+    hdr = {"HD": {"VN": "1.6"}, "SQ": [{"SN": "1", "LN": 100}]}
+    with pysam.AlignmentFile(str(bam), "wb", header=hdr) as out:
+        for i in range(nr):
+            seg = pysam.AlignedSegment()
+            seg.query_name = f"r{i}"
+            seg.query_sequence = query
+            seg.flag = 0
+            seg.reference_id = 0
+            seg.reference_start = rs
+            seg.mapping_quality = 60
+            seg.cigartuples = [(0, a), (2, d), (0, b)]
+            seg.query_qualities = pysam.qualitystring_to_array("I" * len(query))
+            out.write(seg)
+    pysam.index(str(bam))
+
+    ref = ReferenceFasta(str(fasta))
+    src = ConsensusFlankSource(ref, BamConsensusSource(str(bam)), gnomad=None, flank=10)
+    fr = src.fetch(Variant(chrom="1", start=50, end=50, ref="A", alt="T"))  # must not raise
+    assert len(fr.masked_left) == 10 and len(fr.masked_right) == 10
+    assert fr.total == 20  # reference-aligned throughout
+    ref.close()

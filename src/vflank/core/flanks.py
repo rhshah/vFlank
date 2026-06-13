@@ -37,10 +37,21 @@ class FlankResult:
     right: str
     masked_left: str
     masked_right: str
+    covered: int | None = None   # flank positions at/above min_depth (BAM consensus)
+    total: int | None = None     # total flank positions (BAM consensus)
 
     @property
     def n_masked(self) -> int:
         return self.masked_left.count("N") + self.masked_right.count("N")
+
+    @property
+    def n_corrected(self) -> int:
+        """Flank positions where the masked seq is a real base differing from raw."""
+        return sum(
+            m != r and m != "N"
+            for raw, msk in ((self.left, self.masked_left), (self.right, self.masked_right))
+            for r, m in zip(raw, msk, strict=False)
+        )
 
     def upper(self) -> FlankResult:
         """Return an uppercased copy (presentation convenience for callers)."""
@@ -49,6 +60,8 @@ class FlankResult:
             self.right.upper(),
             self.masked_left.upper(),
             self.masked_right.upper(),
+            self.covered,
+            self.total,
         )
 
 

@@ -34,10 +34,15 @@ class ConsensusPolicy:
 
 
 def _parse_consensus_fasta(text: str) -> str:
-    """Join the sequence lines of a single-record FASTA from samtools consensus."""
-    return "".join(
+    """Join the sequence lines of a single-record FASTA from samtools consensus.
+
+    Deletion placeholders ('*', from ``--show-del yes``) are mapped to 'N' — a
+    patient deletion disrupts the flank, so the position is masked.
+    """
+    seq = "".join(
         line.strip() for line in text.splitlines() if line and not line.startswith(">")
-    ).upper()
+    )
+    return seq.upper().replace("*", "N")
 
 
 def run_samtools_consensus(
@@ -58,6 +63,10 @@ def run_samtools_consensus(
         "-c", str(policy.call_fract),
         "--min-MQ", str(policy.min_mapq),
         "--min-BQ", str(policy.min_baseq),
+        # Keep the consensus reference-length (so it aligns to depth/reference and
+        # flanks concatenate): drop insertions, mark deletions as '*' -> 'N'.
+        # True indel-aware consensus is a deferred enhancement.
+        "--show-ins", "no", "--show-del", "yes",
         "-r", region,
     ]
     if policy.het_char == "iupac":
@@ -159,10 +168,13 @@ class BamConsensusSource:
     def consensus(
         self, bare: str, start_0based: int, end_0based: int,
         reference_seq: str, gnomad_positions: set[int],
-    ) -> str:
-        """Patient consensus over ``[start, end)`` aligned to ``reference_seq``."""
+    ) -> tuple[str, int]:
+        """Patient consensus over ``[start, end)``; returns (sequence, n_covered).
+
+        ``n_covered`` is the number of positions at/above ``policy.min_depth``.
+        """
         if end_0based <= start_0based:
-            return reference_seq.upper()
+            return reference_seq.upper(), 0
         contig = self._contig(bare)
         called = run_samtools_consensus(
             self.bam_path, contig, start_0based + 1, end_0based, self.policy
@@ -174,9 +186,10 @@ class BamConsensusSource:
                 f"consensus length mismatch at {bare}:{start_0based}-{end_0based} "
                 f"(called={len(called)}, depth={len(depth)}, ref={len(reference_seq)}, want={n})"
             )
-        return apply_lowcov_overlay(
+        seq = apply_lowcov_overlay(
             called, depth, start_0based, reference_seq, gnomad_positions, self.policy
         )
+        return seq, sum(1 for d in depth if d >= self.policy.min_depth)
 
     def close(self) -> None:  # no persistent handle; symmetry with other sources
         pass
@@ -209,12 +222,15 @@ class ConsensusFlankSource:
 
         left = self.reference.fetch(variant.chrom, left_start_0, left_end_0)
         right = self.reference.fetch(variant.chrom, right_start_0, right_end_0)
-        masked_left = self.bam.consensus(
+        masked_left, cov_left = self.bam.consensus(
             variant.chrom, left_start_0, left_end_0, left,
             self._gnomad_positions(variant.chrom, left_start_0, left_end_0),
         )
-        masked_right = self.bam.consensus(
+        masked_right, cov_right = self.bam.consensus(
             variant.chrom, right_start_0, right_end_0, right,
             self._gnomad_positions(variant.chrom, right_start_0, right_end_0),
         )
-        return FlankResult(left.upper(), right.upper(), masked_left, masked_right)
+        return FlankResult(
+            left.upper(), right.upper(), masked_left, masked_right,
+            covered=cov_left + cov_right, total=len(left) + len(right),
+        )

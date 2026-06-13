@@ -1,15 +1,13 @@
 """Write a machine-readable TSV run report alongside the FASTA output.
 
 Aggregate stats and the skip breakdown go in ``#``-comment header lines; the
-per-variant table follows as proper TSV so it loads cleanly in pandas/R.
+per-variant table follows as proper TSV. Columns are taken from the row keys
+(insertion order), so callers control the columns per run mode.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
-
-_COLUMNS = ["Sample", "Gene", "Chrom", "Start", "End", "Ref", "Alt",
-            "LeftLen", "RightLen", "NMasked", "Truncated"]
 
 
 def write_report(
@@ -25,9 +23,10 @@ def write_report(
     for category, count in skip_breakdown.items():
         lines.append(f"# skip:{category}\t{count}")
 
-    lines.append("\t".join(_COLUMNS))
+    columns = list(summary_rows[0].keys()) if summary_rows else []
+    lines.append("\t".join(columns))
     for r in summary_rows:
-        lines.append("\t".join(str(r[c]) for c in _COLUMNS))
+        lines.append("\t".join(str(r.get(c, "")) for c in columns))
 
     try:
         path.write_text("\n".join(lines) + "\n")

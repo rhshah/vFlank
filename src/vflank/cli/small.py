@@ -32,6 +32,7 @@ from ..io.reference import ReferenceFasta
 from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
+from ._ui import echo_parameters
 
 app = typer.Typer(no_args_is_help=True)
 log = get_logger()
@@ -132,6 +133,10 @@ def run(
     ),
     bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
     bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
+    require_coverage: float = typer.Option(
+        0.0, "--require-coverage", min=0.0, max=1.0,
+        help="Flag BAM-consensus variants whose flanks are < this fraction covered (0=off).",
+    ),
 ):
     """Extract flanking sequences for every variant in a MAF and write a FASTA.
 
@@ -151,7 +156,7 @@ def run(
             pop_data, pop_source, output, report, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
-            uppercase, dedup, bam_resolver, n_bam, policy,
+            uppercase, dedup, bam_resolver, n_bam, policy, require_coverage,
         )
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
@@ -161,9 +166,26 @@ def run(
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
          pop_data, pop_source, output, report, samples, samples_file,
          cols: MafColumns, uppercase: bool, dedup: bool,
-         bam_resolver, n_bam, policy):
+         bam_resolver, n_bam, policy, require_coverage):
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
+
+    bam_mode = bam_resolver is not None
+    echo_parameters({
+        "MAF": maf_file, "Reference": ref_genome, "Genome build": genome_build,
+        "Flank": f"±{flank} bp", "AF threshold": af_threshold,
+        "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
+                    else "none"),
+        "Dedup": dedup, "Uppercase": uppercase,
+        "Sample filter": samples or samples_file or "none",
+        "BAM consensus": (
+            f"on (min-depth={policy.min_depth}, call-fract={policy.call_fract}, "
+            f"het={policy.het_char}, low-cov={policy.lowcov}, "
+            f"baseq={policy.min_baseq}, mapq={policy.min_mapq})" if bam_mode else "off"
+        ),
+        "Require coverage": require_coverage or "off",
+        "Output": output, "Report": report or "none",
+    })
 
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
@@ -241,7 +263,6 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     ref_source = ReferenceFlankSource(reference, gnomad, flank=flank, af_threshold=af_threshold)
 
     # --- BAM consensus mode (per-sample patient sequence) ---
-    bam_mode = bam_resolver is not None
     # Default low-coverage behaviour is REF + gnomAD masking: where the BAM is
     # shallow (< min_depth) we fall back to the reference base, with gnomAD
     # N-masking common SNPs if a population source is given. So an uncovered
@@ -249,6 +270,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     consensus_cache: dict[str, object] = {}   # sample -> ConsensusFlankSource (or ref fallback)
     bam_warned: set[str] = set()
     n_consensus = 0
+    n_flagged = 0
     if bam_mode:
         scope = "single BAM (all samples)" if n_bam == -1 else f"{n_bam} sample(s) mapped"
         console.print(
@@ -360,13 +382,29 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             n_masked_total += fr.n_masked
             sample_tag = variant.sample if bam_mode else None
             records.extend(fasta_io.format_records(variant, fr, ref, alt, sample=sample_tag))
-            summary_rows.append({
+
+            row_detail = {
                 "Sample": variant.sample[:32], "Gene": variant.gene,
                 "Chrom": variant.raw_chrom, "Start": variant.start, "End": variant.end,
                 "Ref": ref[:8], "Alt": alt[:8],
                 "LeftLen": len(fr.left), "RightLen": len(fr.right),
-                "NMasked": fr.n_masked, "Truncated": truncated,
-            })
+                "NMasked": fr.n_masked, "NCorrected": fr.n_corrected, "Truncated": truncated,
+            }
+            if bam_mode:
+                source_label = "consensus" if used_consensus else "reference"
+                covered_frac = (fr.covered / fr.total) if (used_consensus and fr.total) else None
+                flagged = (
+                    require_coverage > 0 and covered_frac is not None
+                    and covered_frac < require_coverage
+                )
+                if flagged:
+                    n_flagged += 1
+                row_detail["Source"] = source_label
+                row_detail["CoveredFrac"] = (
+                    round(covered_frac, 3) if covered_frac is not None else ""
+                )
+                row_detail["Flagged"] = flagged
+            summary_rows.append(row_detail)
 
     reference.close()
     api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
@@ -433,11 +471,16 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]BAM consensus:[/bold]    {n_consensus:>6,} [dim](patient-specific)[/dim]\n"
         if bam_mode else ""
     )
+    flagged_line = (
+        f"[bold yellow]Low-coverage flagged:[/bold yellow] {n_flagged:>6,} "
+        f"[dim](< {require_coverage:.0%} covered)[/dim]\n"
+        if (bam_mode and require_coverage > 0) else ""
+    )
     console.print(
         f"\n[bold]Total in MAF:[/bold]     {n_total:>6,}\n"
         f"[bold]Processed:[/bold]        {len(summary_rows):>6,}\n"
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
-        + dup_line + truncated_line + consensus_line +
+        + dup_line + truncated_line + consensus_line + flagged_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
         + api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
@@ -447,6 +490,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     # --- Optional machine-readable report ---
     if report is not None:
         stats = {
+            # run parameters (what was set)
+            "maf": maf_file, "reference": ref_genome, "genome_build": genome_build,
+            "flank": flank, "af_threshold": af_threshold,
+            "pop_source": pop_source, "pop_data": pop_data, "dedup": dedup,
+            # outcomes (what happened)
             "total_in_maf": n_total,
             "processed": len(summary_rows),
             "skipped": skipped,
@@ -454,13 +502,16 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             "truncated_flanks": n_truncated,
             "bases_masked": n_masked_total,
             "fasta_records": len(records),
-            "pop_source": pop_source,
-            "pop_data": pop_data,
         }
         if api_requests is not None:
             stats["api_requests"] = api_requests
         if bam_mode:
             stats["bam_consensus_records"] = n_consensus
+            stats["bam_min_depth"] = policy.min_depth
+            stats["bam_het_char"] = policy.het_char
+            stats["bam_lowcov"] = policy.lowcov
+            stats["require_coverage"] = require_coverage
+            stats["low_coverage_flagged"] = n_flagged
         report_io.write_report(report, summary_rows, stats, dict(skip_breakdown))
         console.print(f"[bold]Report:[/bold] [cyan]{report.resolve()}[/cyan]")
 

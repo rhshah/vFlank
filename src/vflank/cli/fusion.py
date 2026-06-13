@@ -25,6 +25,7 @@ from ..io.reference import ReferenceFasta
 from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
+from ._ui import echo_parameters
 
 app = typer.Typer(no_args_is_help=True)
 log = get_logger()
@@ -102,6 +103,17 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
          pop_source, af_threshold, output, cols: SvColumns, bam_resolver, policy):
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
+    echo_parameters({
+        "Breakpoints": sv_file, "Reference": ref_genome, "Genome build": genome_build,
+        "Flank": f"{flank} bp/partner", "AF threshold": af_threshold,
+        "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
+                    else "none"),
+        "BAM consensus": (
+            f"on (min-depth={policy.min_depth}, het={policy.het_char}, "
+            f"low-cov={policy.lowcov})" if bam_resolver is not None else "off"
+        ),
+        "Output": output,
+    })
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
     validate_pop_options(pop_source, pop_data)

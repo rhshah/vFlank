@@ -57,10 +57,13 @@ normal no-BAM run (not all-N). Without a population source, `gnomad` is plain
 - `--bam-het-char {N,iupac}` (default `N`) → maps to `samtools consensus`
   default (`N`) vs `--ambig` (IUPAC R/Y/S/W/K/M). `N` is the safe default for
   primer design.
-- **Indels are handled, not masked.** Because the engine is `samtools consensus`
-  (indel-aware, `--show-ins`/`--show-del`), a patient indel in the flank is
-  reflected in the consensus rather than `N`-masked. (The optional pure-pileup
-  engine would mask them instead — see engines.)
+- **Indels: reference-frame (v1).** `samtools consensus` is indel-aware, but its
+  indel output changes the sequence length, which breaks the position-by-position
+  overlay and flank concatenation. So we run it with `--show-ins no --show-del
+  yes` to keep the consensus **reference-length**: insertions are dropped and
+  deletions become `*` → `N` (a patient deletion disrupts the flank, so the
+  position is masked). True indel-aware (length-changing) consensus is a deferred
+  enhancement.
 
 ## Engine — `samtools consensus` via pysam (hybrid)
 
