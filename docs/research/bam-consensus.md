@@ -24,12 +24,14 @@ For each flank position, pile up reads passing `min_mapq` / `min_baseq`, with
 | homozygous-REF (ref frac ≥ `consensus_fraction`, e.g. 0.9) | reference base |
 | homozygous-ALT (one alt ≥ `consensus_fraction`) | **patient ALT base** (consensus correction) |
 | heterozygous (minor allele ≥ `het_fraction`, e.g. 0.25) | `N` (or IUPAC) |
-| significant indel evidence | `N` (v1 — see below) |
+| patient indel | reflected in the consensus (samtools is indel-aware) |
 | **depth < `min_depth`** | see gnomAD layering |
 
-Rationale: a primer over a het site → allele dropout; over a hom-ALT site the
-reference would mismatch *every* template, so we use the patient base; low
-coverage → we can't confirm, so don't trust it.
+This policy is realised through `samtools consensus` options (`--call-fract` →
+hom calls, default/`--ambig` → het, `--min-depth`) plus our low-coverage overlay
+(below). Rationale: a primer over a het site → allele dropout; over a hom-ALT
+site the reference would mismatch *every* template, so we use the patient base;
+low coverage → we can't confirm, so don't trust it.
 
 ## gnomAD layering (mode D)
 
@@ -49,36 +51,59 @@ as `n`.
 
 ## Het and indel representation
 
-- `--bam-het-char {N,iupac}` (default `N`). IUPAC (R/Y/S/W/K/M) preserves which
-  two bases but most designers treat it as degenerate; `N` is the safe default.
-- **Indels (v1 scope):** a flank position with substantial indel evidence is
-  masked to `N` — we do **not** reconstruct the indel-shifted sequence (that
-  changes flank length / coordinate frame). Indel-aware consensus (à la kindel's
-  CIGAR reconciliation) is a deliberate follow-up. The count of indel-masked
-  positions is reported (no silent truncation).
+- `--bam-het-char {N,iupac}` (default `N`) → maps to `samtools consensus`
+  default (`N`) vs `--ambig` (IUPAC R/Y/S/W/K/M). `N` is the safe default for
+  primer design.
+- **Indels are handled, not masked.** Because the engine is `samtools consensus`
+  (indel-aware, `--show-ins`/`--show-del`), a patient indel in the flank is
+  reflected in the consensus rather than `N`-masked. (The optional pure-pileup
+  engine would mask them instead — see engines.)
 
-## Architecture
+## Engine — `samtools consensus` via pysam (hybrid)
 
-The consensus changes the *sequence*, so it is a **FlankSource**, not a mask
-source (unlike gnomAD). It reuses the existing `FlankResult` shape:
+The base-calling is delegated to **`samtools consensus`**, called in-process via
+`pysam.samtools.consensus(...)` — bundled with pysam (verified; no extra system
+dependency; `bcftools` is *not* bundled in this build). It is the validated
+htslib implementation and is indel-aware, so we do not reimplement consensus.
 
-- `raw` = reference flanks (kept for comparison / the un-`Masked__` record);
-- `masked` = the **patient consensus** (hom-ALT corrected, het/low-cov `N`,
-  gnomAD-layered at low coverage).
+We add a thin, **pure** overlay for the two things samtools doesn't do:
 
-So the 2-records-per-target contract is unchanged — the `Masked__` record simply
-becomes the patient-specific assay template.
+1. **gnomAD low-coverage layering** — get a depth array over the window
+   (`pysam.AlignmentFile.count_coverage`, in-process), and at positions below
+   `--bam-min-depth` replace the call with the gnomAD decision (`N` if a common
+   SNP there, else the reference base). "Patient where covered, population where
+   blind."
+2. **Variant-of-interest exclusion** — already handled (flank windows are
+   strictly outside `[start, end]`).
 
 ```
 core/consensus.py
-  consensus_base(column_stats, reference_base, policy) -> base|'N'   # PURE, unit-tested
-  pileup_consensus(bam, chrom, start0, end0, ref_seq, policy)        # pysam pileup loop
-BamConsensusSource(bam_path, policy)        # per-sample, lazy-opened + cached
+  run_samtools_consensus(bam, chrom, start, stop, opts) -> str   # impure (pysam.samtools)
+  window_depth(bam, chrom, start0, end0) -> list[int]            # impure (count_coverage)
+  apply_lowcov_overlay(seq, depth, region_start0, ref_seq,       # PURE, unit-tested
+                       gnomad_positions, min_depth) -> str
+BamConsensusSource(bam_path, policy, engine="samtools")  # per-sample, lazy-open + cache
 ConsensusFlankSource(reference, bam_source, gnomad=None, flank=...)  # FlankSource (small)
 ```
 
-Split the pure per-column decision (`consensus_base`) from the pysam pileup
-iteration so the policy is testable without a BAM.
+The consensus changes the *sequence*, so `ConsensusFlankSource` is a
+**FlankSource** (not a mask source). It reuses the existing `FlankResult`:
+`raw` = reference flanks; `masked` = the patient consensus. The
+2-records-per-target contract is unchanged — `Masked__` simply becomes the
+patient-specific assay template.
+
+**Pluggable engine** (`--bam-engine {samtools,pileup}`, default `samtools`): the
+default delegates to samtools; a future pure-pysam-pileup engine can be added
+behind the same `BamConsensusSource` interface for in-process speed — exactly
+the pattern used for the gnomAD `vcf`/`api` backends. The overlay is engine-independent.
+
+## Performance & parallelism
+
+`samtools consensus` is a subprocess per region, so cost scales with
+(variants × samples). This is **not** optimised inside vflank — the tool stays a
+clean per-unit processor and **Nextflow fans the work out** (per-sample,
+per-chromosome, or per-region) at the pipeline layer. The swappable `pileup`
+engine remains an option if single-process throughput ever matters.
 
 ## Sample → BAM mapping
 
@@ -120,7 +145,7 @@ The consensus is built in **genomic (plus-strand) space, then reverse-complement
 ```
 _segment(reference, bp, flank, *, donor, bam_source, gnomad):
     window = genomic flank window
-    seq = pileup_consensus(bam, window, ref_seq, policy)   # patient bases + N
+    seq = bam_source.consensus(window, ref_seq, gnomad)    # samtools + lowcov overlay
     return revcomp(seq) if rc else seq
 junction = partner1 + partner2 ; one record per (fusion, sample)
 ```
@@ -141,29 +166,32 @@ vflank small run MAF -r REF -g hg19 \
 
 ## Testing & validation
 
-- **Synthetic BAM fixtures** (pysam can write SAM/BAM): a het at a known flank
-  position → `N`; a hom-ALT → patient base; a clean hom-REF → reference;
-  low-coverage → per `--bam-lowcov`; an indel → `N`. The pure `consensus_base`
-  gets exhaustive per-policy unit tests with no BAM.
-- **Oracle:** validate the position calls against `bcftools mpileup | call` and
-  `samtools consensus` on the same synthetic data (run manually / a `@live`-style
-  optional test).
+- **Synthetic BAM fixtures** (pysam writes SAM/BAM in-process): het → `N`/IUPAC;
+  hom-ALT → patient base; hom-REF → reference; low-coverage → per `--bam-lowcov`;
+  indel → reflected (not masked). End-to-end through `pysam.samtools.consensus`.
+- The **pure `apply_lowcov_overlay`** gets exhaustive unit tests with no BAM.
+- **Oracle:** the engine *is* `samtools consensus`, so it is self-validating for
+  the calling; the overlay is what we test. `bcftools` is unavailable in-process
+  (not bundled), so any bcftools cross-check is a manual/optional step.
 
 ## Risks
 
-- **Indels** — the genuinely hard part; v1 masks them (scoped, reported).
 - **Build match** — the BAM must be aligned to the same build as `--genome-build`
-  / the FASTA; mismatched coordinates give wrong pileups. Add a contig-length
-  sanity check against the BAM header.
-- **Performance** — per-window pileup is ~ms; cohort cost scales with
-  (variants × samples). Cache `(sample, window)`; lazy-open + cache BAM handles.
+  / the FASTA; mismatched coordinates give wrong calls. Sanity-check contig
+  lengths against the BAM header.
+- **Performance** — subprocess per region; not optimised in vflank (Nextflow fans
+  out; `pileup` engine is the in-process fallback). Lazy-open + cache BAM handles;
+  cache `(sample, window)`.
 - **`.bai` required**; clear error if missing.
+- **samtools availability** — bundled with pysam, so no external install; pin a
+  pysam floor that includes `samtools consensus` (samtools ≥ 1.16).
 
 ## Build phases
 
-1. `core/consensus.py` — pure `consensus_base` policy + `pileup_consensus`, with
-   synthetic-BAM tests.
+1. `core/consensus.py` — `run_samtools_consensus` + `window_depth` +
+   pure `apply_lowcov_overlay`, with synthetic-BAM tests.
 2. `BamConsensusSource` + `ConsensusFlankSource`; small-variant integration
-   (per-(variant,sample) dedup, sample→BAM mapping, header change).
+   (per-(variant,sample) dedup, `--bam`/`--bam-map`, header change).
 3. Fusion integration (consensus-before-revcomp in `_segment`).
-4. gnomAD layering for low coverage; docs.
+4. gnomAD low-coverage overlay polish + docs; `--bam-engine` knob (samtools
+   default; `pileup` engine deferred).
