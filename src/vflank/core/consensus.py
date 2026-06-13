@@ -13,6 +13,11 @@ wrappers are exercised against tiny synthetic BAMs.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
+
+from ..errors import ConsensusError
+from .flanks import FlankResult
+from .variant import Variant
 
 
 @dataclass(slots=True)
@@ -121,3 +126,95 @@ def apply_lowcov_overlay(
             pos_1based = region_start_0based + 1 + i
             out[i] = "N" if pos_1based in gnomad_positions else reference_seq[i].upper()
     return "".join(out)
+
+
+class BamConsensusSource:
+    """Per-sample patient consensus from a BAM: samtools engine + low-cov overlay.
+
+    One instance wraps one sample's BAM (lazy-resolved contig notation). Reused
+    across that sample's variants; opened handles are cheap.
+    """
+
+    def __init__(self, bam_path, policy: ConsensusPolicy | None = None) -> None:
+        self.bam_path = str(bam_path)
+        self.policy = policy or ConsensusPolicy()
+        if not Path(self.bam_path).exists():
+            raise ConsensusError(f"BAM not found: {self.bam_path}")
+        if not (Path(self.bam_path + ".bai").exists() or Path(self.bam_path + ".csi").exists()):
+            raise ConsensusError(
+                f"BAM index not found for {self.bam_path} (fix: samtools index {self.bam_path})"
+            )
+        import pysam
+
+        with pysam.AlignmentFile(self.bam_path) as af:
+            self._refs = set(af.references)
+
+    def _contig(self, bare: str) -> str:
+        """Resolve a bare chromosome to the BAM's contig name (handles 'chr')."""
+        if bare in self._refs:
+            return bare
+        alt = f"chr{bare}"
+        return alt if alt in self._refs else bare
+
+    def consensus(
+        self, bare: str, start_0based: int, end_0based: int,
+        reference_seq: str, gnomad_positions: set[int],
+    ) -> str:
+        """Patient consensus over ``[start, end)`` aligned to ``reference_seq``."""
+        if end_0based <= start_0based:
+            return reference_seq.upper()
+        contig = self._contig(bare)
+        called = run_samtools_consensus(
+            self.bam_path, contig, start_0based + 1, end_0based, self.policy
+        )
+        depth = window_depth(self.bam_path, contig, start_0based, end_0based, self.policy)
+        n = end_0based - start_0based
+        if len(called) != n or len(depth) != n or len(reference_seq) != n:
+            raise ConsensusError(
+                f"consensus length mismatch at {bare}:{start_0based}-{end_0based} "
+                f"(called={len(called)}, depth={len(depth)}, ref={len(reference_seq)}, want={n})"
+            )
+        return apply_lowcov_overlay(
+            called, depth, start_0based, reference_seq, gnomad_positions, self.policy
+        )
+
+    def close(self) -> None:  # no persistent handle; symmetry with other sources
+        pass
+
+
+class ConsensusFlankSource:
+    """FlankSource producing patient-consensus flanks (raw=reference, masked=consensus).
+
+    gnomAD (if given) provides the low-coverage fallback decision per the policy.
+    """
+
+    def __init__(self, reference, bam_source: BamConsensusSource, gnomad=None,
+                 *, flank: int = 200, af_threshold: float = 0.001):
+        self.reference = reference
+        self.bam = bam_source
+        self.gnomad = gnomad
+        self.flank = flank
+        self.af_threshold = af_threshold
+
+    def _gnomad_positions(self, bare: str, start_0based: int, end_0based: int) -> set[int]:
+        if self.gnomad is None:
+            return set()
+        return set(self.gnomad.get_positions(bare, start_0based, end_0based, self.af_threshold))
+
+    def fetch(self, variant: Variant) -> FlankResult:
+        left_start_0 = max(0, variant.start - self.flank - 1)
+        left_end_0 = variant.start - 1
+        right_start_0 = variant.end
+        right_end_0 = variant.end + self.flank
+
+        left = self.reference.fetch(variant.chrom, left_start_0, left_end_0)
+        right = self.reference.fetch(variant.chrom, right_start_0, right_end_0)
+        masked_left = self.bam.consensus(
+            variant.chrom, left_start_0, left_end_0, left,
+            self._gnomad_positions(variant.chrom, left_start_0, left_end_0),
+        )
+        masked_right = self.bam.consensus(
+            variant.chrom, right_start_0, right_end_0, right,
+            self._gnomad_positions(variant.chrom, right_start_0, right_end_0),
+        )
+        return FlankResult(left.upper(), right.upper(), masked_left, masked_right)

@@ -25,3 +25,7 @@ class PopFreqError(VflankError):
 
 class SvError(VflankError):
     """Problem reading or validating structural-variant / breakpoint input."""
+
+
+class ConsensusError(VflankError):
+    """Problem building a BAM consensus (missing/unindexed BAM, length mismatch)."""

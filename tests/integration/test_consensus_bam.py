@@ -75,3 +75,48 @@ def test_window_depth(tmp_path):
     assert window_depth(bam, "chr1", 21, 32, ConsensusPolicy()) == [20] * 11
     # a region outside the read span -> zero depth
     assert window_depth(bam, "chr1", 45, 50, ConsensusPolicy()) == [0] * 5
+
+
+def test_consensus_flank_source(tmp_path):
+    from vflank.core.consensus import BamConsensusSource, ConsensusFlankSource
+    from vflank.core.variant import Variant
+    from vflank.io.reference import ReferenceFasta
+
+    ref_seq = "".join("ACGT"[i % 4] for i in range(100))
+    fasta = tmp_path / "ref.fasta"
+    fasta.write_text(f">1\n{ref_seq}\n")
+    pysam.faidx(str(fasta))
+
+    rs, rl, nr = 25, 40, 24          # 24 reads cover 1-based 26..65
+    het_g0 = 44                      # genomic 0-based 44 -> het (ref 'A' vs 'G')
+    homalt_g0 = 54                   # genomic 0-based 54 -> hom-ALT (ref 'G' -> 'T')
+    bam = tmp_path / "s.bam"
+    header = {"HD": {"VN": "1.6"}, "SQ": [{"SN": "1", "LN": 100}]}
+    with pysam.AlignmentFile(str(bam), "wb", header=header) as out:
+        for i in range(nr):
+            seq = list(ref_seq[rs:rs + rl])
+            seq[homalt_g0 - rs] = "T"             # all reads: hom-ALT
+            if i >= nr // 2:
+                seq[het_g0 - rs] = "G"            # half reads: het alt
+            a = pysam.AlignedSegment()
+            a.query_name = f"r{i}"
+            a.query_sequence = "".join(seq)
+            a.flag = 0
+            a.reference_id = 0
+            a.reference_start = rs
+            a.mapping_quality = 60
+            a.cigartuples = [(0, rl)]
+            a.query_qualities = pysam.qualitystring_to_array("I" * rl)
+            out.write(a)
+    pysam.index(str(bam))
+
+    ref = ReferenceFasta(str(fasta))
+    src = ConsensusFlankSource(ref, BamConsensusSource(str(bam)), gnomad=None, flank=10)
+    fr = src.fetch(Variant(chrom="1", start=50, end=50, ref="A", alt="T"))
+    # left window 1-based 40..49; het at genomic 45 -> idx 5 -> N
+    assert fr.masked_left[5] == "N"
+    # right window 1-based 51..60; hom-ALT at genomic 55 -> idx 4 -> patient 'T' (ref 'G')
+    assert fr.masked_right[4] == "T" and fr.right[4] == "G"
+    # everything else equals the reference flank (raw)
+    assert fr.masked_left[:5] + fr.masked_left[6:] == fr.left[:5] + fr.left[6:]
+    ref.close()
