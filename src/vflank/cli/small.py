@@ -127,7 +127,8 @@ def run(
     bam_call_fract: float = typer.Option(0.9, "--bam-call-fract", help="Fraction to call a base."),
     bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
     bam_lowcov: str = typer.Option(
-        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad."
+        "gnomad", "--bam-lowcov",
+        help="Below --bam-min-depth: n (mask) | reference | gnomad (default: REF + gnomAD masking).",
     ),
     bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
     bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
@@ -241,10 +242,10 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     # --- BAM consensus mode (per-sample patient sequence) ---
     bam_mode = bam_resolver is not None
-    # `--bam-lowcov gnomad` needs a population source; with none, fall back to the
-    # safe `n` (don't trust an unconfirmed base where the BAM is blind).
-    if bam_mode and gnomad is None and policy.lowcov == "gnomad":
-        policy.lowcov = "n"
+    # Default low-coverage behaviour is REF + gnomAD masking: where the BAM is
+    # shallow (< min_depth) we fall back to the reference base, with gnomAD
+    # N-masking common SNPs if a population source is given. So an uncovered
+    # variant just behaves like a normal no-BAM run (not all-N).
     consensus_cache: dict[str, object] = {}   # sample -> ConsensusFlankSource (or ref fallback)
     bam_warned: set[str] = set()
     n_consensus = 0

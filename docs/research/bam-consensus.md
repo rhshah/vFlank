@@ -44,10 +44,12 @@ we don't.**
 - `depth < min_depth` → fall back to gnomAD: `N` if it's a common SNP there, else
   the reference base.
 
-`--bam-lowcov {n,reference,gnomad}` controls the low-coverage base: `n` (safe),
-`reference` (complete but unconfirmed), or `gnomad` (the layered default when a
-population source is also given). Without a population source, `gnomad` behaves
-as `n`.
+`--bam-lowcov {n,reference,gnomad}` controls the low-coverage base: `n` (mask),
+`reference`, or `gnomad` (**default**: the reference base, with gnomAD N-masking
+common SNPs when a population source is given). So below `min_depth` (default
+20×) we fall back to **REF + gnomAD** — an uncovered variant just behaves like a
+normal no-BAM run (not all-N). Without a population source, `gnomad` is plain
+`reference`.
 
 ## Het and indel representation
 
