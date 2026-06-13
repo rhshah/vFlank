@@ -86,6 +86,7 @@ nav:
       - user-guide/small-variants.md
       - user-guide/fusions.md
       - user-guide/masking.md
+      - user-guide/consensus.md
   - Reference:
       - CLI: reference/cli.md
       - API: reference/api.md

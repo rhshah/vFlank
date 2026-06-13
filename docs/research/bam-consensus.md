@@ -1,8 +1,9 @@
 # BAM consensus masking — design note (modes C / D)
 
 Patient-specific flank generation from a sample BAM, for both small variants and
-fusions. Status: **design; not implemented.** Decisions taken: full consensus
-(not mask-only), `--bam` + `--bam-map`, per-(variant, sample) output.
+fusions. Status: **implemented** (small + fusion). User guide:
+[user-guide/consensus.md](../user-guide/consensus.md). Decisions taken: full
+consensus (not mask-only), `--bam` + `--bam-map`, per-(variant, sample) output.
 
 ## Goal
 

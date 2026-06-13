@@ -6,6 +6,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **Patient consensus from a BAM** (`--bam` / `--bam-map`) for both `small` and
+  `fusion`: the masked record is the per-sample consensus (hom-ALT corrected,
+  het/low-coverage handled), via `samtools consensus`. With a BAM, output is one
+  record per (variant, sample) with the sample in the header; low coverage falls
+  back to reference + gnomAD masking.
+
 ## [0.1.0] - 2026-06-12
 
 ### Added

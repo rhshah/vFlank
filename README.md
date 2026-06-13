@@ -23,11 +23,14 @@ downstream to established tools.
   sequences from an iCallSV / iAnnotateSV breakpoint table (columns by name).
 - **SNP masking, two backends** — local gnomAD VCFs *or* the gnomAD GraphQL API
   (no download), each with `--pop-data {genome,exome,both}`.
+- **Patient consensus from a BAM** (`--bam`/`--bam-map`) — build the flank/junction
+  from the patient's own reads (hom-ALT corrected, het/low-cov handled) so primers
+  match the real template; for both small variants and fusions.
 - **No silent failures** — genome-build guard, flank-truncation detection, and a
   categorised skip summary + optional TSV report.
 
-Planned: BAM consensus flanks, VCF input (small + BND SV), and downstream
-emit formats. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Planned: VCF input (small + BND SV) and downstream emit formats.
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Install
 
