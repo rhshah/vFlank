@@ -128,7 +128,7 @@ def run(
     bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
     bam_lowcov: str = typer.Option(
         "gnomad", "--bam-lowcov",
-        help="Below --bam-min-depth: n (mask) | reference | gnomad (default: REF + gnomAD masking).",
+        help="Low-coverage base: n (mask) | reference | gnomad (default: REF + gnomAD).",
     ),
     bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
     bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
