@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/research/gnomad-api/">
+        <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/research/bam-consensus/">
       
       
-        <link rel="prev" href="../../ARCHITECTURE/">
+        <link rel="prev" href="../sv-vcf-input/">
       
       
-        <link rel="next" href="../sv-vcf-input/">
+        <link rel="next" href="../../changelog/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Research notes - vflank</title>
+        <title>BAM consensus masking — design note (modes C / D) - vflank</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gnomad-graphql-api-findings-limitations-and-design-note" class="md-skip">
+        <a href="#bam-consensus-masking-design-note-modes-c-d" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Research notes
+              BAM consensus masking — design note (modes C / D)
             
           </span>
         </div>
@@ -896,7 +896,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../gnomad-api/" class="md-nav__link ">
               
   
   
@@ -914,7 +914,7 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -963,10 +963,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../bam-consensus/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BAM consensus masking — design note (modes C / D)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -982,6 +1009,169 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-position-consensus-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-position consensus policy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gnomad-layering-mode-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gnomAD layering (mode D)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#het-and-indel-representation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Het and indel representation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sample-bam-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample → BAM mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-granularity-the-data-model-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output granularity (the data-model change)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#end-to-end-small-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-end — small variants
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#end-to-end-fusions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-end — fusions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing &amp; validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build phases
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1056,10 +1246,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#summary-recommendation" class="md-nav__link">
+  <a href="#goal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Summary / recommendation
+        Goal
       
     </span>
   </a>
@@ -1067,10 +1257,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#endpoint-and-protocol" class="md-nav__link">
+  <a href="#per-position-consensus-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Endpoint and protocol
+        Per-position consensus policy
       
     </span>
   </a>
@@ -1078,10 +1268,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#datasets-and-genome-builds-verified" class="md-nav__link">
+  <a href="#gnomad-layering-mode-d" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Datasets and genome builds (verified)
+        gnomAD layering (mode D)
       
     </span>
   </a>
@@ -1089,10 +1279,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#query-shape-region-and-coordinates" class="md-nav__link">
+  <a href="#het-and-indel-representation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Query shape (region) and coordinates
+        Het and indel representation
       
     </span>
   </a>
@@ -1100,66 +1290,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#schema-facts-that-matter-introspected" class="md-nav__link">
+  <a href="#architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Schema facts that matter (introspected)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Schema facts that matter (introspected)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        AF rule for masking (matches our VCF behaviour of max(AF, AF_grpmax))
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#limitations-the-important-part" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Limitations (the important part)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Limitations (the important part)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#rate-limit-math-why-source-choice-matters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Rate-limit math (why source choice matters)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#-pop-data-genomeexomeboth-across-both-sources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --pop-data {genome,exome,both} across both sources
+        Architecture
       
     </span>
   </a>
@@ -1167,10 +1301,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#proposed-design-implementation-pending" class="md-nav__link">
+  <a href="#sample-bam-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Proposed design (implementation pending)
+        Sample → BAM mapping
       
     </span>
   </a>
@@ -1178,10 +1312,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#test-plan" class="md-nav__link">
+  <a href="#output-granularity-the-data-model-change" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Test plan
+        Output granularity (the data-model change)
       
     </span>
   </a>
@@ -1189,10 +1323,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#docs-plan" class="md-nav__link">
+  <a href="#end-to-end-small-variants" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Docs plan
+        End-to-end — small variants
       
     </span>
   </a>
@@ -1200,10 +1334,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolved-decisions" class="md-nav__link">
+  <a href="#end-to-end-fusions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolved decisions
+        End-to-end — fusions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing &amp; validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build phases
       
     </span>
   </a>
@@ -1230,224 +1408,172 @@
   
 
 
-<h1 id="gnomad-graphql-api-findings-limitations-and-design-note">gnomAD GraphQL API — findings, limitations, and design note<a class="headerlink" href="#gnomad-graphql-api-findings-limitations-and-design-note" title="Permanent link">&para;</a></h1>
-<p>Investigation of whether/how to use the public gnomAD API as an alternative
-population-frequency masking source (vs downloading per-chromosome VCFs).
-Status: <strong>implemented</strong> — <code>core/popfreq_api.GnomadApiSource</code>, selected via
-<code>--pop-source api</code>. The VCF source (<code>core/popfreq.GnomadStore</code>) and the API
-source are symmetric across <code>--pop-data {genome,exome,both}</code>.</p>
-<p>All facts below were verified against the live endpoint and the gnomAD docs on
-2026-06-12.</p>
-<h2 id="summary-recommendation">Summary / recommendation<a class="headerlink" href="#summary-recommendation" title="Permanent link">&para;</a></h2>
-<p>Use the <strong>public hosted endpoint</strong> <code>https://gnomad.broadinstitute.org/api</code>
-(GraphQL over HTTP POST) as an <em>optional</em> masking source, selected with
-<code>--pop-source api</code>. Keep the local-VCF source as the default for reproducible /
-bulk / offline (HPC) runs. The API is ideal for <strong>small cohorts with no local
-data</strong> (e.g. our 20-variant TP53 test); it is <strong>not</strong> suitable for large cohorts
-because of a hard rate limit (below).</p>
-<p>No new runtime dependency: use the <strong>standard-library <code>urllib.request</code></strong>.
-<code>requests</code> is unnecessary; <code>fastapi</code> is irrelevant (it builds servers — we are a
-client).</p>
-<h2 id="endpoint-and-protocol">Endpoint and protocol<a class="headerlink" href="#endpoint-and-protocol" title="Permanent link">&para;</a></h2>
+<h1 id="bam-consensus-masking-design-note-modes-c-d">BAM consensus masking — design note (modes C / D)<a class="headerlink" href="#bam-consensus-masking-design-note-modes-c-d" title="Permanent link">&para;</a></h1>
+<p>Patient-specific flank generation from a sample BAM, for both small variants and
+fusions. Status: <strong>design; not implemented.</strong> Decisions taken: full consensus
+(not mask-only), <code>--bam</code> + <code>--bam-map</code>, per-(variant, sample) output.</p>
+<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
+<p>gnomAD masking is a <em>population</em> prior. With the patient's own reads we can do
+better: build the flank from the <strong>patient's actual sequence</strong> so a primer/probe
+matches the real template, and <code>N</code> only where the patient is genuinely
+ambiguous. This catches <strong>private/rare</strong> variants gnomAD never saw.</p>
 <ul>
-<li>URL: <code>https://gnomad.broadinstitute.org/api</code></li>
-<li>Method: HTTP <code>POST</code>, <code>Content-Type: application/json</code>, body <code>{"query": "...", "variables": {...}}</code></li>
-<li>GraphQL <strong>errors return HTTP 200</strong> with an <code>errors</code> array in the body — must be
-  checked explicitly, not just by status code.</li>
-<li>Server-side caching present (<code>x-cached: HIT/MISS</code> response header).</li>
+<li><strong>Mode C</strong> = BAM consensus only.</li>
+<li><strong>Mode D</strong> = BAM consensus, with gnomAD as the fallback where the BAM is blind.</li>
 </ul>
-<h2 id="datasets-and-genome-builds-verified">Datasets and genome builds (verified)<a class="headerlink" href="#datasets-and-genome-builds-verified" title="Permanent link">&para;</a></h2>
-<p><code>DatasetId</code> enum includes: <code>gnomad_r4</code>, <code>gnomad_r4_non_ukb</code>, <code>gnomad_r3</code> (+subsets),
-<code>gnomad_r2_1</code>, <code>gnomad_r2_1_controls</code>/<code>_non_neuro</code>/<code>_non_cancer</code>/<code>_non_topmed</code>, <code>exac</code>.</p>
-<p>Mapping for vflank:</p>
+<h2 id="per-position-consensus-policy">Per-position consensus policy<a class="headerlink" href="#per-position-consensus-policy" title="Permanent link">&para;</a></h2>
+<p>For each flank position, pile up reads passing <code>min_mapq</code> / <code>min_baseq</code>, with
+<code>ignore_overlaps=True</code> (don't double-count overlapping mates). Then:</p>
 <table>
 <thead>
 <tr>
-<th>vflank <code>--genome-build</code></th>
-<th><code>reference_genome</code></th>
-<th><code>dataset</code></th>
+<th>Condition (depth ≥ <code>min_depth</code>)</th>
+<th>Output base</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>hg19</code> (GRCh37)</td>
-<td><code>GRCh37</code></td>
-<td><code>gnomad_r2_1</code></td>
+<td>homozygous-REF (ref frac ≥ <code>consensus_fraction</code>, e.g. 0.9)</td>
+<td>reference base</td>
 </tr>
 <tr>
-<td><code>hg38</code> (GRCh38)</td>
-<td><code>GRCh38</code></td>
-<td><code>gnomad_r4</code></td>
+<td>homozygous-ALT (one alt ≥ <code>consensus_fraction</code>)</td>
+<td><strong>patient ALT base</strong> (consensus correction)</td>
+</tr>
+<tr>
+<td>heterozygous (minor allele ≥ <code>het_fraction</code>, e.g. 0.25)</td>
+<td><code>N</code> (or IUPAC)</td>
+</tr>
+<tr>
+<td>significant indel evidence</td>
+<td><code>N</code> (v1 — see below)</td>
+</tr>
+<tr>
+<td><strong>depth &lt; <code>min_depth</code></strong></td>
+<td>see gnomAD layering</td>
 </tr>
 </tbody>
 </table>
-<p><code>reference_genome</code> is the <code>ReferenceGenomeId</code> enum (<code>GRCh37</code> / <code>GRCh38</code>). The
-<code>chrom</code> argument takes the <strong>bare</strong> name (<code>"17"</code>) for both builds — matches our
-canonical internal form.</p>
-<h2 id="query-shape-region-and-coordinates">Query shape (region) and coordinates<a class="headerlink" href="#query-shape-region-and-coordinates" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">region</span><span class="p">(</span><span class="n">chrom</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;17&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="mi">7579400</span><span class="p">,</span><span class="w"> </span><span class="n">stop</span><span class="p">:</span><span class="w"> </span><span class="mi">7579540</span><span class="p">,</span><span class="w"> </span><span class="n">reference_genome</span><span class="p">:</span><span class="w"> </span><span class="no">GRCh37</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">variants</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span><span class="w"> </span><span class="no">gnomad_r2_1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="n">pos</span><span class="w"> </span><span class="n">ref</span><span class="w"> </span><span class="n">alt</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="n">exome</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">af</span><span class="w"> </span><span class="n">populations</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="n">ac</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="n">genome</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">af</span><span class="w"> </span><span class="n">populations</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="n">ac</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
+<p>Rationale: a primer over a het site → allele dropout; over a hom-ALT site the
+reference would mismatch <em>every</em> template, so we use the patient base; low
+coverage → we can't confirm, so don't trust it.</p>
+<h2 id="gnomad-layering-mode-d">gnomAD layering (mode D)<a class="headerlink" href="#gnomad-layering-mode-d" title="Permanent link">&para;</a></h2>
+<p>The principle: <strong>patient-specific where we have coverage; population prior where
+we don't.</strong></p>
+<ul>
+<li><code>depth ≥ min_depth</code> → the BAM is authoritative (table above). gnomAD is ignored
+  at that position (if the patient is confidently hom-ALT, a primer matching the
+  patient base works even though gnomAD flags the site as common).</li>
+<li><code>depth &lt; min_depth</code> → fall back to gnomAD: <code>N</code> if it's a common SNP there, else
+  the reference base.</li>
+</ul>
+<p><code>--bam-lowcov {n,reference,gnomad}</code> controls the low-coverage base: <code>n</code> (safe),
+<code>reference</code> (complete but unconfirmed), or <code>gnomad</code> (the layered default when a
+population source is also given). Without a population source, <code>gnomad</code> behaves
+as <code>n</code>.</p>
+<h2 id="het-and-indel-representation">Het and indel representation<a class="headerlink" href="#het-and-indel-representation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>--bam-het-char {N,iupac}</code> (default <code>N</code>). IUPAC (R/Y/S/W/K/M) preserves which
+  two bases but most designers treat it as degenerate; <code>N</code> is the safe default.</li>
+<li><strong>Indels (v1 scope):</strong> a flank position with substantial indel evidence is
+  masked to <code>N</code> — we do <strong>not</strong> reconstruct the indel-shifted sequence (that
+  changes flank length / coordinate frame). Indel-aware consensus (à la kindel's
+  CIGAR reconciliation) is a deliberate follow-up. The count of indel-masked
+  positions is reported (no silent truncation).</li>
+</ul>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<p>The consensus changes the <em>sequence</em>, so it is a <strong>FlankSource</strong>, not a mask
+source (unlike gnomAD). It reuses the existing <code>FlankResult</code> shape:</p>
+<ul>
+<li><code>raw</code> = reference flanks (kept for comparison / the un-<code>Masked__</code> record);</li>
+<li><code>masked</code> = the <strong>patient consensus</strong> (hom-ALT corrected, het/low-cov <code>N</code>,
+  gnomAD-layered at low coverage).</li>
+</ul>
+<p>So the 2-records-per-target contract is unchanged — the <code>Masked__</code> record simply
+becomes the patient-specific assay template.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>core/consensus.py
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  consensus_base(column_stats, reference_base, policy) -&gt; base|&#39;N&#39;   # PURE, unit-tested
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  pileup_consensus(bam, chrom, start0, end0, ref_seq, policy)        # pysam pileup loop
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>BamConsensusSource(bam_path, policy)        # per-sample, lazy-opened + cached
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ConsensusFlankSource(reference, bam_source, gnomad=None, flank=...)  # FlankSource (small)
 </code></pre></div>
+<p>Split the pure per-column decision (<code>consensus_base</code>) from the pysam pileup
+iteration so the policy is testable without a BAM.</p>
+<h2 id="sample-bam-mapping">Sample → BAM mapping<a class="headerlink" href="#sample-bam-mapping" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>region(start, stop)</code> is <strong>1-based, inclusive</strong>; returned <code>pos</code> is 1-based.
-  Our masking interface uses 0-based half-open <code>[s0, e0)</code> → query <code>start = s0 + 1</code>,
-  <code>stop = e0</code>; returned <code>pos</code> values are used directly (they're what <code>mask_sequence</code>
-  expects).</li>
+<li><code>--bam SAMPLE.bam</code> — single sample (require a one-sample MAF, or combine with
+  <code>--samples</code>).</li>
+<li><code>--bam-map samples.tsv</code> — <code>sample&lt;TAB&gt;bam_path</code> for cohorts (explicit/auditable).</li>
+<li>A sample with no BAM → <strong>warn</strong>, fall back to reference + gnomAD (mode B) for
+  that sample (never silent).</li>
 </ul>
-<h2 id="schema-facts-that-matter-introspected">Schema facts that matter (introspected)<a class="headerlink" href="#schema-facts-that-matter-introspected" title="Permanent link">&para;</a></h2>
+<h2 id="output-granularity-the-data-model-change">Output granularity (the data-model change)<a class="headerlink" href="#output-granularity-the-data-model-change" title="Permanent link">&para;</a></h2>
+<p>BAM consensus is <strong>sample-specific</strong>, so dedup changes:</p>
 <ul>
-<li><code>Variant</code>: <code>pos, ref, alt, exome, genome, joint, rsids, flags, …</code>.</li>
-<li><code>exome</code>/<code>genome</code> are <code>VariantSequencingTypeData</code>: has <code>af</code> (Float), <code>ac</code>, <code>an</code>,
-  <code>populations</code>, <code>faf95</code>, <code>fafmax</code>. <strong><code>af</code> IS available at this level.</strong></li>
-<li><code>VariantPopulation</code>: <code>id, ac, an, homozygote_count, …</code> — <strong>no <code>af</code> field</strong>; the
-  per-population AF must be computed as <code>ac / an</code> (guard <code>an &gt; 0</code>).</li>
-<li><code>joint</code> (<code>VariantJointSequencingTypeData</code>) exists <strong>only in v4</strong> (combined
-  exome+genome); it has <code>ac/an/populations/fafmax</code> but <strong>no direct <code>af</code></strong> (compute
-  <code>ac/an</code>). For v2.1.1 <code>joint</code> is null.</li>
-<li>v4 uses <strong><code>fafmax</code></strong> for the filtering-AF max; there is <strong>no <code>grpmax</code></strong> field
-  (an early guess that the API corrected).</li>
+<li><strong>With any <code>--bam*</code>:</strong> dedup key = <code>(CHR_POS_REF_ALT, sample)</code> → one record per
+  (variant, sample); the <strong>sample returns to the header</strong>
+  (<code>&gt;{SAMPLE}__{GENE}__{HGVSp}__{HGVSc}__{CHR}_{POS}_{REF}_{ALT}</code>). Applied to all
+  records for a consistent granularity, even BAM-less samples (which get mode B).</li>
+<li><strong>Without <code>--bam*</code>:</strong> unchanged — dedup by <code>CHR_POS_REF_ALT</code>, no sample tag.</li>
 </ul>
-<h3 id="af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax">AF rule for masking (matches our VCF behaviour of max(AF, AF_grpmax))<a class="headerlink" href="#af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax" title="Permanent link">&para;</a></h3>
-<p>For each variant, SNPs only (<code>len(ref) == 1 and len(alt) == 1</code>):
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>af_overall = max of (genome.af, exome.af) ignoring None
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>af_grpmax  = max over (genome.populations + exome.populations) of ac/an, an&gt;0
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>af = max(af_overall, af_grpmax)
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>mask pos if af &gt;= af_threshold
+<h2 id="end-to-end-small-variants">End-to-end — small variants<a class="headerlink" href="#end-to-end-small-variants" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>for each (variant, sample):
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    bam = bam_for(sample)                     # --bam or --bam-map; may be None
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    raw    = reference flanks
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    masked = ConsensusFlankSource(reference, bam, gnomad).fetch(variant)
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>             # per-position policy + gnomAD layering at low coverage
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>emit (raw, masked); dedup key (CHR_POS_REF_ALT, sample); sample in header
 </code></pre></div>
-Verified on the real common SNP TP53 P72R (rs1042522, chr17:7579472 GRCh37):
-<code>exome.af = 0.668</code>, population-max <code>= 0.738</code> — correctly flagged as common.</p>
-<h2 id="limitations-the-important-part">Limitations (the important part)<a class="headerlink" href="#limitations-the-important-part" title="Permanent link">&para;</a></h2>
+<h2 id="end-to-end-fusions">End-to-end — fusions<a class="headerlink" href="#end-to-end-fusions" title="Permanent link">&para;</a></h2>
+<p>Each partner flank is an ordinary reference window (reads spanning the <em>junction</em>
+won't align — that's fusion evidence — but the partner flanks pile up normally).
+The consensus is built in <strong>genomic (plus-strand) space, then reverse-complemented</strong>
+— our existing trick: <code>revcomp</code> of a consensus segment is just the complement
+(real bases complement; <code>N</code>→<code>N</code>), so consensus-before-revcomp is correct.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>_segment(reference, bp, flank, *, donor, bam_source, gnomad):
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    window = genomic flank window
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    seq = pileup_consensus(bam, window, ref_seq, policy)   # patient bases + N
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    return revcomp(seq) if rc else seq
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>junction = partner1 + partner2 ; one record per (fusion, sample)
+</code></pre></div>
+<p>The breakpoint TSV's optional <code>sample</code> column drives <code>bam_for(sample)</code>.</p>
+<h2 id="cli-surface">CLI surface<a class="headerlink" href="#cli-surface" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vflank small run MAF -r REF -g hg19 \
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    --bam-map samples.tsv \            # or --bam single.bam
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    --bam-min-depth 20 --bam-het-fraction 0.25 \
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    --bam-consensus-fraction 0.9 --bam-min-baseq 20 --bam-min-mapq 20 \
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    --bam-het-char N --bam-lowcov gnomad \
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    --pop-source api                   # gnomAD fallback for low-coverage
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a># fusion: identical --bam* flags; uses the TSV sample column
+</code></pre></div>
+<h2 id="testing-validation">Testing &amp; validation<a class="headerlink" href="#testing-validation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Synthetic BAM fixtures</strong> (pysam can write SAM/BAM): a het at a known flank
+  position → <code>N</code>; a hom-ALT → patient base; a clean hom-REF → reference;
+  low-coverage → per <code>--bam-lowcov</code>; an indel → <code>N</code>. The pure <code>consensus_base</code>
+  gets exhaustive per-policy unit tests with no BAM.</li>
+<li><strong>Oracle:</strong> validate the position calls against <code>bcftools mpileup | call</code> and
+  <code>samtools consensus</code> on the same synthetic data (run manually / a <code>@live</code>-style
+  optional test).</li>
+</ul>
+<h2 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Indels</strong> — the genuinely hard part; v1 masks them (scoped, reported).</li>
+<li><strong>Build match</strong> — the BAM must be aligned to the same build as <code>--genome-build</code>
+  / the FASTA; mismatched coordinates give wrong pileups. Add a contig-length
+  sanity check against the BAM header.</li>
+<li><strong>Performance</strong> — per-window pileup is ~ms; cohort cost scales with
+  (variants × samples). Cache <code>(sample, window)</code>; lazy-open + cache BAM handles.</li>
+<li><strong><code>.bai</code> required</strong>; clear error if missing.</li>
+</ul>
+<h2 id="build-phases">Build phases<a class="headerlink" href="#build-phases" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Rate limit: 10 requests / IP / 60 s</strong> (gnomAD policy; README confirms IP-level
-   rate limiting in <code>rate-limiting.ts</code>). Exceeding it returns errors / blocks the IP.
-   This is the dominant constraint.</li>
-<li><strong>Per-region variant cap.</strong> A region with too many variants returns
-   <code>"This region has too many variants to display. Select a smaller region."</code>
-   Irrelevant for our ±200 bp windows; relevant if anyone tried whole-gene queries.</li>
-<li><strong>Not for bulk.</strong> gnomAD explicitly directs large/programmatic workloads to the
-   VCF/Hail-table downloads or the gnomAD Toolbox, not the API.</li>
-<li><strong>Reproducibility.</strong> Results are not pinned — gnomAD updates the served data;
-   network is required (no offline/HPC compute nodes). For a clinical ddPCR context,
-   record the <code>dataset</code> id in the run report for provenance.</li>
-<li><strong>Schema is "subject to change"</strong> (README) — pin the query and add a schema-shape
-   check / clear error if fields go missing.</li>
-<li><strong>Coverage gaps.</strong> In coding regions, <code>genome.af</code> is often <code>None</code> (exome-only
-   coverage); the <code>max-ignoring-None</code> rule handles this, but it means genome-only
-   masking would miss exonic SNPs — use both exome and genome.</li>
-</ol>
-<h3 id="rate-limit-math-why-source-choice-matters">Rate-limit math (why source choice matters)<a class="headerlink" href="#rate-limit-math-why-source-choice-matters" title="Permanent link">&para;</a></h3>
-<p>10 req/min, and our interface calls <code>get_positions</code> twice per variant (left + right
-flank). Mitigations bring this down:
-- <strong>One query per variant window:</strong> pad each region query to cover <em>both</em> flanks of
-  a variant (<code>[start-flank-1, end+flank]</code>) and cache as intervals, so the sibling
-  flank call is a cache hit → ~1 request/variant.
-- <strong>Region cache:</strong> identical/overlapping variants (e.g. our 20 identical TP53
-  rows) collapse to a single request.
-- Even so: ~10 <em>distinct</em> variant windows/min. ≤~50 distinct variants is comfortable;
-  hundreds means minutes of throttled waiting → prefer local VCF.</p>
-<h2 id="-pop-data-genomeexomeboth-across-both-sources"><code>--pop-data {genome,exome,both}</code> across both sources<a class="headerlink" href="#-pop-data-genomeexomeboth-across-both-sources" title="Permanent link">&para;</a></h2>
-<p><code>--pop-data</code> selects which gnomAD dataset(s) to consult; the masking rule is the
-same regardless of source.</p>
-<ul>
-<li><strong>API source:</strong> free — one region query returns both <code>genome{}</code> and <code>exome{}</code>;
-  <code>both</code> = <code>max(genome.af, exome.af, per-pop ac/an)</code>.</li>
-<li><strong>VCF source:</strong> maps to which file set is opened in <code>--pop-vcf-dir</code>:</li>
-<li><code>genome</code> → <code>gnomad.genomes.*</code> (the current behaviour / what the original tool used)</li>
-<li><code>exome</code>  → <code>gnomad.exomes.*</code></li>
-<li><code>both</code>   → open both per chromosome, mask the <strong>union</strong> of positions (a position
-    is masked if AF ≥ threshold in <em>either</em> cohort).</li>
-</ul>
-<p>gnomAD ships <strong>per-chromosome files for both genomes and exomes</strong>, both builds
-(verified): e.g. GRCh37 chr17 genomes 14.5 GB, exomes 3.9 GB (a 63 GB combined
-exome file also exists but we use per-chrom). So the VCF source can support all
-three — it just needs the corresponding files present.</p>
-<p>Asymmetry to respect: the API gets all three for free; the VCF source needs the
-files downloaded. <strong>If <code>--pop-data exome</code>/<code>both</code> is requested on the VCF source
-without the required files, raise a clear error — never silently fall back to
-genome-only.</strong> Today the package ships only genome patterns; adding exome
-patterns (per-chrom, both builds) + union logic is required to enable
-exome/both on the VCF source.</p>
-<p><code>both</code> combine = <strong>max AF across cohorts</strong> (conservative, primer-safe). The
-statistically pooled combine is gnomAD's <code>joint</code> dataset, which exists <strong>only for
-v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code> first.</p>
-<p>Filename patterns needed (split genome/exome):
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hg19 genome: gnomad.genomes.r2.1.1.sites.{chrom}.vcf.bgz
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>hg19 exome:  gnomad.exomes.r2.1.1.sites.{chrom}.vcf.bgz
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>hg38 genome: gnomad.genomes.v4.1.sites.chr{chrom}.vcf.bgz
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>hg38 exome:  gnomad.exomes.v4.1.sites.chr{chrom}.vcf.bgz
-</code></pre></div></p>
-<h2 id="proposed-design-implementation-pending">Proposed design (implementation pending)<a class="headerlink" href="#proposed-design-implementation-pending" title="Permanent link">&para;</a></h2>
-<ul>
-<li>New <code>core/popfreq_api.py::GnomadApiSource</code> implementing the <strong>same duck-typed
-  interface</strong> as <code>GnomadStore</code>: <code>get_positions(bare, start0, end0, af_threshold) -&gt; list[int]</code>.
-  Drops in behind <code>ReferenceFlankSource</code> with no core changes.</li>
-<li>CLI: <code>--pop-source {vcf,api}</code> (default <code>vcf</code>). <code>api</code> ignores <code>--pop-vcf-dir</code>.</li>
-<li>Build→(reference_genome, dataset) mapping as above; <code>--gnomad-dataset</code> override
-  for subsets (e.g. <code>gnomad_r2_1_non_cancer</code>).</li>
-<li>HTTP via <code>urllib.request</code>; 30 s timeout; <strong>client-side throttle ≤10/60 s</strong>
-  (token bucket); <strong>exponential backoff + retry</strong> on transient/429; raise
-  <code>PopFreqError</code> with a clear message on hard failure (no silent empty mask).</li>
-<li>Region-interval cache (pad to cover both flanks) to minimise requests.</li>
-<li>Record dataset id + "source=api" in the run report for provenance.</li>
-<li>Up-front guard: if the distinct-variant count is large, warn and suggest
-  <code>--pop-source vcf</code>.</li>
-</ul>
-<h2 id="test-plan">Test plan<a class="headerlink" href="#test-plan" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Unit (no network):</strong></li>
-<li><code>build_to_dataset(genome_build)</code> mapping.</li>
-<li>Response→positions parser: given saved JSON fixtures (real API responses for a
-    common-SNP region and a rare-only region), assert correct SNP/AF filtering,
-    <code>af = max(overall, ac/an grpmax)</code>, indels excluded, <code>None</code> AF handled.</li>
-<li>Coordinate conversion (<code>[s0,e0)</code> → <code>start=s0+1, stop=e0</code>).</li>
-<li>Throttle/backoff logic with a fake clock and a fake transport (no real HTTP).</li>
-<li>Error mapping: GraphQL <code>errors</code> array and HTTP failure → <code>PopFreqError</code>.</li>
-<li><strong>Fixtures:</strong> commit 2–3 small real JSON responses under <code>tests/fixtures/gnomad_api/</code>
-  (captured once; &lt;5 KB each) so tests are deterministic and offline.</li>
-<li><strong>Integration:</strong> the existing <code>ReferenceFlankSource</code> masking test, but with a
-  stub source object exposing <code>get_positions</code> — confirms the API source is
-  interchangeable with <code>GnomadStore</code> (no real network in CI).</li>
-<li><strong>Optional live smoke test:</strong> one test hitting the real API, marked
-  <code>@pytest.mark.live</code> and <strong>skipped by default</strong> (run manually); keeps CI offline
-  and polite to the shared resource.</li>
-</ul>
-<h2 id="docs-plan">Docs plan<a class="headerlink" href="#docs-plan" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>docs/DEVELOPER.md</code>: add <code>--pop-source api</code> to the CLI section and a "new
-  frequency source" note (it already documents the duck-typed interface).</li>
-<li><code>docs/ARCHITECTURE.md</code>: add the API source to the masking modes / popfreq seam.</li>
-<li><code>ddpcr-conventions</code> skill: add the AF rule (max of overall + per-pop ac/an) and
-  the API-vs-VCF tradeoff so future work reasons about it correctly.</li>
-<li><code>README.md</code>: one line under masking — "no-download option via the gnomAD API for
-  small cohorts."</li>
-<li>User-facing guidance everywhere: <strong>API = small/no-download; VCF = bulk/reproducible/HPC.</strong></li>
-</ul>
-<h2 id="resolved-decisions">Resolved decisions<a class="headerlink" href="#resolved-decisions" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Default genome build = <code>hg19</code> (GRCh37 / gnomAD v2.1.1).</strong> gnomAD v4 is
-   <strong>GRCh38-only</strong> — there is no v4 GRCh37. This deployment's data is <code>assembly19</code>
-   (hg19 ctDNA) and the existing tool is hg19, so hg19 is the right default. CLI
-   default (<code>small run</code>, <code>list-vcf</code>) changed hg38 → hg19; hg38 users pass <code>-g hg38</code>
-   and the build-mismatch guard catches a wrong choice.</li>
-<li><strong>Default population data = <code>genome</code></strong>, exposed as <code>--pop-data {genome,exome,both}</code>.
-   Flanks routinely fall in non-coding regions where <strong>exomes have no data</strong>;
-   genomes cover the whole genome uniformly; and this matches the existing
-   genomes-VCF behaviour. Verified on TP53 P72R (GRCh37): genome af=0.621 (AN 31k),
-   exome af=0.668 (AN 251k) — both agree it's common. Exome's larger N only helps
-   for <em>rare</em> coding variants near the threshold; <code>both</code> (union/max) is the safest
-   near exons.</li>
-<li><strong>AF within the chosen dataset:</strong> <code>af = max(seq.af, max(ac/an over populations))</code>,
-   SNPs only — mirrors the VCF source's max(AF, AF_grpmax).</li>
-<li><strong>Default <code>--pop-source = vcf</code></strong> (api opt-in). Both sources default to genome
-   for parity.</li>
-<li><strong>Fixed safe throttle</strong> (≤10 req/60 s + backoff); no <code>--api-rate</code> knob initially.</li>
+<li><code>core/consensus.py</code> — pure <code>consensus_base</code> policy + <code>pileup_consensus</code>, with
+   synthetic-BAM tests.</li>
+<li><code>BamConsensusSource</code> + <code>ConsensusFlankSource</code>; small-variant integration
+   (per-(variant,sample) dedup, sample→BAM mapping, header change).</li>
+<li>Fusion integration (consensus-before-revcomp in <code>_segment</code>).</li>
+<li>gnomAD layering for low coverage; docs.</li>
 </ol>
 
 
@@ -1471,7 +1597,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 18:35:38 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 13, 2026 20:59:37 UTC">June 13, 2026</span>
   </span>
 
     
@@ -1481,7 +1607,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 15:45:27 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 13, 2026 20:59:37 UTC">June 13, 2026</span>
   </span>
 
     
@@ -1516,7 +1642,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../ARCHITECTURE/" class="md-footer__link md-footer__link--prev" aria-label="Previous: vflank — Architecture &amp;amp; Roadmap">
+          <a href="../sv-vcf-input/" class="md-footer__link md-footer__link--prev" aria-label="Previous: SV + VCF input — design note (M4 / M4.6)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1526,20 +1652,20 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
                 Previous
               </span>
               <div class="md-ellipsis">
-                vflank — Architecture &amp; Roadmap
+                SV + VCF input — design note (M4 / M4.6)
               </div>
             </div>
           </a>
         
         
           
-          <a href="../sv-vcf-input/" class="md-footer__link md-footer__link--next" aria-label="Next: SV + VCF input — design note (M4 / M4.6)">
+          <a href="../../changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: Changelog">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                SV + VCF input — design note (M4 / M4.6)
+                Changelog
               </div>
             </div>
             <div class="md-footer__button md-icon">
