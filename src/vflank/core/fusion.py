@@ -50,7 +50,8 @@ class JunctionResult:
 
 
 def _segment(
-    reference, bp: Breakpoint, flank: int, *, donor: bool, gnomad=None, af_threshold: float = 0.001
+    reference, bp: Breakpoint, flank: int, *, donor: bool, gnomad=None,
+    af_threshold: float = 0.001, bam_source=None,
 ) -> tuple[str, str]:
     """Return ``(raw, masked)`` for one partner segment, oriented to the junction.
 
@@ -73,7 +74,14 @@ def _segment(
 
     raw = reference.fetch(bp.chrom, start0, end0).upper()
     masked = raw
-    if gnomad is not None:
+    if bam_source is not None:
+        # Patient consensus in genomic (plus-strand) space; revcomp below.
+        gnomad_pos = (
+            set(gnomad.get_positions(bp.chrom, start0, end0, af_threshold))
+            if gnomad is not None else set()
+        )
+        masked = bam_source.consensus(bp.chrom, start0, end0, raw, gnomad_pos)
+    elif gnomad is not None:
         snps = gnomad.get_positions(bp.chrom, start0, end0, af_threshold)
         masked = mask_sequence(raw, start0, snps)
     if rc:
@@ -82,19 +90,21 @@ def _segment(
 
 
 def build_junction(
-    reference, fusion: Fusion, flank: int, gnomad=None, af_threshold: float = 0.001
+    reference, fusion: Fusion, flank: int, gnomad=None, af_threshold: float = 0.001,
+    bam_source=None,
 ) -> JunctionResult:
     """Construct the fusion junction sequence (partner1 + partner2).
 
     ``flank`` is the bases taken from each partner, so the junction is up to
     ``2*flank`` bp (shorter if a partner runs off a contig end). The probe is
-    designed to span ``junction_index``. When ``gnomad`` is given, common SNPs in
-    the partner flanks are masked to 'N' in ``masked_sequence``.
+    designed to span ``junction_index``. ``masked_sequence`` is the gnomAD-masked
+    junction, or — when ``bam_source`` is given — the per-sample patient consensus
+    (built in genomic space before reverse-complement).
     """
     raw1, masked1 = _segment(reference, fusion.bp1, flank, donor=True,
-                             gnomad=gnomad, af_threshold=af_threshold)
+                             gnomad=gnomad, af_threshold=af_threshold, bam_source=bam_source)
     raw2, masked2 = _segment(reference, fusion.bp2, flank, donor=False,
-                             gnomad=gnomad, af_threshold=af_threshold)
+                             gnomad=gnomad, af_threshold=af_threshold, bam_source=bam_source)
     sequence = raw1 + raw2
     masked_sequence = masked1 + masked2
     return JunctionResult(

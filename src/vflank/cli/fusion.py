@@ -14,17 +14,20 @@ import typer
 from rich.table import Table
 
 from ..core.chrom import normalise_chrom
+from ..core.consensus import BamConsensusSource
 from ..core.fusion import build_junction
 from ..core.popfreq_api import dataset_for_build
-from ..errors import VflankError
+from ..errors import ConsensusError, VflankError
 from ..io import breakpoints as bp_io
 from ..io import fasta as fasta_io
 from ..io.breakpoints import SvColumns
 from ..io.reference import ReferenceFasta
-from ..logging import console
+from ..logging import console, get_logger
+from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
 
 app = typer.Typer(no_args_is_help=True)
+log = get_logger()
 
 
 @app.command()
@@ -56,6 +59,20 @@ def run(
     output: Path = typer.Option(
         Path("fusion_junctions.fasta"), "--output", "-o", help="Output FASTA file."
     ),
+    bam: Path | None = typer.Option(
+        None, "--bam", help="Single-sample BAM for patient consensus of the junction flanks."
+    ),
+    bam_map: Path | None = typer.Option(
+        None, "--bam-map", help="TSV (sample<TAB>bam_path) for per-fusion consensus."
+    ),
+    bam_min_depth: int = typer.Option(20, "--bam-min-depth"),
+    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract"),
+    bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
+    bam_lowcov: str = typer.Option(
+        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad."
+    ),
+    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
+    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
     chr1_col: str = typer.Option(SvColumns.chr1, "--chr1-col"),
     pos1_col: str = typer.Option(SvColumns.pos1, "--pos1-col"),
     str1_col: str = typer.Option(SvColumns.str1, "--str1-col"),
@@ -70,15 +87,19 @@ def run(
         chr1_col, pos1_col, str1_col, chr2_col, pos2_col, str2_col, name_col, sample_col
     )
     try:
+        policy = build_consensus_policy(
+            bam_min_depth, bam_call_fract, bam_het_char, bam_lowcov, bam_min_baseq, bam_min_mapq
+        )
+        bam_resolver, _n_bam = load_bam_resolver(bam, bam_map)
         _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
-             pop_source, af_threshold, output, cols)
+             pop_source, af_threshold, output, cols, bam_resolver, policy)
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
         raise typer.Exit(1) from exc
 
 
 def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
-         pop_source, af_threshold, output, cols: SvColumns):
+         pop_source, af_threshold, output, cols: SvColumns, bam_resolver, policy):
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
     if genome_build not in ("hg19", "hg38"):
@@ -110,7 +131,38 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
         console.print(f"[bold]Masking:[/bold] gnomAD API  [dim]({pop_data}, {dataset})[/dim]")
     elif gnomad is not None:
         console.print(f"[bold]Masking:[/bold] {pop_vcf_dir}  [dim](pop-data={pop_data})[/dim]")
+
+    # --- BAM consensus (per-fusion patient sequence) ---
+    bam_mode = bam_resolver is not None
+    bam_cache: dict[str, object] = {}   # sample -> BamConsensusSource | None
+    bam_warned: set[str] = set()
+    n_consensus = 0
+    if bam_mode:
+        console.print(
+            f"[bold]BAM consensus:[/bold] on  [dim](min-depth={policy.min_depth}, "
+            f"het={policy.het_char}, low-cov={policy.lowcov})[/dim]"
+        )
     console.print(f"[bold]Flank:[/bold] {flank} bp/partner (junction ≤ {2 * flank} bp)\n")
+
+    def _bam_for(sample: str):
+        if not bam_mode or not sample:
+            return None
+        if sample in bam_cache:
+            return bam_cache[sample]
+        path = bam_resolver(sample)
+        src = None
+        if path is not None:
+            try:
+                src = BamConsensusSource(path, policy)
+            except ConsensusError as exc:
+                if sample not in bam_warned:
+                    log.warning("BAM unusable for %s (%s) — gnomAD masking only", sample, exc)
+                    bam_warned.add(sample)
+        elif sample not in bam_warned:
+            log.warning("No BAM for sample %s — gnomAD masking only", sample)
+            bam_warned.add(sample)
+        bam_cache[sample] = src
+        return src
 
     records: list[str] = []
     skipped = 0
@@ -124,12 +176,18 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
             skip_reasons.append(f"row {row_idx} — {reason}")
             skipped += 1
             continue
+        bam_source = _bam_for(fusion.sample)
         try:
-            jr = build_junction(reference, fusion, flank, gnomad=gnomad, af_threshold=af_threshold)
+            jr = build_junction(
+                reference, fusion, flank, gnomad=gnomad,
+                af_threshold=af_threshold, bam_source=bam_source,
+            )
         except Exception as exc:  # noqa: BLE001
             skip_reasons.append(f"row {row_idx} {fusion.name} — junction error: {exc}")
             skipped += 1
             continue
+        if bam_source is not None:
+            n_consensus += 1
 
         label = fasta_io.safe_header(fusion.name or "fusion")
         bp = f"{fusion.bp1.chrom}_{fusion.bp1.pos}_{fusion.bp1.strand}__" \
@@ -151,6 +209,9 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
     reference.close()
     if gnomad is not None:
         gnomad.close()
+    for src in bam_cache.values():
+        if src is not None:
+            src.close()
     fasta_io.write_fasta(output, records)
 
     console.rule("[bold green]Results[/bold green]")
@@ -172,8 +233,10 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
             console.print(f"  • {reason}")
 
     mask_line = f"[bold]Bases masked:[/bold] {n_masked_total:>6,}\n" if n_masked_total else ""
+    consensus_line = f"[bold]BAM consensus:[/bold] {n_consensus:>6,}\n" if bam_mode else ""
     console.print(
         f"\n[bold]Fusions:[/bold]   {len(df):>6,}\n"
+        + consensus_line +
         f"[bold]Records:[/bold]   {len(records):>6,} [dim](raw + masked per fusion)[/dim]\n"
         f"[bold]Skipped:[/bold]   {skipped:>6,}\n"
         + mask_line +
