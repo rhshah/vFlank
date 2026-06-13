@@ -18,20 +18,23 @@ from rich.progress import (
 from rich.table import Table
 
 from ..core.chrom import detect_series_chr_style, normalise_chrom
+from ..core.consensus import BamConsensusSource, ConsensusFlankSource
 from ..core.flanks import ReferenceFlankSource
 from ..core.popfreq import build_chrom_vcf_map, kinds_for
 from ..core.popfreq_api import dataset_for_build
 from ..core.skips import categorize_skip
-from ..errors import VflankError
+from ..errors import ConsensusError, VflankError
 from ..io import fasta as fasta_io
 from ..io import maf as maf_io
 from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
 from ..io.reference import ReferenceFasta
-from ..logging import console
+from ..logging import console, get_logger
+from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
 
 app = typer.Typer(no_args_is_help=True)
+log = get_logger()
 
 
 def _load_sample_filter(
@@ -113,20 +116,41 @@ def run(
         True, "--dedup/--no-dedup",
         help="Emit one record per unique variant (CHR_POS_REF_ALT), collapsing samples.",
     ),
+    bam: Path | None = typer.Option(
+        None, "--bam", help="Single-sample BAM for patient consensus (modes C/D)."
+    ),
+    bam_map: Path | None = typer.Option(
+        None, "--bam-map",
+        help="TSV (Tumor_Sample_Barcode<TAB>bam_path) for cohort consensus.",
+    ),
+    bam_min_depth: int = typer.Option(20, "--bam-min-depth", help="Min depth to trust a base."),
+    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract", help="Fraction to call a base."),
+    bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
+    bam_lowcov: str = typer.Option(
+        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad."
+    ),
+    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
+    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
 ):
     """Extract flanking sequences for every variant in a MAF and write a FASTA.
 
-    Each variant yields a raw record and a Masked record (common population SNPs
-    with AF >= --af-threshold replaced by 'N'). Chromosome notation is
+    Each variant yields a raw record and a Masked record. Common population SNPs
+    (gnomAD, AF >= --af-threshold) are masked; with --bam/--bam-map the Masked
+    record is the per-sample patient consensus instead (one record per
+    (variant, sample); sample is added to the header). Chromosome notation is
     auto-detected from the FASTA and VCFs.
     """
     try:
+        policy = build_consensus_policy(
+            bam_min_depth, bam_call_fract, bam_het_char, bam_lowcov, bam_min_baseq, bam_min_mapq
+        )
+        bam_resolver, n_bam = load_bam_resolver(bam, bam_map)
         _run(
             maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             pop_data, pop_source, output, report, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
-            uppercase, dedup,
+            uppercase, dedup, bam_resolver, n_bam, policy,
         )
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
@@ -135,7 +159,8 @@ def run(
 
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
          pop_data, pop_source, output, report, samples, samples_file,
-         cols: MafColumns, uppercase: bool, dedup: bool):
+         cols: MafColumns, uppercase: bool, dedup: bool,
+         bam_resolver, n_bam, policy):
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
 
@@ -210,9 +235,55 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         console.print(
             "[yellow]⚠ No masking source (--pop-source vcf without --pop-vcf-dir).[/yellow]"
         )
-    console.print(f"[bold]Flank:[/bold] ±{flank} bp\n")
+    console.print(f"[bold]Flank:[/bold] ±{flank} bp")
 
-    source = ReferenceFlankSource(reference, gnomad, flank=flank, af_threshold=af_threshold)
+    ref_source = ReferenceFlankSource(reference, gnomad, flank=flank, af_threshold=af_threshold)
+
+    # --- BAM consensus mode (per-sample patient sequence) ---
+    bam_mode = bam_resolver is not None
+    # `--bam-lowcov gnomad` needs a population source; with none, fall back to the
+    # safe `n` (don't trust an unconfirmed base where the BAM is blind).
+    if bam_mode and gnomad is None and policy.lowcov == "gnomad":
+        policy.lowcov = "n"
+    consensus_cache: dict[str, object] = {}   # sample -> ConsensusFlankSource (or ref fallback)
+    bam_warned: set[str] = set()
+    n_consensus = 0
+    if bam_mode:
+        scope = "single BAM (all samples)" if n_bam == -1 else f"{n_bam} sample(s) mapped"
+        console.print(
+            f"[bold]BAM consensus:[/bold] {scope}  [dim](min-depth={policy.min_depth}, "
+            f"het={policy.het_char}, low-cov={policy.lowcov})[/dim]"
+        )
+    console.print()
+
+    def _source_for(variant):
+        """Pick the flank source for a variant (consensus per-sample, or reference)."""
+        if not bam_mode:
+            return ref_source, False
+        sample = variant.sample
+        if sample in consensus_cache:
+            cached = consensus_cache[sample]
+            return cached, not isinstance(cached, ReferenceFlankSource)
+        bam_path = bam_resolver(sample)
+        if bam_path is None:
+            if sample not in bam_warned:
+                log.warning("No BAM for sample %s — using reference + gnomAD masking", sample)
+                bam_warned.add(sample)
+            consensus_cache[sample] = ref_source
+            return ref_source, False
+        try:
+            src = ConsensusFlankSource(
+                reference, BamConsensusSource(bam_path, policy), gnomad,
+                flank=flank, af_threshold=af_threshold,
+            )
+        except ConsensusError as exc:
+            if sample not in bam_warned:
+                log.warning("BAM unusable for %s (%s) — reference + gnomAD", sample, exc)
+                bam_warned.add(sample)
+            consensus_cache[sample] = ref_source
+            return ref_source, False
+        consensus_cache[sample] = src
+        return src, True
 
     # --- Process variants ---
     records: list[str] = []
@@ -240,17 +311,20 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 skipped += 1
                 continue
 
-            # Collapse the same variant seen across multiple samples: the flank
-            # and mask are sample-independent here, so one record per unique
-            # CHR_POS_REF_ALT. (Consensus modes C/D will key on variant+sample.)
+            # Dedup: by CHR_POS_REF_ALT (sample-independent reference/gnomAD
+            # masking). With a BAM the consensus is patient-specific, so the key
+            # also includes the sample -> one record per (variant, sample).
             if dedup:
                 key = (variant.chrom, variant.start, variant.end,
                        variant.ref.upper(), variant.alt.upper())
+                if bam_mode:
+                    key = (*key, variant.sample)
                 if key in seen_variants:
                     n_duplicate += 1
                     continue
                 seen_variants.add(key)
 
+            source, used_consensus = _source_for(variant)
             try:
                 fr = source.fetch(variant)
             except Exception as exc:  # noqa: BLE001
@@ -280,8 +354,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 fr = fr.upper()
                 ref, alt = ref.upper(), alt.upper()
 
+            if used_consensus:
+                n_consensus += 1
             n_masked_total += fr.n_masked
-            records.extend(fasta_io.format_records(variant, fr, ref, alt))
+            sample_tag = variant.sample if bam_mode else None
+            records.extend(fasta_io.format_records(variant, fr, ref, alt, sample=sample_tag))
             summary_rows.append({
                 "Sample": variant.sample[:32], "Gene": variant.gene,
                 "Chrom": variant.raw_chrom, "Start": variant.start, "End": variant.end,
@@ -294,6 +371,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
     if gnomad is not None:
         gnomad.close()
+    for src in consensus_cache.values():
+        if hasattr(src, "bam"):
+            src.bam.close()
 
     fasta_io.write_fasta(output, records)
 
@@ -348,11 +428,15 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]Dup. collapsed:[/bold]   {n_duplicate:>6,} [dim](other samples)[/dim]\n"
         if n_duplicate else ""
     )
+    consensus_line = (
+        f"[bold]BAM consensus:[/bold]    {n_consensus:>6,} [dim](patient-specific)[/dim]\n"
+        if bam_mode else ""
+    )
     console.print(
         f"\n[bold]Total in MAF:[/bold]     {n_total:>6,}\n"
         f"[bold]Processed:[/bold]        {len(summary_rows):>6,}\n"
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
-        + dup_line + truncated_line +
+        + dup_line + truncated_line + consensus_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
         + api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
@@ -374,6 +458,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         }
         if api_requests is not None:
             stats["api_requests"] = api_requests
+        if bam_mode:
+            stats["bam_consensus_records"] = n_consensus
         report_io.write_report(report, summary_rows, stats, dict(skip_breakdown))
         console.print(f"[bold]Report:[/bold] [cyan]{report.resolve()}[/cyan]")
 

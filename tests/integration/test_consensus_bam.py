@@ -120,3 +120,58 @@ def test_consensus_flank_source(tmp_path):
     # everything else equals the reference flank (raw)
     assert fr.masked_left[:5] + fr.masked_left[6:] == fr.left[:5] + fr.left[6:]
     ref.close()
+
+
+def test_small_run_with_bam_consensus(tmp_path):
+    from typer.testing import CliRunner
+
+    from vflank.cli.app import app
+
+    ref_seq = "".join("ACGT"[i % 4] for i in range(100))
+    fasta = tmp_path / "ref.fasta"
+    fasta.write_text(f">1\n{ref_seq}\n")
+    pysam.faidx(str(fasta))
+
+    rs, rl, nr = 25, 40, 24
+    het_g0 = 44   # genomic 0-based -> het in the left flank
+    bam = tmp_path / "S1.bam"
+    header = {"HD": {"VN": "1.6"}, "SQ": [{"SN": "1", "LN": 100}]}
+    with pysam.AlignmentFile(str(bam), "wb", header=header) as out:
+        for i in range(nr):
+            seq = list(ref_seq[rs:rs + rl])
+            if i >= nr // 2:
+                seq[het_g0 - rs] = "G"
+            a = pysam.AlignedSegment()
+            a.query_name = f"r{i}"
+            a.query_sequence = "".join(seq)
+            a.flag = 0
+            a.reference_id = 0
+            a.reference_start = rs
+            a.mapping_quality = 60
+            a.cigartuples = [(0, rl)]
+            a.query_qualities = pysam.qualitystring_to_array("I" * rl)
+            out.write(a)
+    pysam.index(str(bam))
+
+    header_cols = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    maf = tmp_path / "v.maf"
+    maf.write_text(header_cols + "\n" + "\t".join(["GENE", "1", "50", "50", "A", "T", "S1"]) + "\n")
+    bammap = tmp_path / "map.tsv"
+    bammap.write_text(f"S1\t{bam}\n")
+    out_fa = tmp_path / "out.fasta"
+
+    result = CliRunner().invoke(app, [
+        "small", "run", str(maf), "-r", str(fasta), "-g", "hg38",
+        "--bam-map", str(bammap), "-f", "10", "--output", str(out_fa),
+    ])
+    assert result.exit_code == 0, result.output
+    lines = out_fa.read_text().splitlines()
+    assert len(lines) == 4
+    assert lines[0].startswith(">S1__GENE")            # sample back in the header
+    assert lines[2].startswith(">Masked__S1__GENE")
+    masked_left = lines[3].split("[", 1)[0]
+    assert "N" in masked_left                          # het in left flank -> N in consensus
+    assert "BAM consensus" in result.output
