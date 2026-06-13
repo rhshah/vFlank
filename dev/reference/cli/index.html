@@ -1119,8 +1119,10 @@ $ vflank small [OPTIONS] COMMAND [ARGS]...</code></p>
 </ul>
 <h3 id="vflank-small-run"><code>vflank small run</code><a class="headerlink" href="#vflank-small-run" title="Permanent link">&para;</a></h3>
 <p>Extract flanking sequences for every variant in a MAF and write a FASTA.</p>
-<p>Each variant yields a raw record and a Masked record (common population SNPs
-with AF &gt;= --af-threshold replaced by 'N'). Chromosome notation is
+<p>Each variant yields a raw record and a Masked record. Common population SNPs
+(gnomAD, AF &gt;= --af-threshold) are masked; with --bam/--bam-map the Masked
+record is the per-sample patient consensus instead (one record per
+(variant, sample); sample is added to the header). Chromosome notation is
 auto-detected from the FASTA and VCFs.</p>
 <p><strong>Usage</strong>:</p>
 <p><code>console
@@ -1153,6 +1155,14 @@ $ vflank small run [OPTIONS] MAF_FILE</code></p>
 <li><code>--sample-col TEXT</code>: [default: Tumor_Sample_Barcode]</li>
 <li><code>--uppercase / --no-uppercase</code>: Uppercase flanking sequences.  [default: uppercase]</li>
 <li><code>--dedup / --no-dedup</code>: Emit one record per unique variant (CHR_POS_REF_ALT), collapsing samples.  [default: dedup]</li>
+<li><code>--bam PATH</code>: Single-sample BAM for patient consensus (modes C/D).</li>
+<li><code>--bam-map PATH</code>: TSV (Tumor_Sample_Barcode<TAB>bam_path) for cohort consensus.</li>
+<li><code>--bam-min-depth INTEGER</code>: Min depth to trust a base.  [default: 20]</li>
+<li><code>--bam-call-fract FLOAT</code>: Fraction to call a base.  [default: 0.9]</li>
+<li><code>--bam-het-char TEXT</code>: Het output: N or iupac.  [default: N]</li>
+<li><code>--bam-lowcov TEXT</code>: Below --bam-min-depth: n (mask) | reference | gnomad (default: REF + gnomAD masking).  [default: gnomad]</li>
+<li><code>--bam-min-baseq INTEGER</code>: [default: 20]</li>
+<li><code>--bam-min-mapq INTEGER</code>: [default: 20]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h3 id="vflank-small-inspect"><code>vflank small inspect</code><a class="headerlink" href="#vflank-small-inspect" title="Permanent link">&para;</a></h3>
