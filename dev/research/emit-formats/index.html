@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -1531,10 +1531,15 @@
 
 
 <h1 id="research-plan-designer-native-emit-formats-olivar-primer3">Research &amp; plan — designer-native emit formats (Olivar / Primer3)<a class="headerlink" href="#research-plan-designer-native-emit-formats-olivar-primer3" title="Permanent link">¶</a></h1>
-<p>Status: <strong>design / not yet implemented.</strong> This is milestone <strong>M4.5-emit</strong> — the
-half of the consensus milestone that did not ship in 0.2.0. It is the feature
-that makes vflank a <em>pipeline front-end</em> rather than a <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> generator: turning a
-masked target into the exact input two downstream designers expect.</p>
+<p>Status: <strong>Primer3 emit implemented</strong> (<code>--emit-primer3</code>, Unreleased);
+<strong>Olivar emit still planned.</strong> This is milestone <strong>M4.5-emit</strong> — the half of the
+consensus milestone that did not ship in 0.2.0. It is the feature that makes
+vflank a <em>pipeline front-end</em> rather than a <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> generator: turning a masked
+target into the exact input two downstream designers expect.</p>
+<p>The first phase landed as a direct emitter (<code>io/emit_primer3.py</code>) that reads the
+existing <code>FlankResult</code> / <code>JunctionResult</code> rather than a separate <code>EmitRecord</code>
+refactor — the <code>EmitRecord</code> model below remains the target once the Olivar
+emitter (which needs the same masked-coordinate stream) is added.</p>
 <h2 id="why-this-is-the-priority">Why this is the priority<a class="headerlink" href="#why-this-is-the-priority" title="Permanent link">¶</a></h2>
 <p>Per the project scope (CLAUDE.md): vflank is <strong>not</strong> a primer designer; it must
 "add <em>emit formats</em> that feed those tools." Today the only output is raw +
@@ -1627,10 +1632,12 @@ accepted alias for one release.</p>
 Primer3 (Olivar is amplicon-tiling, not junction probes). Each emitter is a
 thin <code>io/</code> writer over the shared <code>EmitRecord</code> stream.</p>
 <h2 id="provenance">Provenance<a class="headerlink" href="#provenance" title="Permanent link">¶</a></h2>
-<p>Every emitted file gets a header comment with the <strong>vflank version</strong>, the
-parameter set, and the genome build — the same provenance now printed in the run
-report (see <a href="#">the version-in-report work</a>; M-version). A designer artifact you
-find six months later must say which vflank built it.</p>
+<p>Boulder-IO has <strong>no comment syntax</strong>, so the Primer3 file can't carry an inline
+provenance header — the <strong>vflank version</strong> is instead recorded in the run report
+(<code># vflank_version</code>) and the parameter echo. Olivar's CSV/BED <em>can</em> take a
+comment header, so its emitter will stamp version + parameters directly. Either
+way, a designer artifact you find six months later must be traceable to the
+vflank run that built it.</p>
 <h2 id="module-placement">Module placement<a class="headerlink" href="#module-placement" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>core/   produces EmitRecord (pure; no tool knowledge)
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>io/emit_fasta.py     raw/masked FASTA  (refactor of today's fasta.py renderer)
@@ -1651,11 +1658,12 @@ find six months later must say which vflank built it.</p>
 </ul>
 <h2 id="phasing">Phasing<a class="headerlink" href="#phasing" title="Permanent link">¶</a></h2>
 <ol>
-<li><strong><code>EmitRecord</code> + refactor <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr></strong> onto it (no behaviour change; <code>--records</code>
-   lands here).</li>
-<li><strong>Primer3 emitter</strong> (the simpler, fully-specified format) for small + fusion.</li>
+<li>✅ <strong>Primer3 emitter</strong> (<code>--emit-primer3</code>) for small + fusion — done, reading
+   the existing flank/junction results directly.</li>
+<li><strong><code>EmitRecord</code> + refactor <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr></strong> onto it (<code>--records {both,masked,raw}</code>
+   lands here), so Olivar and <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> share the masked-coordinate stream.</li>
 <li><strong>Olivar emitter</strong> after confirming its input schema against a pinned version.</li>
-<li><strong>Provenance headers + docs + the Olivar/Primer3 round-trip <abbr title="Continuous Integration">CI</abbr> marker.</strong></li>
+<li><strong>Olivar/Primer3 round-trip <abbr title="Continuous Integration">CI</abbr> marker</strong> (run the real tools on emitted files).</li>
 </ol>
 <h2 id="risks-open-questions">Risks / open questions<a class="headerlink" href="#risks-open-questions" title="Permanent link">¶</a></h2>
 <ul>
@@ -1693,7 +1701,7 @@ find six months later must say which vflank built it.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 04:28:20 UTC"><span class="timeago" datetime="2026-06-14T04:28:20+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 04:28:20 UTC">2026-06-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 04:56:18 UTC"><span class="timeago" datetime="2026-06-14T04:56:18+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 04:56:18 UTC">2026-06-14</span>
   </span>
 
     

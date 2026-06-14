@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -1256,6 +1256,7 @@ $ vflank small run [OPTIONS] MAF_FILE</code></p>
 <li><code>--pop-source TEXT</code>: Masking backend: vcf (local <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> VCFs) or api (<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL, no download).  [default: vcf]</li>
 <li><code>-o, --output PATH</code>: Output <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> file.  [default: flanking_sequences.fasta]</li>
 <li><code>--report PATH</code>: Write a per-variant TSV run report (stats + table) to this path.</li>
+<li><code>--emit-primer3 PATH</code>: Also write a Primer3 Boulder-IO input file (one record per variant).</li>
 <li><code>-s, --samples TEXT</code>: Comma-separated Tumor_Sample_Barcode IDs to include.</li>
 <li><code>--samples-file PATH</code>: File of sample IDs, one per line (# comments allowed).</li>
 <li><code>--chrom-col TEXT</code>: [default: Chromosome]</li>
@@ -1341,6 +1342,7 @@ $ vflank fusion run [OPTIONS] SV_FILE</code></p>
 <li><code>--pop-source TEXT</code>: Masking backend: vcf or api (no download).  [default: vcf]</li>
 <li><code>--af-threshold FLOAT RANGE</code>: Min population <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> to mask a <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr>.  [default: 0.001; 0.0&lt;=x&lt;=1.0]</li>
 <li><code>-o, --output PATH</code>: Output <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> file.  [default: fusion_junctions.fasta]</li>
+<li><code>--emit-primer3 PATH</code>: Also write a Primer3 Boulder-IO input file (one record per junction).</li>
 <li><code>--bam PATH</code>: Single-sample <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> for patient consensus of the junction flanks.</li>
 <li><code>--bam-map PATH</code>: TSV (sample<tab>bam_path) for per-fusion consensus.</tab></li>
 <li><code>--bam-min-depth INTEGER</code>: [default: 20]</li>

@@ -29,7 +29,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
 <body data-md-color-accent="custom" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
@@ -516,6 +516,19 @@
       
     </span>
 </a>
+<nav aria-label="Unreleased" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#added">
+<span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#020-2026-06-14">
@@ -528,7 +541,7 @@
 <nav aria-label="0.2.0 - 2026-06-14" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#added">
+<a class="md-nav__link" href="#added_1">
 <span class="md-ellipsis">
       
         Added
@@ -559,7 +572,7 @@
 <nav aria-label="0.1.0 - 2026-06-12" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#added_1">
+<a class="md-nav__link" href="#added_2">
 <span class="md-ellipsis">
       
         Added
@@ -598,6 +611,19 @@
       
     </span>
 </a>
+<nav aria-label="Unreleased" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#added">
+<span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#020-2026-06-14">
@@ -610,7 +636,7 @@
 <nav aria-label="0.2.0 - 2026-06-14" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#added">
+<a class="md-nav__link" href="#added_1">
 <span class="md-ellipsis">
       
         Added
@@ -641,7 +667,7 @@
 <nav aria-label="0.1.0 - 2026-06-12" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#added_1">
+<a class="md-nav__link" href="#added_2">
 <span class="md-ellipsis">
       
         Added
@@ -682,8 +708,18 @@
 <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project
 adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="unreleased"><a href="https://github.com/rhshah/vFlank/compare/v0.2.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">¶</a></h2>
-<h2 id="020-2026-06-14"><a href="https://github.com/rhshah/vFlank/compare/v0.1.0...v0.2.0">0.2.0</a> - 2026-06-14<a class="headerlink" href="#020-2026-06-14" title="Permanent link">¶</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Primer3 emit</strong> (<code>--emit-primer3 FILE</code>) for both <code>small</code> and <code>fusion</code>: writes
+  Boulder-IO records (<code>SEQUENCE_ID</code>/<code>TEMPLATE</code>/<code>TARGET</code>, and
+  <code>SEQUENCE_EXCLUDED_REGION</code> from the masked positions) so a probe/primer design
+  avoids common SNPs and patient-ambiguous sites. The template uses the
+  masked/consensus call, filling <code>N</code> sites with the reference base and excluding
+  them — a hard constraint, unlike a degenerate base. The <code>version</code> is recorded
+  in the run report and parameter echo.</li>
+</ul>
+<h2 id="020-2026-06-14"><a href="https://github.com/rhshah/vFlank/compare/v0.1.0...v0.2.0">0.2.0</a> - 2026-06-14<a class="headerlink" href="#020-2026-06-14" title="Permanent link">¶</a></h2>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">¶</a></h3>
 <ul>
 <li><strong>Patient consensus from a <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr></strong> (<code>--bam</code> / <code>--bam-map</code>) for both <code>small</code> and
   <code>fusion</code>: the masked record is the per-sample consensus (<abbr title="homozygous — two identical alleles at a locus">hom</abbr>-<abbr title="alternate (variant) allele">ALT</abbr> corrected,
@@ -715,7 +751,7 @@ adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>
   bumped off the deprecated Node-20 runtime (<code>checkout@v5</code>, <code>setup-python@v6</code>).</li>
 </ul>
 <h2 id="010-2026-06-12"><a href="https://github.com/rhshah/vFlank/releases/tag/v0.1.0">0.1.0</a> - 2026-06-12<a class="headerlink" href="#010-2026-06-12" title="Permanent link">¶</a></h2>
-<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">¶</a></h3>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">¶</a></h3>
 <ul>
 <li>Small-variant flank extraction from <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> (<code>vflank small run</code>), with <code>inspect</code>
   and <code>list-vcf</code> helpers.</li>

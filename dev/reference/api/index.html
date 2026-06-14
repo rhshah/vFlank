@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -1561,6 +1561,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#vflank.io.fasta.record_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        record_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#vflank.io.fasta.format_records" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2847,6 +2858,17 @@
     <span class="md-ellipsis">
       
         safe_header
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vflank.io.fasta.record_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        record_id
       
     </span>
   </a>
@@ -6335,6 +6357,50 @@ than letting pysam raise a confusing KeyError for every variant.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="vflank.io.fasta.record_id" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">record_id</span>
+
+
+<a href="#vflank.io.fasta.record_id" class="headerlink" title="Permanent link">¶</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">record_id</span><span class="p">(</span><span class="n">variant</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The shared record key: <code>[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}</code>.</p>
+<p>Used for both <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> headers and Primer3 <code>SEQUENCE_ID</code> so records cross-reference.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/vflank/io/fasta.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">def</span><span class="w"> </span><span class="nf">record_id</span><span class="p">(</span><span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="sd">"""The shared record key: ``[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}``.</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    Used for both FASTA headers and Primer3 ``SEQUENCE_ID`` so records cross-reference.</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    """</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">variant</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">variant</span><span class="o">.</span><span class="n">gene</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">protein</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">cdna</span><span class="p">,</span> <span class="n">key</span><span class="p">]</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="k">if</span> <span class="n">sample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="n">fields</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="k">return</span> <span class="s2">"__"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">safe_header</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="vflank.io.fasta.format_records" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">format_records</span>
 
@@ -6359,19 +6425,7 @@ Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}</em><em alt="ALT">{<abbr t
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/fasta.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-33">33</a></span>
 <span class="normal"><a href="#__codelineno-0-34">34</a></span>
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
@@ -6381,29 +6435,33 @@ Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}</em><em alt="ALT">{<abbr t
 <span class="normal"><a href="#__codelineno-0-40">40</a></span>
 <span class="normal"><a href="#__codelineno-0-41">41</a></span>
 <span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">def</span><span class="w"> </span><span class="nf">format_records</span><span class="p">(</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">,</span> <span class="n">flanks</span><span class="p">:</span> <span class="n">FlankResult</span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">    </span><span class="sd">"""Two FASTA records per variant: raw and masked.</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    Keyed on the variant identity (CHR_POS_REF_ALT). When ``sample`` is given</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    (BAM-consensus mode, where the sequence is patient-specific), the sample is</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    prefixed so per-(variant, sample) records stay distinct:</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    &gt;[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    {left}[REF/ALT]{right}</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    &gt;Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    {masked_left}[REF/ALT]{masked_right}</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    """</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">variant</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">"</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">variant</span><span class="o">.</span><span class="n">gene</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">protein</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">cdna</span><span class="p">,</span> <span class="n">key</span><span class="p">]</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="k">if</span> <span class="n">sample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="n">fields</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">base</span> <span class="o">=</span> <span class="s2">"__"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">safe_header</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">)</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="k">return</span> <span class="p">[</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="sa">f</span><span class="s2">"&gt;</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">left</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">right</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="sa">f</span><span class="s2">"&gt;Masked__</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">masked_left</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">masked_right</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="p">]</span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="k">def</span><span class="w"> </span><span class="nf">format_records</span><span class="p">(</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">,</span> <span class="n">flanks</span><span class="p">:</span> <span class="n">FlankResult</span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">    </span><span class="sd">"""Two FASTA records per variant: raw and masked.</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    Keyed on the variant identity (CHR_POS_REF_ALT). When ``sample`` is given</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    (BAM-consensus mode, where the sequence is patient-specific), the sample is</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    prefixed so per-(variant, sample) records stay distinct:</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    &gt;[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    {left}[REF/ALT]{right}</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    &gt;Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    {masked_left}[REF/ALT]{masked_right}</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    """</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="n">base</span> <span class="o">=</span> <span class="n">record_id</span><span class="p">(</span><span class="n">variant</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="sa">f</span><span class="s2">"&gt;</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">left</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">right</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="sa">f</span><span class="s2">"&gt;Masked__</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">masked_left</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">flanks</span><span class="o">.</span><span class="n">masked_right</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="p">]</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
