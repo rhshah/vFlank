@@ -16,16 +16,22 @@ files, fanned out by Nextflow.
 
 Recommended path, in order:
 
-1. **Single-variant mode** (`small one` / `fusion one`) — the request/response
-   primitive every other piece needs. Low risk: the core is already per-variant.
+1. **Thin web service over the existing pipeline** — reuse `io/maf.load_maf` +
+   the existing per-row loop as a *library* (no new CLI command, no refactor).
+   The service owns a small-input cap and HTTP error mapping; **all existing
+   input validation is inherited**. See the v1 implementation note (§1).
 2. **API-backed sources** — gnomAD API exists (`--pop-source api`); add a
    reference API source (see `genome-api.md`). **Reference choice is
    host-dependent** (verified below): **UCSC** behind a server (nicer coords, no
    CORS needed), **Ensembl** for a static/browser app (CORS-safe). Together these
    make a stateless server possible (no local FASTA/VCF).
-3. **UI** — a thin layer over the single-variant endpoint.
+3. **UI** — a thin front-end over the service (small-file upload / paste).
 4. **WASM-BAM** — `samtools` via biowasm/Aioli, client-side, for the
-   patient-consensus path; keeps PHI in the browser.
+   patient-consensus path; keeps PHI in the browser (v2).
+
+A single-variant CLI mode (`small one` / `fusion one`) and the `make_variant`
+refactor are **not required for v1** — they become worthwhile only if a
+structured form UX is later preferred over file input (see §1, "Deferred").
 
 ### v1 scope decision — ship without BAM (steps 1–3)
 
@@ -74,33 +80,58 @@ Plan around these free-tier traits (none is a blocker for an internal/demo tool)
   cache, one rate limiter, no coordination across instances.
 - **Stateless, no disk** — matches the ephemeral filesystem; nothing to persist.
 
-## 1. Single-variant mode — the primitive
+## 1. v1 implementation — reuse the existing pipeline (no new command)
 
-Both CLI entry points are file-first today, but the core is already
-single-variant:
+**Decision:** v1 is a thin web service that calls the existing pipeline as a
+**library** — no `small one` / `fusion one` CLI command, no `make_variant`
+refactor, and **no new input validation**. The service is the only new code.
 
-- `cli/small.py` loop: `maf_io.parse_variant_row(row, cols)` → one `Variant` →
-  `source.fetch(variant)` → `FlankResult`.
-- `cli/fusion.py` loop: `bp_io.parse_fusion_row(row, cols)` → one `Fusion` →
-  `core.fusion.build_junction(...)`.
+Why this is enough: the core is already per-variant, and the file path already
+validates input at both levels, so the service inherits all of it:
 
-A "one variant" entry constructs a single `Variant`/`Fusion` from arguments
-instead of a parsed row and calls the **identical** path:
+- `io/maf.load_maf` — unreadable / empty file and **missing required columns** →
+  `MafError` (with a remap hint); optional label columns defaulted.
+- `io/maf.parse_variant_row` (per row) — `normalise_chrom`, numeric-position
+  coercion, `validate_coordinates`, `validate_allele` → a skip reason the loop
+  aggregates. Fusions: `io/breakpoints.parse_fusion_row` (chrom / pos / strand).
 
-```
-vflank small one  --at 17:7579472 --ref C --alt G   -r REF -g hg19 [--pop-source api]
-vflank fusion one --bp1 9:133589268:+ --bp2 22:23632600:+  -r REF -g hg19
-```
+The validators (`validate_coordinates`, `validate_allele`, `normalise_chrom`)
+are already standalone pure functions; `parse_*_row` is just pandas extraction
+around them. So **no input validation is written or duplicated** for v1.
 
-Design constraints:
+What the service adds — at its own layer, not in core:
 
-- **No duplicated orchestration.** Factor the shared "build source → fetch →
-  format → (report) one record" out of `_run` so file-mode and one-mode share
-  it. This is required by the repo's no-duplication discipline, not optional.
-- This is the exact shape an HTTP endpoint and a UI form need: one variant in,
-  raw + `Masked__` out, **no file upload**.
-- Scope guardrail (per CLAUDE.md): it emits the masked target sequence and the
-  Olivar/Primer3 emit formats; it does not become a primer designer.
+- **Small-input cap (UI / service only).** Reject inputs over ~10 records
+  *after* parse, with a clear "≤10 records in the hosted UI" message. This is a
+  hosting *policy* guard (protect the shared instance / the API rate limit),
+  deliberately **not** placed in `run`: a hard cap there would regress
+  legitimate local-file batch users (no rate limit on the local path; the
+  existing soft warning at >50 in `small.py` is already tied to
+  `--pop-source api`, the correct condition).
+- **HTTP mapping.** Translate `MafError` / `VflankError` → 4xx; surface per-row
+  skip reasons in the response body.
+- **Input plumbing.** `load_maf` takes a path, so the service writes the
+  uploaded text to a temp file (fine on Render's ephemeral FS) — or a one-line
+  refactor lets `load_maf` accept a file-like buffer.
+
+Scope guardrail (per CLAUDE.md): the service emits the masked target sequence and
+the Olivar / Primer3 emit formats; it does not become a primer designer.
+
+### Deferred (only if a form UX is later preferred)
+
+A browser **form** (type `chr/pos/ref/alt`, or two breakpoints) is a nicer
+single-variant UX than uploading a tiny MAF, but it needs structured input that
+doesn't flow through pandas. That — and only that — is when the following earn
+their place, and even then they **reuse the same validators**, not new logic:
+
+- `core/variant.make_variant(...)` / `core/fusion.make_fusion(...)` — thin, pure
+  orchestration of the existing validators minus pandas; `parse_*_row` delegates
+  to them (removing the pandas/validation coupling).
+- Optional `small one` / `fusion one` CLI commands as terminal conveniences over
+  the same builders.
+
+This keeps v1 minimal while leaving a clean, non-duplicating path to the form UX
+if/when it's wanted.
 
 ## 2. API-backed sources — what makes a stateless server possible
 
