@@ -237,9 +237,21 @@ output.
 
 ## 8. Contributing workflow
 
-1. Branch for feature/milestone work (`git checkout -b m3-ci`).
+The repo follows **git-flow**: `main` holds tagged releases (`vX.Y.Z`) only,
+`develop` is the integration branch. Initialise once with `git flow init`
+(already configured here: prefixes `feature/ bugfix/ release/ hotfix/`,
+version-tag prefix `v`).
+
+1. Start a feature off `develop`: `git flow feature start <name>`
+   (equivalently `git checkout -b feature/<name> develop`).
 2. Make the change; add/adjust tests in the matching `tests/` subtree.
 3. Run the full quality gate (section 4) until green.
 4. Re-read your diff for duplication, dead code, and unused symbols.
 5. Commit, ending the message with:
    `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
+6. Finish the feature back into `develop`: `git flow feature finish <name>`
+   (or open a PR targeting `develop`).
+7. **Releases:** `git flow release start X.Y.Z`, bump the version, then
+   `git flow release finish X.Y.Z` — this merges into both `main` and
+   `develop` and tags `vX.Y.Z`. Push with `git push --tags origin main develop`.
+   Urgent production fixes use `git flow hotfix start X.Y.Z` off `main`.

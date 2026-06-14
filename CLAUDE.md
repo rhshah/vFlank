@@ -97,6 +97,16 @@ skill — it carries the reference detail that doesn't belong in always-on conte
 
 ## Git
 
-- Work on a branch; the foundation is committed on `main`.
+The repo follows **git-flow** (`main` = production, `develop` = integration):
+
+- **`main`** holds released, tagged versions only (`vX.Y.Z`); never commit to it
+  directly. **`develop`** is the integration branch — feature work branches off
+  it and merges back into it.
+- Day-to-day work uses git-flow branches: `git flow feature start <name>`
+  (branches off `develop`), `git flow release start X.Y.Z`, `git flow hotfix
+  start X.Y.Z` (off `main`). Prefixes: `feature/ bugfix/ release/ hotfix/`;
+  version-tag prefix `v`.
+- A release/hotfix `finish` merges into **both** `main` and `develop` and tags
+  `main`. Small doc-only tweaks may be committed straight to `develop`.
 - End commit messages with: `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
 - Commit/push only when asked.
