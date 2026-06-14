@@ -98,7 +98,9 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.snippets:
-      base_path: ["."]
+      base_path: [".", "docs"]
+      auto_append:
+        - includes/abbreviations.md
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -130,6 +132,7 @@ nav:
   - How It Works:
       - Architecture: ARCHITECTURE.md
       - Python API: reference/api.md
+      - Glossary: reference/glossary.md
       - Research notes:
           - gnomAD API: research/gnomad-api.md
           - SV / VCF input: research/sv-vcf-input.md
