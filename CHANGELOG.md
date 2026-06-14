@@ -6,12 +6,36 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-14
+
 ### Added
 - **Patient consensus from a BAM** (`--bam` / `--bam-map`) for both `small` and
   `fusion`: the masked record is the per-sample consensus (hom-ALT corrected,
   het/low-coverage handled), via `samtools consensus`. With a BAM, output is one
   record per (variant, sample) with the sample in the header; low coverage falls
   back to reference + gnomAD masking.
+- **Coverage controls** for BAM consensus: `--bam-min-depth`, `--bam-call-fract`,
+  `--bam-het-char {N,iupac}`, `--bam-lowcov`, `--bam-min-baseq`, `--bam-min-mapq`,
+  and `--require-coverage` to flag (rather than silently fall back on) variants
+  below the depth threshold.
+- **Patient insertions are flagged, not dropped.** The reference-length consensus
+  now scans read CIGARs and masks insertion anchor sites to `N`, surfaced as
+  `NInserted` per variant and an "Insertion sites" line in the run summary —
+  closing a silent-failure gap (deletions were already masked).
+- **Run transparency:** every run echoes the full parameter set, and the TSV
+  report carries per-variant detail (masked / corrected / inserted / coverage
+  fraction / source / flagged).
+- **Documentation:** glossary + site-wide abbreviation tooltips, mermaid
+  architecture/flow diagrams (with pan/zoom), a left-sidebar layout, a
+  "Highlighter" slate+amber palette, and a "Reading a record" explainer that
+  shows masked sequences with inline highlighting, before/after diffs, and
+  clickable annotations.
+
+### Changed
+- Adopted **git-flow** (`main` = releases, `develop` = integration) and reworked
+  CI accordingly: a docs-build guard on every PR, versioned docs deployed with
+  `mike` (`dev` from `develop`, `latest` from tags), and the GitHub Actions
+  bumped off the deprecated Node-20 runtime (`checkout@v5`, `setup-python@v6`).
 
 ## [0.1.0] - 2026-06-12
 
@@ -29,5 +53,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   categorised skip summary + optional TSV run report.
 - Documentation site (MkDocs Material) and GitHub Actions CI.
 
-[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/rhshah/vFlank/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rhshah/vFlank/releases/tag/v0.1.0
