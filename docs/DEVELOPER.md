@@ -237,9 +237,48 @@ output.
 
 ## 8. Contributing workflow
 
-1. Branch for feature/milestone work (`git checkout -b m3-ci`).
+The repo follows **git-flow**: `main` holds tagged releases (`vX.Y.Z`) only,
+`develop` is the integration branch. Initialise once with `git flow init`
+(already configured here: prefixes `feature/ release/ hotfix/`, version-tag
+prefix `v`). The installed git-flow is nvie 0.4.1, whose subcommands are
+`feature`, `release`, `hotfix`, `support` — there is **no `bugfix` subcommand**
+(that is the AVH edition); use a `feature` branch for fixes.
+
+1. Start a feature off `develop`: `git flow feature start <name>`
+   (equivalently `git checkout -b feature/<name> develop`).
 2. Make the change; add/adjust tests in the matching `tests/` subtree.
 3. Run the full quality gate (section 4) until green.
 4. Re-read your diff for duplication, dead code, and unused symbols.
 5. Commit, ending the message with:
-   `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
+   `Co-Authored-By: Claude Code <noreply@anthropic.com>`
+6. Finish the feature back into `develop`: `git flow feature finish <name>`
+   (or open a PR targeting `develop`).
+7. **Releases:** `git flow release start X.Y.Z`, bump the version, then
+   `git flow release finish X.Y.Z` — this merges into both `main` and
+   `develop` and tags `vX.Y.Z`. Push with `git push --tags origin main develop`,
+   then `gh release create vX.Y.Z` to publish (that triggers PyPI + GHCR).
+   Urgent production fixes use `git flow hotfix start X.Y.Z` off `main`.
+
+## 9. Continuous integration
+
+Three workflows in `.github/workflows/`, each scoped to the git-flow event that
+needs it:
+
+| Event | `ci.yml` (lint · type · test · docs-build) | `docs.yml` (mike deploy) | `release.yml` (publish) |
+|-------|:--:|:--:|:--:|
+| PR → `develop` / `main` | ✓ | — | — |
+| push `develop` | ✓ | `dev` alias | — |
+| push `main` | ✓ | — | — |
+| `vX.Y.Z` tag | — | `X.Y.Z` + `latest` (default) | — |
+| GitHub Release published | — | — | PyPI + GHCR |
+
+- **`ci.yml`** runs on pushes to `main`/`develop` and PRs targeting them. The
+  `docs` job runs a plain `mkdocs build` (no deploy): it exits non-zero on
+  config/plugin/**dependency** errors, so a missing-plugin breakage is caught in
+  the PR instead of at deploy time.
+- **`docs.yml`** publishes versioned docs with `mike`: the rolling `dev` alias
+  from `develop`, and `X.Y.Z` + `latest` from a `vX.Y.Z` tag. A `docs-deploy`
+  concurrency group serialises the gh-pages pushes.
+- **`release.yml`** publishes to PyPI (OIDC Trusted Publishing) and GHCR when a
+  GitHub Release is published. The release sequence (step 7) pushes the tag —
+  which deploys versioned docs — then creates the Release — which publishes.

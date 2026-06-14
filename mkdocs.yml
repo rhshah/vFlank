@@ -17,8 +17,8 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.tabs
     - navigation.sections
+    - navigation.expand
     - navigation.indexes
     - navigation.path
     - navigation.top
@@ -57,6 +57,13 @@ plugins:
       zoomable: true
       draggable: true
   - mermaid2
+  # Pan/zoom for mermaid diagrams (mermaid renders as inline SVG, which the
+  # image lightbox can't grab). Defaults: mermaid true, images false — so this
+  # and glightbox don't both target images.
+  - panzoom:
+      full_screen: true
+      always_show_hint: true
+      key: "none"
   - git-revision-date-localized:
       enable_creation_date: true
       fallback_to_build_date: true
@@ -91,6 +98,8 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:mermaid2.fence_mermaid_custom
   - pymdownx.inlinehilite
+  - pymdownx.mark:
+      smart_mark: false   # allow ==N== mid-sequence (DNA highlighting)
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.tabbed:
