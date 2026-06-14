@@ -24,8 +24,18 @@ app.add_typer(small.app, name="small", help="Small-variant (SNP/indel) flank ext
 app.add_typer(fusion.app, name="fusion", help="Structural-variant junction extraction.")
 
 
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(__version__)
+        raise typer.Exit()
+
+
 @app.callback()
 def main(
+    version: bool = typer.Option(
+        False, "--version", callback=_version_callback, is_eager=True,
+        help="Print the vflank version and exit.",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable DEBUG logging."),
     quiet: bool = typer.Option(False, "--quiet", "-q", help="Only show warnings and errors."),
     debug: bool = typer.Option(False, "--debug", help="DEBUG logging + rich tracebacks."),

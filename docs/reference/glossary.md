@@ -38,8 +38,11 @@ MAF
     [Architecture](../ARCHITECTURE.md)).
 
 VCF
-:   Variant Call Format. Alternative variant input (1-based). Used both for
-    small variants and, with Delly `CT`/`BND` records, for structural variants.
+:   Variant Call Format (1-based). Today vflank uses VCF only for **population
+    masking** (gnomAD VCFs via `--pop-vcf-dir`); variant *input* is a MAF (small
+    variants) or a breakpoint TSV (fusions). VCF as a variant-input format —
+    small-variant VCF, and Delly `CT`/`BND` SV VCF — is a designed but unshipped
+    direction ([sv-vcf-input.md](../research/sv-vcf-input.md)).
 
 SNP
 :   A single-nucleotide polymorphism common enough in the population to risk a

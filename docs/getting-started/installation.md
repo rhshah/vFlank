@@ -8,7 +8,13 @@
 - An **indexed reference FASTA** (`.fai` alongside it; `samtools faidx ref.fasta`).
 - Optionally, gnomAD VCFs **or** internet access to the gnomAD API (for masking).
 
-## From GitHub
+## From PyPI
+
+```bash
+pip install vflank
+```
+
+## From GitHub (latest, unreleased)
 
 ```bash
 pip install git+https://github.com/rhshah/vFlank.git

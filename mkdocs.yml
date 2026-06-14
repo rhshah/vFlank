@@ -143,6 +143,7 @@ nav:
       - Python API: reference/api.md
       - Glossary: reference/glossary.md
       - Research notes:
+          - Emit formats (Olivar/Primer3): research/emit-formats.md
           - gnomAD API: research/gnomad-api.md
           - SV / VCF input: research/sv-vcf-input.md
           - BAM consensus: research/bam-consensus.md

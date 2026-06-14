@@ -13,6 +13,7 @@ from pathlib import Path
 import typer
 from rich.table import Table
 
+from .. import __version__
 from ..core.chrom import normalise_chrom
 from ..core.consensus import BamConsensusSource
 from ..core.fusion import build_junction
@@ -104,6 +105,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
     echo_parameters({
+        "vflank version": __version__,
         "Breakpoints": sv_file, "Reference": ref_genome, "Genome build": genome_build,
         "Flank": f"{flank} bp/partner", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")

@@ -17,6 +17,7 @@ from rich.progress import (
 )
 from rich.table import Table
 
+from .. import __version__
 from ..core.chrom import detect_series_chr_style, normalise_chrom
 from ..core.consensus import BamConsensusSource, ConsensusFlankSource
 from ..core.flanks import ReferenceFlankSource
@@ -172,6 +173,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     bam_mode = bam_resolver is not None
     echo_parameters({
+        "vflank version": __version__,
         "MAF": maf_file, "Reference": ref_genome, "Genome build": genome_build,
         "Flank": f"±{flank} bp", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
@@ -497,6 +499,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     # --- Optional machine-readable report ---
     if report is not None:
         stats = {
+            # provenance
+            "vflank_version": __version__,
             # run parameters (what was set)
             "maf": maf_file, "reference": ref_genome, "genome_build": genome_build,
             "flank": flank, "af_threshold": af_threshold,

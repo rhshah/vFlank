@@ -5,7 +5,9 @@ vflank can build the flank from the **patient's own sequence** — so a primer/p
 matches the real template, and `N` is used only where the patient is genuinely
 ambiguous. This catches **private / rare** variants gnomAD never saw.
 
-Available for both `vflank small` and `vflank fusion` via the same flags.
+Available for both `vflank small` and `vflank fusion` via the same `--bam` /
+`--bam-map` and `--bam-*` policy flags. (`--require-coverage`, which *flags*
+low-coverage variants instead of falling back, is `vflank small` only.)
 
 ## How it works
 

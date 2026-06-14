@@ -59,39 +59,51 @@ flowchart TD
 
 Mode C/D is the differentiator: patient consensus catches **private/rare**
 variants gnomAD never sees — the ones that silently break a primer for one
-patient. Consensus will be built on `bcftools mpileup→call→consensus
---iupac-codes` (or pysam pileup), validated against `samtools consensus`, with
-kindel's indel reconciliation as a reference for the hard CIGAR cases.
+patient. Consensus is delegated to `samtools consensus` (in-process via
+`pysam.samtools`), kept reference-length, with a pure low-coverage overlay and
+insertion-site flagging on top. See [research/bam-consensus.md](research/bam-consensus.md).
 
-Implemented today: `ReferenceFlankSource` (modes A + B). The population-mask
-backend is pluggable behind a duck-typed `get_positions` interface, with two
-interchangeable implementations selected by `--pop-source`:
-`GnomadStore` (local VCFs) and `GnomadApiSource` (gnomAD GraphQL API, no
-download, rate-limited). Both honour `--pop-data {genome,exome,both}` (union for
-`both`). See [research/gnomad-api.md](research/gnomad-api.md).
+**All four modes are implemented** (`ReferenceFlankSource` for A/B,
+`ConsensusFlankSource` for C/D). The population-mask backend is pluggable behind
+a duck-typed `get_positions` interface, with two interchangeable implementations
+selected by `--pop-source`: `GnomadStore` (local VCFs) and `GnomadApiSource`
+(gnomAD GraphQL API, no download, rate-limited). Both honour
+`--pop-data {genome,exome,both}` (union for `both`). See
+[research/gnomad-api.md](research/gnomad-api.md).
 
 ## Module map
 
 ```
 src/vflank/
 ├── core/
-│   ├── chrom.py     notation detect/normalise (pure)
-│   ├── variant.py   Variant dataclass + validation (pure)
-│   ├── flanks.py    FlankSource protocol, ReferenceFlankSource, mask_sequence
-│   ├── popfreq.py   gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
-│   └── popfreq_api.py  gnomAD GraphQL API source (GnomadApiSource) + pure parser
+│   ├── chrom.py       notation detect/normalise (pure)
+│   ├── variant.py     Variant dataclass + validation (pure)
+│   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
+│   ├── popfreq.py     gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
+│   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource) + pure parser
+│   ├── consensus.py   BAM patient consensus (modes C/D): samtools engine, pure
+│   │                  low-cov overlay, insertion-site flagging
+│   ├── fusion.py      Breakpoint/Fusion model, reverse-complement junction builder
+│   └── skips.py       categorised skip/he reporting helpers (pure)
 ├── io/
-│   ├── maf.py       load/remap/validate, row → Variant
-│   ├── reference.py ReferenceFasta + genome-build guard
-│   └── fasta.py     header sanitise + record format/write
+│   ├── maf.py         load/remap/validate, row → Variant
+│   ├── reference.py   ReferenceFasta + genome-build guard
+│   ├── fasta.py       header sanitise + record format/write
+│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
+│   └── report.py      TSV run-report writer (flexible columns)
 ├── cli/
-│   ├── app.py       root Typer, global -v/-q/--debug, version
-│   └── small.py     run · inspect · list-vcf
-├── logging.py       Rich console + logger
-└── errors.py        VflankError hierarchy
+│   ├── app.py         root Typer, global -v/-q/--debug, version
+│   ├── small.py       run · inspect · list-vcf (+ masking, BAM, coverage flags)
+│   ├── fusion.py      run (+ masking, BAM flags)
+│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
+│   ├── _masking.py    shared gnomAD source wiring
+│   └── _ui.py         parameter-echo panel
+├── logging.py         Rich console + logger
+└── errors.py          VflankError hierarchy
 ```
 
-The hot kernels (`parse_common_snp_positions`, future consensus pileup) are pure
+The hot kernels (`parse_common_snp_positions`, `mask_sequence`, the consensus
+overlay) are pure
 functions over plain iterables — the natural seam to later accelerate with Rust
 (rust-htslib for consensus parity with samtools; noodles for pure-Rust gnomAD
 scanning). Lock correctness in Python first; port the proven bottleneck only.
@@ -119,20 +131,32 @@ model, iCallSV strand mapping) are captured in
 
 ## Roadmap
 
+Shipped through **v0.2.0** (on PyPI + GHCR):
+
 | M | Deliverable | State |
 |---|-------------|-------|
 | M1 | Scaffold (src-layout, pyproject/Hatch, Typer root, logging) | ✅ done |
 | M2 | Small-variant port (behaviour-preserving, testable) | ✅ done |
-| M3 | Tests + provenance (unit + integration, build guard) | 🟡 in progress |
-| M4 | Fusion rewrite (Python 3 + Pydantic config) | ⬜ |
-| M4.5 | Consensus (modes C/D) + `--emit-olivar` / `--emit-primer3` | ⬜ |
-| M5 | MkDocs (Material + mkdocstrings) | ⬜ |
-| M6 | Release (PyPI via OIDC; pysam wheel caveats) | ⬜ |
-| M7 | Nextflow / nf-core pipeline (containerised) | ⬜ |
+| M3 | Tests + provenance (unit + integration, build guard) | ✅ done |
+| M4 | Fusion rewrite (Python 3, breakpoint-TSV input) | ✅ done |
+| M4.5 | BAM consensus (modes C/D) + insertion flagging | ✅ done (0.2.0) |
+| M5 | MkDocs (Material + mkdocstrings, versioned via mike) | ✅ done |
+| M6 | Release (PyPI via OIDC; GHCR image) | ✅ done (0.1.0, 0.2.0) |
+
+Next, in priority order (each has a design note in `research/`):
+
+| Next | Deliverable | Design note |
+|------|-------------|-------------|
+| **M4.5-emit** | `--emit olivar,primer3` designer-native output formats | [emit-formats.md](research/emit-formats.md) |
+| M-vcf | VCF input — small-variant VCF, then Delly `CT`/`BND` SV VCF | [sv-vcf-input.md](research/sv-vcf-input.md) |
+| M-indel | Indel-aware (length-changing) consensus — option 3 | [indel-aware-consensus.md](research/indel-aware-consensus.md) |
+| M7 | Nextflow / nf-core pipeline (containerised) | — |
+| M-rust | Port the proven hot kernels to Rust (optional) | — |
 
 ### Top risks
-1. Fusion script intent is undocumented/buggy — recover before M4.
-2. Reference build mismatch → silent wrong sequence — guarded in `reference.py`.
-3. pysam wheel fragility — CI matrix Linux+macOS; document WSL/conda.
-4. Indel coordinate edge cases — dedicated tests in M3.
-5. Olivar GPL/dep isolation — enforced by the out-of-process boundary.
+1. Reference build mismatch → silent wrong sequence — guarded in `reference.py`.
+2. pysam wheel fragility — CI matrix Linux+macOS; document WSL/conda.
+3. Indel coordinate edge cases — insertion flagging shipped; length-changing
+   consensus is deferred to M-indel with its own test matrix.
+4. Olivar input-schema drift — pin a version and assert columns in the emitter
+   (M4.5-emit); the dependency itself stays out-of-process (GPL isolation).
