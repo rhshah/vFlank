@@ -50,12 +50,6 @@ plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\,(?!\d)|&[lg]t;'
   - section-index
-  - glightbox:
-      touchNavigation: true
-      loop: false
-      effect: zoom
-      zoomable: true
-      draggable: true
   - mermaid2
   - git-revision-date-localized:
       enable_creation_date: true

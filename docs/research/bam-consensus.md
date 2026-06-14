@@ -78,6 +78,26 @@ normal no-BAM run (not all-N). Without a population source, `gnomad` is plain
   consensus — keeping the patient's actual inserted bases — is a deferred
   enhancement (see [option 3 plan](indel-aware-consensus.md)).
 
+The three read scans (base calls, depth, insertion anchors) combine into the
+final masked flank like so:
+
+```mermaid
+flowchart TD
+    R["reads in window"] --> SC["samtools consensus<br/>--show-ins no --show-del yes"]
+    R --> DEP["window_depth<br/>per-position"]
+    R --> INS["insertion_sites<br/>CIGAR walk"]
+    SC --> CALL["per-base call<br/>reference-length · del → N"]
+    CALL --> OV{"depth ≥ min_depth?"}
+    DEP --> OV
+    OV -->|yes| KEEP["keep patient call"]
+    OV -->|no| LOW["low-cov overlay<br/>REF, or N if gnomAD SNP"]
+    KEEP --> ANCHOR{"insertion anchor?"}
+    LOW --> ANCHOR
+    INS --> ANCHOR
+    ANCHOR -->|yes| MN["mask N"] --> OUT["masked flank"]
+    ANCHOR -->|no| OUT
+```
+
 ## Engine — `samtools consensus` via pysam (hybrid)
 
 The base-calling is delegated to **`samtools consensus`**, called in-process via

@@ -50,6 +50,7 @@ docs = [
     "mkdocs-typer2>=0.1",
     "mkdocs-git-revision-date-localized-plugin>=1.2",
     "mkdocs-section-index>=0.3",
+    "mkdocs-mermaid2-plugin>=1.1",
 ]
 
 [project.scripts]

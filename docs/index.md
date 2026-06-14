@@ -10,6 +10,22 @@ polymorphisms masked so primers and probes avoid them.
 It is the **front-end** of an assay-design pipeline. It does not design primers
 itself — it prepares clean, masked target sequences to hand to a designer.
 
+```mermaid
+flowchart LR
+    MAF["MAF / VCF<br/>small variants"] --> FL
+    BP["Breakpoints<br/>fusions / SVs"] --> FL
+    REF[("Reference FASTA")] --> FL
+    POP[("gnomAD<br/>VCF / API")] --> MK
+    BAM[("Sample BAM<br/>optional")] --> MK
+    subgraph vflank["vflank · front-end"]
+        direction LR
+        FL["Extract flanks /<br/>build junction"] --> MK["Mask common SNPs<br/>+ patient consensus"]
+    end
+    MK --> OUT["Raw + Masked<br/>FASTA"]
+    OUT --> OL["Olivar<br/>amplicons"] --> DD["ddPCR assays"]
+    OUT --> P3["Primer3<br/>junction probes"] --> DD
+```
+
 ## Highlights
 
 - :material-dna: **Small variants** — extract ±N bp flanks from a MAF, emit raw +

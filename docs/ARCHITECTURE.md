@@ -20,12 +20,17 @@ the dependency graph clean. Orchestration across samples/tools is a **Nextflow**
 layer that wraps the stable CLIs in per-process containers — added last, never a
 prerequisite for the standalone CLI.
 
-```
-                 ┌── small variants ──► Olivar  ─┐
-vflank front-end ─┤   (FASTA + SNP CSV)           ├─► ddPCR assays
- (flank + mask)   └── fusion junction ─► Primer3 ─┘
-        ▲
-   ref FASTA  ·  gnomAD VCFs  ·  (optional) sample BAM
+```mermaid
+flowchart LR
+    REF[("ref FASTA")] --> VF
+    POP[("gnomAD VCFs")] --> VF
+    BAM[("sample BAM<br/>optional")] --> VF
+    subgraph VF["vflank front-end · flank + mask"]
+        SV["small variants<br/>FASTA + SNP CSV"]
+        FU["fusion junction"]
+    end
+    SV --> OL["Olivar"] --> DD["ddPCR assays"]
+    FU --> P3["Primer3"] --> DD
 ```
 
 ## Flank source strategy (modes)
@@ -38,6 +43,19 @@ A `FlankSource` decides *where each flank base comes from*:
 | B Reference + pop-mask | + gnomAD | reference | common SNPs → N |
 | C Consensus | + BAM | patient consensus, ref fallback | het / low-cov → N/IUPAC |
 | D Consensus + pop-mask | all | patient consensus | gnomAD ∪ observed-het |
+
+The mode is selected implicitly by which inputs are present:
+
+```mermaid
+flowchart TD
+    V["flank window"] --> Q1{"--bam given?"}
+    Q1 -->|no| Q2{"gnomAD given?"}
+    Q1 -->|yes| C["patient consensus<br/>het / low-cov → N / IUPAC"] --> Q3{"gnomAD given?"}
+    Q2 -->|no| A["Mode A — reference, no mask"]
+    Q2 -->|yes| B["Mode B — reference + SNP mask"]
+    Q3 -->|no| MC["Mode C — consensus only"]
+    Q3 -->|yes| MD["Mode D — consensus + SNP mask"]
+```
 
 Mode C/D is the differentiator: patient consensus catches **private/rare**
 variants gnomAD never sees — the ones that silently break a primer for one
@@ -77,6 +95,17 @@ The hot kernels (`parse_common_snp_positions`, future consensus pileup) are pure
 functions over plain iterables — the natural seam to later accelerate with Rust
 (rust-htslib for consensus parity with samtools; noodles for pure-Rust gnomAD
 scanning). Lock correctness in Python first; port the proven bottleneck only.
+
+The layering enforces a one-way **dependency rule** — `core/` stays pure so its
+kernels remain unit-testable without pysam and portable to Rust:
+
+```mermaid
+flowchart LR
+    cli["cli/<br/>Typer apps"] -->|uses| io["io/<br/>file access · pysam · pandas"]
+    cli -->|uses| core["core/<br/>pure domain kernels"]
+    io -->|uses| core
+    core -->|depends on| std(["stdlib only"])
+```
 
 ## Origin
 
