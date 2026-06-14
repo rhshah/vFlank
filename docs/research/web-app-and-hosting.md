@@ -27,13 +27,30 @@ Recommended path, in order:
 4. **WASM-BAM** — `samtools` via biowasm/Aioli, client-side, for the
    patient-consensus path; keeps PHI in the browser.
 
+### v1 scope decision — ship without BAM (steps 1–3)
+
+**v1 = steps 1–3; BAM (step 4) is deferred to v2.** This is the cleanest first
+release because the BAM is the *only* thing that forces the hard parts — WASM /
+Aioli / the ported overlay, client-side file handling, the BAM-input spectrum,
+**and the entire PHI/compliance story**. Dropping it for v1 means:
+
+- v1 = single variant (SNV or SV) + reference API + gnomAD API → masked flanks,
+  i.e. exactly the existing **modes A/B** (the CLI's default with no `--bam`). No
+  new science.
+- **No patient data ever touches the app** — only public reference + gnomAD data
+  flow through it, so hosting carries no PHI liability anywhere.
+- A fully static **GitHub Pages** build is genuinely viable for v1: gnomAD +
+  Ensembl are both CORS-safe (verified), so the only remaining lift is porting
+  the small pure kernel (`mask_sequence` + flank math) to JS — no WASM blocker.
+- **BAM (modes C/D) becomes a self-contained v2** that adds the patient-consensus
+  path and picks from the BAM-input options (below) then, without gating v1.
+
 **Hosting recommendation:** for the fastest path that reuses the existing Python
 core, host a small FastAPI service on **Render** (or Fly.io / Railway / Cloud
-Run) with the BAM step running client-side in WASM. A fully static **GitHub
-Pages** deployment is achievable *only* if the Python kernel is ported to
-JS/WASM and every external API allows browser CORS — a larger lift, best as an
-end-state or a public demo. A **hybrid** (Pages frontend + a small API backend)
-is the pragmatic middle.
+Run). With BAM deferred (v1), there is no PHI and a fully static **GitHub Pages**
+build is also viable once the small pure kernel is ported to JS. When BAM lands
+(v2), the client-side WASM path keeps patient reads in the browser; a **hybrid**
+(Pages frontend + a small API backend) is the pragmatic middle.
 
 ## 1. Single-variant mode — the primitive
 
@@ -77,12 +94,56 @@ small stateless container. Reference sequence is immutable, so the
 reproducibility caveat that keeps the gnomAD API *optional* does not apply to the
 reference API.
 
-## 3. WebAssembly for BAM — the one input that can't be an API
+## 3. BAM input — deferred to v2 (the one input that can't be an API)
 
-Reference and gnomAD can be remote calls; **patient reads cannot** — BAMs are
-large and are PHI. You can't (and shouldn't) upload a multi-GB BAM to a hosted
-service. WASM resolves this tension: run `samtools` **client-side in the
-browser**, so reads never leave the user's machine.
+**Deferred to v2** (see the v1 scope decision above). Captured here so the
+research isn't lost. Reference and gnomAD can be remote calls; **patient reads
+cannot** — BAMs are large and are PHI. The right axis for choosing is *where the
+reads live and who sees them*, with file size secondary. Single-variant scope
+helps every option: you only ever need one ±flank window, never the whole BAM.
+
+### BAM-input options (v2)
+
+*Reads never leave the user's machine:*
+
+1. **Client-side WASM (biowasm/Aioli)** — local file picker, `.bai` ranged read,
+   consensus in the tab. Strongest privacy; works even on static Pages. Cost:
+   WASM engine + the pure overlay ported to JS/Rust. (Detailed below.)
+2. **Client-side slice → upload only the window (hybrid)** — browser extracts the
+   ±flank mini-BAM (`samtools view -b region` in WASM, a few KB) and uploads only
+   that slice to a backend running the **real pysam `BamConsensusSource`**.
+   Reuses the Python core verbatim; KB not GB; only reads near one locus leave
+   the machine.
+
+*Reads (or a slice) transit your server:*
+
+3. **Server-side ranged fetch from a user-provided URL** — pysam/htslib opens a
+   BAM/CRAM over `https://`/`s3://` and reads only indexed byte ranges; the file
+   stays in the user's bucket (signed URL). IGV-style. `BamConsensusSource` works
+   with a URL instead of a path. Needs the `.bai` alongside + access.
+4. **GA4GH htsget** — standardized authorized, region-scoped read streaming.
+   Purpose-built, but needs an htsget server to exist (most labs don't run one).
+5. **Full server-side upload** — simplest to build (reuses everything), worst on
+   PHI and size; for single-variant, options 2–3 dominate it.
+
+*Reads stay in the secure pipeline:*
+
+6. **Pre-compute, serve the derived sequence** — run consensus offline
+   (CLI/Nextflow) in the secure environment; the web tool consumes only the
+   already-masked per-variant sequence. Zero BAM in the app; not interactive for
+   new variants.
+
+*Ruled out:* **Pyodide + pysam** in-browser (htslib C not readily available in
+Pyodide) — hence WASM uses samtools-wasm + a ported overlay, not Python.
+
+*Cross-cutting:* **CRAM** (smaller, same indexed ranged access) helps 2–4.
+**Host shape constrains the set** — static Pages can do #1 (and #3 if the bucket
+sends CORS); a server unlocks #2–#6.
+
+### Option 1 in detail — WASM resolves the privacy tension
+
+WASM lets you run `samtools` **client-side in the browser**, so reads never leave
+the user's machine.
 
 **Tooling:** [biowasm](https://biowasm.com/) compiles `samtools` (and htslib,
 `bcftools`, etc.) to WebAssembly; [Aioli](https://github.com/biowasm/aioli) runs
