@@ -19,8 +19,10 @@ Recommended path, in order:
 1. **Single-variant mode** (`small one` / `fusion one`) — the request/response
    primitive every other piece needs. Low risk: the core is already per-variant.
 2. **API-backed sources** — gnomAD API exists (`--pop-source api`); add a
-   reference API source (see `genome-api.md`, prefer UCSC). Together these make a
-   stateless server possible (no local FASTA/VCF).
+   reference API source (see `genome-api.md`). **Reference choice is
+   host-dependent** (verified below): **UCSC** behind a server (nicer coords, no
+   CORS needed), **Ensembl** for a static/browser app (CORS-safe). Together these
+   make a stateless server possible (no local FASTA/VCF).
 3. **UI** — a thin layer over the single-variant endpoint.
 4. **WASM-BAM** — `samtools` via biowasm/Aioli, client-side, for the
    patient-consensus path; keeps PHI in the browser.
@@ -127,11 +129,11 @@ Two fundamentally different shapes, driven by **where the kernel runs**:
 
 Decision drivers:
 
-- **Static-only (Pages) requires browser CORS on every external call.** Verified:
-  the gnomAD API sends `Access-Control-Allow-Origin: *`, so direct browser calls
-  work. **Open:** UCSC/Ensembl reference-API CORS (below). If a reference API
-  blocks cross-origin, a static site needs a tiny proxy — which means a server,
-  defeating Pages-only.
+- **Static-only (Pages) requires browser CORS on every external call.** Verified
+  (below): gnomAD and **Ensembl** both send `Access-Control-Allow-Origin: *`, so
+  a static app can call both directly. **UCSC apparently does not** set CORS for
+  browser use — so a Pages app must use Ensembl for the reference, or proxy UCSC
+  (a proxy means a server, defeating Pages-only).
 - **Static-only also requires porting the kernel** (flank math + masking) to
   JS/WASM. That's real work but keeps the pure-function discipline honest.
 - **A server (Render et al.) sidesteps both:** keep the Python kernel; server-side
@@ -141,26 +143,90 @@ Decision drivers:
   the chosen platform. That's a strong property when hosting patient-adjacent
   tooling on a third-party PaaS: no patient reads on Render/Pages, ever.
 
-## Verified facts (2026-06-14) and open questions
+## Verification log (2026-06-14)
 
-Verified:
+**Environment limitation, stated up front.** This session's network policy
+**blocks direct egress** to the genome/annotation API hosts — `curl` to
+`api.genome.ucsc.edu`, `rest.ensembl.org`, and `gnomad.broadinstitute.org` all
+returned `HTTP 403` (an egress proxy block, not the APIs themselves);
+`raw.githubusercontent.com` was reachable (`301`). So CORS could **not** be
+confirmed by capturing live response headers here. The findings below are from
+**authoritative source/docs**, which is conclusive for the source-backed items
+and strong (but not a live header capture) for the doc-backed ones. The one
+cheap final step — open a browser, run `fetch()` from a throwaway origin, read
+the `Access-Control-Allow-Origin` header in devtools — is noted per item.
 
-- **gnomAD GraphQL API allows cross-origin browser requests.** Its server applies
-  `app.use(cors())` (default config → `Access-Control-Allow-Origin: *`) in
-  `broadinstitute/gnomad-browser` `graphql-api/src/app.ts`. → A static browser
-  app can call gnomAD directly.
-- **biowasm ships samtools 1.17 and 1.18** (both ≥ 1.16), so the `consensus`
-  subcommand is available in principle.
+### CONFIRMED — gnomAD API is browser-CORS-safe
 
-Open (verify before committing to a static/Pages build):
+- **Evidence (source):** `broadinstitute/gnomad-browser`,
+  `graphql-api/src/app.ts` imports `cors` and calls `app.use(cors())` with no
+  arguments. The `cors` package's default config emits
+  `Access-Control-Allow-Origin: *`.
+- **Conclusion:** a static browser app can POST GraphQL to
+  `https://gnomad.broadinstitute.org/api` cross-origin. Rate limit (~10/60 s)
+  still applies but is irrelevant for single-variant interactive use.
+- **Confidence:** high (server source). Live header check optional.
 
-- **UCSC / Ensembl reference-API CORS** — does the chosen reference API send
-  permissive CORS headers for browser calls? If not, a reference proxy (small
-  server) is required, and Pages-only is off the table.
-- **Runtime confirmation** that the biowasm samtools module actually exposes
-  `consensus` (not just that the version supports it).
+### CONFIRMED — Ensembl REST is browser-CORS-safe
+
+- **Evidence (docs):** the official Ensembl wiki page *CORS And JSONP*
+  (`Ensembl/ensembl-rest`) states Ensembl REST returns
+  `Access-Control-Allow-Origin: *` whenever an `Origin` request header is sent,
+  and calls CORS "the best way to access data in Ensembl REST from a browser."
+- **Conclusion:** Ensembl REST is usable directly from a static browser app.
+  Note: GRCh37 lives on `grch37.rest.ensembl.org` (separate host); 1-based
+  coordinates need a `+1` conversion vs. our 0-based half-open interface.
+- **Confidence:** high (vendor docs). Live header check optional.
+
+### LIKELY NOT browser-CORS-safe — UCSC REST API
+
+- **Evidence (community + docs):** a UCSC `genome` mailing-list thread ("Our web
+  application got blocked by api.genome.ucsc.edu") and multiple community
+  write-ups indicate browser apps hit CORS blocking and/or aggressive
+  rate-limit blocking against `api.genome.ucsc.edu`, with a **server-side proxy**
+  given as the standard workaround. The UCSC API help page itself does not
+  advertise CORS support, and recommends ~1 request/second.
+- **Conclusion / impact:** UCSC is **not** a safe direct-from-browser reference
+  source. This **changes the reference-API choice by host** (see correction
+  below). It remains fine behind a server (server-side calls need no CORS).
+- **Confidence:** medium-high (community + absence of vendor CORS docs);
+  could not capture the header here (egress blocked). A live devtools/curl
+  check from an unrestricted network is the recommended final confirmation
+  before relying on it either way.
+
+### CONFIRMED — biowasm samtools includes `consensus`
+
+- **Evidence (build recipe):** `biowasm/biowasm` `tools/samtools/compile.sh`
+  runs `emmake make samtools` with only `--without-curses` (disables the curses
+  TUI `tview`, **not** subcommands) — i.e. a full samtools build, no subcommand
+  exclusions. The CDN offers samtools **1.17 / 1.18**, both ≥ 1.16 where
+  `consensus` was introduced.
+- **Conclusion:** `samtools consensus` is compiled into the WASM module.
+- **Confidence:** high for "compiled in." A **runtime smoke test** (load the
+  module via Aioli and run `samtools consensus` on a tiny indexed BAM in a
+  WebWorker) is still worth doing once, to confirm behaviour end-to-end.
+
+### Correction this verification forces
+
+The earlier lean toward **UCSC** as the reference API (in `genome-api.md`, for
+its 0-based coords and `hg19`/`hg38` names) holds **only for a server host**.
+For a **static / GitHub Pages** app the reference API must be browser-CORS-safe,
+and UCSC apparently is not — so the static-case reference source should be
+**Ensembl** (CORS `*`), accepting the `+1` coordinate conversion and the
+per-build host split. Summary:
+
+| Host shape | Reference API | Why |
+|---|---|---|
+| Server (Render etc.) | **UCSC** | server-side call, no CORS needed; nicer coords |
+| Static (Pages) | **Ensembl** | CORS `*` confirmed; UCSC needs a proxy |
+
+### Still open
+
+- **UCSC CORS — live header capture** from an unrestricted network (devtools or
+  `curl -I` with an `Origin` header) to upgrade the UCSC finding from
+  "likely/medium-high" to confirmed.
 - **Local BAM range-read ergonomics** in Aioli for a user-picked `.bam` + `.bai`
-  (File System Access API vs. file slicing) on the target browsers.
+  (File System Access API vs. `File.slice`) on the target browsers.
 
 ## Scope guardrail
 
