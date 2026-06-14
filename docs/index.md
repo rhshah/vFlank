@@ -12,7 +12,7 @@ itself — it prepares clean, masked target sequences to hand to a designer.
 
 ```mermaid
 flowchart LR
-    MAF["MAF / VCF<br/>small variants"] --> FL
+    MAF["MAF<br/>small variants"] --> FL
     BP["Breakpoints<br/>fusions / SVs"] --> FL
     REF[("Reference FASTA")] --> FL
     POP[("gnomAD<br/>VCF / API")] --> MK
@@ -40,7 +40,8 @@ flowchart LR
 ## Install
 
 ```bash
-pip install git+https://github.com/rhshah/vFlank.git
+pip install vflank                                    # released versions, from PyPI
+pip install git+https://github.com/rhshah/vFlank.git  # latest from GitHub
 ```
 
 See [Installation](getting-started/installation.md) and the
