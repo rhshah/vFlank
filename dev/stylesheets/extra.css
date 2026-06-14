@@ -1,23 +1,25 @@
-/* vflank brand palette — a deep teal primary with a warm amber accent.
-   The theme palette is set to `custom`, so Material defines no built-in
-   color and these :root variables win without a specificity fight. */
+/* vflank brand palette — "Highlighter": a neutral slate primary (the masked /
+   common genomic background) with a warm amber accent (the variant / flank that
+   pops out). The theme palette is set to `custom`, so Material defines no
+   built-in color and these :root variables win without a specificity fight. */
 :root {
-  --md-primary-fg-color:        #0b6b6e;
-  --md-primary-fg-color--light: #12908f;
-  --md-primary-fg-color--dark:  #084d4f;
-  --md-accent-fg-color:         #e8730c;
+  --md-primary-fg-color:        #455a64;  /* blue-grey 700 */
+  --md-primary-fg-color--light: #607d8b;  /* blue-grey 500 */
+  --md-primary-fg-color--dark:  #37474f;  /* blue-grey 800 */
+  --md-accent-fg-color:         #e8730c;  /* amber */
   --md-accent-fg-color--transparent: rgba(232, 115, 12, 0.1);
-  --md-code-bg-color:           rgba(11, 107, 110, 0.06);
+  --md-code-bg-color:           rgba(69, 90, 100, 0.06);
 }
 
-/* Dark scheme: lift the teal so it reads on slate; warmer amber accent. */
+/* Dark scheme: lift the slate so it reads on the dark background. */
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color:        #18b6b0;
-  --md-primary-fg-color--light: #3ccfc8;
-  --md-primary-fg-color--dark:  #0c7575;
+  --md-primary-fg-color:        #78909c;  /* blue-grey 400 */
+  --md-primary-fg-color--light: #90a4ae;  /* blue-grey 300 */
+  --md-primary-fg-color--dark:  #546e7a;  /* blue-grey 600 */
   --md-accent-fg-color:         #ffb454;
-  --md-default-bg-color:        #0f1b1b;
-  --md-code-bg-color:           rgba(24, 182, 176, 0.12);
+  --md-accent-fg-color--transparent: rgba(255, 180, 84, 0.12);
+  --md-default-bg-color:        #11181c;
+  --md-code-bg-color:           rgba(144, 164, 174, 0.12);
 }
 
 /* A subtle gradient header for a bit of polish. */
@@ -37,7 +39,19 @@
   cursor: help;
 }
 
-/* Tighten the look of the homepage feature grid (md_in_html cards). */
-.md-typeset .grid.cards > ul > li {
-  border-radius: 0.4rem;
+/* ==highlight== (pymdownx.mark): theme to the amber accent so masked regions /
+   variants literally glow against the sequence. Used for `==N==` and `[REF/ALT]`
+   inside DNA blocks. */
+.md-typeset mark {
+  background-color: var(--md-accent-fg-color--transparent);
+  box-shadow: 0 0 0 0.12em var(--md-accent-fg-color--transparent);
+  color: inherit;
+  border-radius: 0.15em;
+}
+
+/* Give DNA sequences room to breathe — a touch of letter-spacing so A/C/G/T/N
+   read cleanly in inline code and code blocks tagged as sequences. */
+.md-typeset code,
+.md-typeset pre code {
+  letter-spacing: 0.02em;
 }
