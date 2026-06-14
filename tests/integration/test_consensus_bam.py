@@ -213,3 +213,51 @@ def test_consensus_handles_deletion_reads_reference_length(tmp_path):
     assert len(fr.masked_left) == 10 and len(fr.masked_right) == 10
     assert fr.total == 20  # reference-aligned throughout
     ref.close()
+
+
+def test_consensus_flags_insertion_site(tmp_path):
+    # Reads carrying a 4 bp insertion in the right flank: the consensus stays
+    # reference-length (insertion dropped) but the anchor position is flagged as
+    # N and reported via ``inserted`` — not lost silently.
+    from vflank.core.consensus import (
+        BamConsensusSource,
+        ConsensusPolicy,
+        insertion_sites,
+    )
+    from vflank.io.reference import ReferenceFasta
+
+    ref_seq = "".join("ACGT"[i % 4] for i in range(100))
+    fasta = tmp_path / "ref.fasta"
+    fasta.write_text(f">1\n{ref_seq}\n")
+    pysam.faidx(str(fasta))
+
+    rs, a, ins, b, nr = 49, 6, 4, 20, 24   # M6 I4 M20 -> ref span 26, covers [49,75)
+    anchor0 = rs + a - 1                    # 0-based ref base before the insertion
+    query = ref_seq[rs:rs + a] + "TTTT" + ref_seq[rs + a:rs + a + b]
+    bam = tmp_path / "ins.bam"
+    hdr = {"HD": {"VN": "1.6"}, "SQ": [{"SN": "1", "LN": 100}]}
+    with pysam.AlignmentFile(str(bam), "wb", header=hdr) as out:
+        for i in range(nr):
+            seg = pysam.AlignedSegment()
+            seg.query_name = f"r{i}"
+            seg.query_sequence = query
+            seg.flag = 0
+            seg.reference_id = 0
+            seg.reference_start = rs
+            seg.mapping_quality = 60
+            seg.cigartuples = [(0, a), (1, ins), (0, b)]
+            seg.query_qualities = pysam.qualitystring_to_array("I" * len(query))
+            out.write(seg)
+    pysam.index(str(bam))
+
+    policy = ConsensusPolicy(min_depth=10)
+    assert insertion_sites(str(bam), "1", 49, 75, policy) == {anchor0}
+
+    # Right flank of a variant at 50 is ref[50, 60) 0-based -> includes anchor0=54.
+    ref = ReferenceFasta(str(fasta))
+    bsrc = BamConsensusSource(str(bam), policy)
+    seq, _covered, n_ins = bsrc.consensus("1", 50, 60, ref_seq[50:60], set())
+    assert n_ins == 1
+    assert seq[anchor0 - 50] == "N"
+    assert len(seq) == 10  # reference-length preserved
+    ref.close()

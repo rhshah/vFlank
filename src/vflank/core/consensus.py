@@ -76,6 +76,17 @@ def run_samtools_consensus(
     return _parse_consensus_fasta(text)
 
 
+def _usable(read, min_mapq: int) -> bool:
+    """A primary, non-duplicate, adequately-mapped read (shared filter)."""
+    return (
+        not read.is_unmapped
+        and not read.is_secondary
+        and not read.is_supplementary
+        and not read.is_duplicate
+        and read.mapping_quality >= min_mapq
+    )
+
+
 def window_depth(
     bam_path: str, chrom: str, start_0based: int, end_0based: int, policy: ConsensusPolicy
 ) -> list[int]:
@@ -87,22 +98,58 @@ def window_depth(
     """
     import pysam
 
-    def keep(read) -> bool:
-        return (
-            not read.is_unmapped
-            and not read.is_secondary
-            and not read.is_supplementary
-            and not read.is_duplicate
-            and read.mapping_quality >= policy.min_mapq
-        )
-
     with pysam.AlignmentFile(bam_path) as af:
         cov = af.count_coverage(
             chrom, start_0based, end_0based,
-            quality_threshold=policy.min_baseq, read_callback=keep,
+            quality_threshold=policy.min_baseq,
+            read_callback=lambda r: _usable(r, policy.min_mapq),
         )
     n = end_0based - start_0based
     return [int(cov[0][i] + cov[1][i] + cov[2][i] + cov[3][i]) for i in range(n)]
+
+
+def insertion_sites(
+    bam_path: str, chrom: str, start_0based: int, end_0based: int, policy: ConsensusPolicy
+) -> set[int]:
+    """0-based reference positions with a significant patient insertion.
+
+    Walks read CIGARs directly (the same primary/MQ filter as :func:`window_depth`)
+    rather than pileup, whose default stepper silently drops reads in some BAMs.
+    A position is flagged when, among reads spanning it, depth >= ``min_depth`` and
+    the fraction anchoring an insertion is >= ``1 - call_fract``. The site is the
+    reference base *before* the inserted bases (matching the consensus engine,
+    which drops insertions to stay reference-length — so we flag rather than lose
+    the event silently).
+    """
+    import pysam
+
+    threshold = 1.0 - policy.call_fract
+    n = end_0based - start_0based
+    cover = [0] * n
+    ins = [0] * n
+    with pysam.AlignmentFile(bam_path) as af:
+        for read in af.fetch(chrom, start_0based, end_0based):
+            if not _usable(read, policy.min_mapq):
+                continue
+            refpos = read.reference_start
+            for op, length in read.cigartuples or ():
+                if op in (0, 7, 8):  # M/=/X: consume reference and query
+                    lo = max(refpos, start_0based)
+                    hi = min(refpos + length, end_0based)
+                    for p in range(lo, hi):
+                        cover[p - start_0based] += 1
+                    refpos += length
+                elif op in (2, 3):  # D/N: consume reference only
+                    refpos += length
+                elif op == 1:  # I: anchored on the preceding reference base
+                    anchor = refpos - 1
+                    if start_0based <= anchor < end_0based:
+                        ins[anchor - start_0based] += 1
+    return {
+        start_0based + i
+        for i in range(n)
+        if cover[i] >= policy.min_depth and ins[i] > 0 and ins[i] / cover[i] >= threshold
+    }
 
 
 def apply_lowcov_overlay(
@@ -168,13 +215,15 @@ class BamConsensusSource:
     def consensus(
         self, bare: str, start_0based: int, end_0based: int,
         reference_seq: str, gnomad_positions: set[int],
-    ) -> tuple[str, int]:
-        """Patient consensus over ``[start, end)``; returns (sequence, n_covered).
+    ) -> tuple[str, int, int]:
+        """Patient consensus over ``[start, end)``.
 
-        ``n_covered`` is the number of positions at/above ``policy.min_depth``.
+        Returns ``(sequence, n_covered, n_inserted)``. Insertion sites are masked
+        to 'N' (the reference-length engine drops the inserted bases, so we flag
+        the site rather than lose it silently).
         """
         if end_0based <= start_0based:
-            return reference_seq.upper(), 0
+            return reference_seq.upper(), 0, 0
         contig = self._contig(bare)
         called = run_samtools_consensus(
             self.bam_path, contig, start_0based + 1, end_0based, self.policy
@@ -189,7 +238,13 @@ class BamConsensusSource:
         seq = apply_lowcov_overlay(
             called, depth, start_0based, reference_seq, gnomad_positions, self.policy
         )
-        return seq, sum(1 for d in depth if d >= self.policy.min_depth)
+        ins = insertion_sites(self.bam_path, contig, start_0based, end_0based, self.policy)
+        if ins:
+            chars = list(seq)
+            for pos in ins:
+                chars[pos - start_0based] = "N"
+            seq = "".join(chars)
+        return seq, sum(1 for d in depth if d >= self.policy.min_depth), len(ins)
 
     def close(self) -> None:  # no persistent handle; symmetry with other sources
         pass
@@ -222,15 +277,16 @@ class ConsensusFlankSource:
 
         left = self.reference.fetch(variant.chrom, left_start_0, left_end_0)
         right = self.reference.fetch(variant.chrom, right_start_0, right_end_0)
-        masked_left, cov_left = self.bam.consensus(
+        masked_left, cov_left, ins_left = self.bam.consensus(
             variant.chrom, left_start_0, left_end_0, left,
             self._gnomad_positions(variant.chrom, left_start_0, left_end_0),
         )
-        masked_right, cov_right = self.bam.consensus(
+        masked_right, cov_right, ins_right = self.bam.consensus(
             variant.chrom, right_start_0, right_end_0, right,
             self._gnomad_positions(variant.chrom, right_start_0, right_end_0),
         )
         return FlankResult(
             left.upper(), right.upper(), masked_left, masked_right,
             covered=cov_left + cov_right, total=len(left) + len(right),
+            inserted=ins_left + ins_right,
         )

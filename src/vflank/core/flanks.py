@@ -39,6 +39,7 @@ class FlankResult:
     masked_right: str
     covered: int | None = None   # flank positions at/above min_depth (BAM consensus)
     total: int | None = None     # total flank positions (BAM consensus)
+    inserted: int | None = None  # flank positions masked for a patient insertion
 
     @property
     def n_masked(self) -> int:
@@ -62,6 +63,7 @@ class FlankResult:
             self.masked_right.upper(),
             self.covered,
             self.total,
+            self.inserted,
         )
 
 

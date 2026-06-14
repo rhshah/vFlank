@@ -60,10 +60,23 @@ normal no-BAM run (not all-N). Without a population source, `gnomad` is plain
 - **Indels: reference-frame (v1).** `samtools consensus` is indel-aware, but its
   indel output changes the sequence length, which breaks the position-by-position
   overlay and flank concatenation. So we run it with `--show-ins no --show-del
-  yes` to keep the consensus **reference-length**: insertions are dropped and
-  deletions become `*` → `N` (a patient deletion disrupts the flank, so the
-  position is masked). True indel-aware (length-changing) consensus is a deferred
-  enhancement.
+  yes` to keep the consensus **reference-length**. Both indel kinds are flagged,
+  not lost:
+  - **Deletions** become `*` → `N` directly in the engine output (a patient
+    deletion disrupts the flank, so the position is masked).
+  - **Insertions** would otherwise be dropped silently by `--show-ins no`. To
+    avoid a silent failure we independently scan read CIGARs
+    (`insertion_sites()`, same primary/MQ filter as the depth array) and **mask
+    the anchor base — the reference position immediately before the insertion —
+    to `N`** when the insertion is supported by ≥ `1 − call_fract` of spanning
+    reads at ≥ `min_depth`. The count is surfaced as `NInserted` per variant and
+    an `Insertion sites` line in the run summary.
+
+  Reads are scanned via `fetch` + CIGAR walk rather than pileup: pysam's default
+  pileup stepper silently drops reads in some BAMs (e.g. subset/sliced BAMs),
+  which would under-count insertions. True indel-aware (length-changing)
+  consensus — keeping the patient's actual inserted bases — is a deferred
+  enhancement (see [option 3 plan](indel-aware-consensus.md)).
 
 ## Engine — `samtools consensus` via pysam (hybrid)
 

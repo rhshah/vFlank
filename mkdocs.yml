@@ -97,4 +97,5 @@ nav:
           - research/gnomad-api.md
           - research/sv-vcf-input.md
           - research/bam-consensus.md
+          - research/indel-aware-consensus.md
   - Changelog: changelog.md

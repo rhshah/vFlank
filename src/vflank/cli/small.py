@@ -271,6 +271,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     bam_warned: set[str] = set()
     n_consensus = 0
     n_flagged = 0
+    n_inserted_total = 0
     if bam_mode:
         scope = "single BAM (all samples)" if n_bam == -1 else f"{n_bam} sample(s) mapped"
         console.print(
@@ -403,7 +404,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 row_detail["CoveredFrac"] = (
                     round(covered_frac, 3) if covered_frac is not None else ""
                 )
+                row_detail["NInserted"] = fr.inserted or 0
                 row_detail["Flagged"] = flagged
+                n_inserted_total += fr.inserted or 0
             summary_rows.append(row_detail)
 
     reference.close()
@@ -471,6 +474,10 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]BAM consensus:[/bold]    {n_consensus:>6,} [dim](patient-specific)[/dim]\n"
         if bam_mode else ""
     )
+    inserted_line = (
+        f"[bold]Insertion sites:[/bold]  {n_inserted_total:>6,} [dim](masked N)[/dim]\n"
+        if (bam_mode and n_inserted_total) else ""
+    )
     flagged_line = (
         f"[bold yellow]Low-coverage flagged:[/bold yellow] {n_flagged:>6,} "
         f"[dim](< {require_coverage:.0%} covered)[/dim]\n"
@@ -480,7 +487,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"\n[bold]Total in MAF:[/bold]     {n_total:>6,}\n"
         f"[bold]Processed:[/bold]        {len(summary_rows):>6,}\n"
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
-        + dup_line + truncated_line + consensus_line + flagged_line +
+        + dup_line + truncated_line + consensus_line + inserted_line + flagged_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
         + api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
@@ -512,6 +519,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             stats["bam_lowcov"] = policy.lowcov
             stats["require_coverage"] = require_coverage
             stats["low_coverage_flagged"] = n_flagged
+            stats["insertion_sites_masked"] = n_inserted_total
         report_io.write_report(report, summary_rows, stats, dict(skip_breakdown))
         console.print(f"[bold]Report:[/bold] [cyan]{report.resolve()}[/cyan]")
 

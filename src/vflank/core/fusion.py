@@ -80,7 +80,7 @@ def _segment(
             set(gnomad.get_positions(bp.chrom, start0, end0, af_threshold))
             if gnomad is not None else set()
         )
-        masked, _covered = bam_source.consensus(bp.chrom, start0, end0, raw, gnomad_pos)
+        masked, _covered, _inserted = bam_source.consensus(bp.chrom, start0, end0, raw, gnomad_pos)
     elif gnomad is not None:
         snps = gnomad.get_positions(bp.chrom, start0, end0, af_threshold)
         masked = mask_sequence(raw, start0, snps)
