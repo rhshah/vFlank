@@ -1,6 +1,8 @@
 # vflank
 
 [![CI](https://github.com/rhshah/vFlank/actions/workflows/ci.yml/badge.svg)](https://github.com/rhshah/vFlank/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/vflank)](https://pypi.org/project/vflank/)
+[![GHCR](https://img.shields.io/badge/ghcr.io-vflank-2496ED?logo=docker&logoColor=white)](https://github.com/rhshah/vFlank/pkgs/container/vflank)
 [![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://rhshah.github.io/vFlank/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
