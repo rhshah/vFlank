@@ -1,9 +1,13 @@
 name: CI
 
+# Runs on the two long-lived branches and on every PR that targets them.
+# git-flow feature/release/hotfix branches get CI via their PR, or when
+# `git flow ... finish` lands them on develop/main.
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -45,3 +49,20 @@ jobs:
       - run: pip install -e ".[dev]"
       - name: Pytest
         run: pytest --cov=vflank --cov-report=term-missing
+
+  docs:
+    name: Docs build (no deploy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # git-revision-date plugin needs history
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[docs]"
+      # A plain build fails on config/plugin/dependency errors (exit 1) — the
+      # class of breakage that would otherwise only surface at deploy time.
+      - name: Build docs
+        run: mkdocs build

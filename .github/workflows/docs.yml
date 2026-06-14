@@ -1,13 +1,23 @@
 name: Docs
 
+# Versioned docs published with mike (git-flow aligned):
+#   push to develop  -> rolling "dev" alias
+#   vX.Y.Z tag       -> that version, aliased "latest" and set as default
+# PRs do not deploy; CI's "Docs build (no deploy)" job validates them instead.
 on:
   push:
-    branches: [main]
+    branches: [develop]
     tags: ["v*"]
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# Serialise deploys: mike pushes to gh-pages, so concurrent runs would race.
+# Queue rather than cancel — never interrupt an in-flight gh-pages push.
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -27,9 +37,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin gh-pages --depth=1 || true
 
-      # main -> the rolling "dev" docs
+      # develop -> the rolling "dev" docs
       - name: Deploy dev docs
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/develop'
         run: mike deploy --push --update-aliases dev
 
       # vX.Y.Z tag -> that version, aliased "latest" and set as default

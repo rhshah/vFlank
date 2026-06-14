@@ -104,8 +104,9 @@ The repo follows **git-flow** (`main` = production, `develop` = integration):
   it and merges back into it.
 - Day-to-day work uses git-flow branches: `git flow feature start <name>`
   (branches off `develop`), `git flow release start X.Y.Z`, `git flow hotfix
-  start X.Y.Z` (off `main`). Prefixes: `feature/ bugfix/ release/ hotfix/`;
-  version-tag prefix `v`.
+  start X.Y.Z` (off `main`). Prefixes: `feature/ release/ hotfix/`; version-tag
+  prefix `v`. (Installed git-flow is nvie 0.4.1 — no `bugfix` subcommand; use a
+  `feature` branch for fixes.)
 - A release/hotfix `finish` merges into **both** `main` and `develop` and tags
   `main`. Small doc-only tweaks may be committed straight to `develop`.
 - End commit messages with: `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
