@@ -109,5 +109,5 @@ The repo follows **git-flow** (`main` = production, `develop` = integration):
   `feature` branch for fixes.)
 - A release/hotfix `finish` merges into **both** `main` and `develop` and tags
   `main`. Small doc-only tweaks may be committed straight to `develop`.
-- End commit messages with: `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
+- End commit messages with: `Co-Authored-By: Claude Code <noreply@anthropic.com>`
 - Commit/push only when asked.

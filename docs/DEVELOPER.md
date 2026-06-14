@@ -250,7 +250,7 @@ prefix `v`). The installed git-flow is nvie 0.4.1, whose subcommands are
 3. Run the full quality gate (section 4) until green.
 4. Re-read your diff for duplication, dead code, and unused symbols.
 5. Commit, ending the message with:
-   `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
+   `Co-Authored-By: Claude Code <noreply@anthropic.com>`
 6. Finish the feature back into `develop`: `git flow feature finish <name>`
    (or open a PR targeting `develop`).
 7. **Releases:** `git flow release start X.Y.Z`, bump the version, then

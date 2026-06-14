@@ -98,6 +98,8 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:mermaid2.fence_mermaid_custom
   - pymdownx.inlinehilite
+  - pymdownx.mark:
+      smart_mark: false   # allow ==N== mid-sequence (DNA highlighting)
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.tabbed:
