@@ -4,46 +4,64 @@ site_url: https://rhshah.github.io/vFlank/
 repo_url: https://github.com/rhshah/vFlank
 repo_name: rhshah/vFlank
 edit_uri: edit/main/docs/
-copyright: Copyright &copy; 2026 Ronak Shah
+copyright: >
+  Copyright &copy; 2026
+  <a href="https://github.com/rhshah">Ronak Shah</a> —
+  built with <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>
 
 theme:
   name: material
   icon:
     repo: fontawesome/brands/github
+    logo: material/dna
   features:
+    - navigation.instant
+    - navigation.tracking
     - navigation.tabs
     - navigation.sections
+    - navigation.indexes
+    - navigation.path
     - navigation.top
     - navigation.footer
-    - navigation.indexes
     - search.suggest
     - search.highlight
+    - search.share
     - content.code.copy
     - content.code.annotate
+    - content.tabs.link
     - toc.follow
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
-      accent: teal
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/weather-night
+        icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
-      accent: teal
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/weather-sunny
+        icon: material/brightness-4
         name: Switch to light mode
 
 plugins:
-  - search
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\,(?!\d)|&[lg]t;'
   - section-index
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      zoomable: true
+      draggable: true
+  - mermaid2
   - git-revision-date-localized:
       enable_creation_date: true
       fallback_to_build_date: true
       enable_git_follow: false
+      type: timeago
   - mkdocs-typer2
   - mkdocstrings:
       handlers:
@@ -57,45 +75,66 @@ plugins:
             docstring_section_style: table
 
 markdown_extensions:
+  - abbr
   - admonition
   - attr_list
+  - def_list
+  - footnotes
   - md_in_html
   - tables
   - toc:
       permalink: true
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
   - pymdownx.inlinehilite
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.snippets:
       base_path: ["."]
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css
 
 extra:
+  generator: false
   version:
     provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/rhshah/vFlank
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/vflank/
 
 nav:
   - Home: index.md
   - Getting Started:
-      - getting-started/installation.md
-      - getting-started/quickstart.md
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
   - User Guide:
-      - user-guide/small-variants.md
-      - user-guide/fusions.md
-      - user-guide/masking.md
-      - user-guide/consensus.md
-  - Reference:
-      - CLI: reference/cli.md
-      - API: reference/api.md
-  - Developer:
-      - DEVELOPER.md
-      - ARCHITECTURE.md
+      - Small Variants: user-guide/small-variants.md
+      - Fusions: user-guide/fusions.md
+      - SNP Masking: user-guide/masking.md
+      - BAM Consensus: user-guide/consensus.md
+  - CLI Reference: reference/cli.md
+  - How It Works:
+      - Architecture: ARCHITECTURE.md
+      - Python API: reference/api.md
       - Research notes:
-          - research/gnomad-api.md
-          - research/sv-vcf-input.md
-          - research/bam-consensus.md
-          - research/indel-aware-consensus.md
-  - Changelog: changelog.md
+          - gnomAD API: research/gnomad-api.md
+          - SV / VCF input: research/sv-vcf-input.md
+          - BAM consensus: research/bam-consensus.md
+          - Indel-aware consensus (plan): research/indel-aware-consensus.md
+  - Development:
+      - Developer Guide: DEVELOPER.md
+      - Changelog: changelog.md

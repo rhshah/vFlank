@@ -1,0 +1,43 @@
+/* vflank brand palette — a deep teal primary with a warm amber accent.
+   The theme palette is set to `custom`, so Material defines no built-in
+   color and these :root variables win without a specificity fight. */
+:root {
+  --md-primary-fg-color:        #0b6b6e;
+  --md-primary-fg-color--light: #12908f;
+  --md-primary-fg-color--dark:  #084d4f;
+  --md-accent-fg-color:         #e8730c;
+  --md-accent-fg-color--transparent: rgba(232, 115, 12, 0.1);
+  --md-code-bg-color:           rgba(11, 107, 110, 0.06);
+}
+
+/* Dark scheme: lift the teal so it reads on slate; warmer amber accent. */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #18b6b0;
+  --md-primary-fg-color--light: #3ccfc8;
+  --md-primary-fg-color--dark:  #0c7575;
+  --md-accent-fg-color:         #ffb454;
+  --md-default-bg-color:        #0f1b1b;
+  --md-code-bg-color:           rgba(24, 182, 176, 0.12);
+}
+
+/* A subtle gradient header for a bit of polish. */
+.md-header {
+  background: linear-gradient(90deg, var(--md-primary-fg-color--dark), var(--md-primary-fg-color));
+}
+
+/* Material icons used inline (e.g. :material-dna:) — align nicely with text. */
+.md-typeset .twemoji svg {
+  vertical-align: text-bottom;
+  height: 1.15em;
+}
+
+/* Abbreviation tooltips (def_list/abbr) — make the dotted hint obvious. */
+.md-typeset abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+/* Tighten the look of the homepage feature grid (md_in_html cards). */
+.md-typeset .grid.cards > ul > li {
+  border-radius: 0.4rem;
+}
