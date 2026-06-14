@@ -220,6 +220,18 @@ per-build host split. Summary:
 | Server (Render etc.) | **UCSC** | server-side call, no CORS needed; nicer coords |
 | Static (Pages) | **Ensembl** | CORS `*` confirmed; UCSC needs a proxy |
 
+**Why a server host removes the UCSC CORS problem:** CORS is enforced *only by
+the browser* on cross-origin JavaScript requests; server-to-server HTTP is not
+subject to it. On a server host the call chain is browser → your backend (same
+origin) → UCSC (server-side, no CORS), so UCSC's missing CORS header never comes
+into play — exactly how `GnomadApiSource` already calls gnomAD server-side. What
+still does *not* work on any host is the **browser** calling UCSC directly;
+hosting location doesn't change that, because it's the request *origin* (server
+vs. browser), not where the frontend is served, that matters. Caveat for the
+server case: all users' UCSC calls share the server's IP, so honour UCSC's
+~1 req/s guidance with caching/throttling (it has blocked web apps that didn't),
+and Render's free tier cold-starts after idle.
+
 ### Still open
 
 - **UCSC CORS — live header capture** from an unrestricted network (devtools or
