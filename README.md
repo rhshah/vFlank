@@ -4,6 +4,7 @@
 [![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://rhshah.github.io/vFlank/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/rhshah/vFlank)
 
 **Variant-aware flanking-sequence extraction and masking for ddPCR assay design.**
 
