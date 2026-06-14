@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/research/gnomad-api/">
       
       
-        <link rel="prev" href="../../ARCHITECTURE/">
+        <link rel="prev" href="../../reference/glossary/">
       
       
         <link rel="next" href="../sv-vcf-input/">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Research notes - vflank</title>
+        <title>gnomAD API - vflank</title>
       
     
     
@@ -55,6 +55,10 @@
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
+      <link rel="stylesheet" href="../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -71,7 +75,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -101,7 +105,7 @@
     <a href="../.." title="vflank" class="md-header__button md-logo" aria-label="vflank" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -118,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Research notes
+              gnomAD API
             
           </span>
         </div>
@@ -131,20 +135,20 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
       </label>
     
   
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
       </label>
     
   
@@ -174,6 +178,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
@@ -249,54 +258,16 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../getting-started/installation/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Getting Started
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../user-guide/small-variants/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  User Guide
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/cli/" class="md-tabs__link">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
           
   
   
     
   
-  Reference
+  Getting Started
 
         </a>
       </li>
@@ -308,17 +279,37 @@
   
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/small-variants/" class="md-tabs__link">
+          
+  
+  
     
   
+  User Guide
+
+        </a>
+      </li>
+    
   
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="../../DEVELOPER/" class="md-tabs__link">
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/cli/" class="md-tabs__link">
         
   
   
     
   
-  Developer
+  CLI Reference
 
       </a>
     </li>
@@ -329,18 +320,45 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../../changelog/" class="md-tabs__link">
-        
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../ARCHITECTURE/" class="md-tabs__link">
+          
   
   
     
   
-  Changelog
+  How It Works
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../DEVELOPER/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
   
 
       
@@ -369,7 +387,7 @@
     <a href="../.." title="vflank" class="md-nav__button md-logo" aria-label="vflank" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"/></svg>
 
     </a>
     vflank
@@ -427,6 +445,8 @@
       
         
       
+        
+      
     
     
     
@@ -443,9 +463,8 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/installation/" class="md-nav__link ">
-              
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -459,14 +478,8 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
+            <span class="md-nav__icon md-icon"></span>
+          </label>
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
@@ -478,6 +491,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -529,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -545,9 +588,8 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <div class="md-nav__link md-nav__container">
-            <a href="../../user-guide/small-variants/" class="md-nav__link ">
-              
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -561,14 +603,8 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
+            <span class="md-nav__icon md-icon"></span>
+          </label>
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
@@ -588,6 +624,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../user-guide/small-variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Small Variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../user-guide/fusions/" class="md-nav__link">
         
   
@@ -595,7 +659,7 @@
   <span class="md-ellipsis">
     
   
-    Fusions / Structural Variants
+    Fusions
   
 
     
@@ -651,7 +715,7 @@
   <span class="md-ellipsis">
     
   
-    Patient Consensus from a BAM
+    BAM Consensus
   
 
     
@@ -660,6 +724,580 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How It Works
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research notes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gnomAD API
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gnomAD API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary / recommendation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoint-and-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoint and protocol
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#datasets-and-genome-builds-verified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datasets and genome builds (verified)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-shape-region-and-coordinates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query shape (region) and coordinates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-facts-that-matter-introspected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema facts that matter (introspected)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schema facts that matter (introspected)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AF rule for masking (matches our VCF behaviour of max(AF, AF_grpmax))
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations-the-important-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations (the important part)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitations (the important part)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rate-limit-math-why-source-choice-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate-limit math (why source choice matters)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-pop-data-genomeexomeboth-across-both-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        --pop-data {genome,exome,both} across both sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposed-design-implementation-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposed design (implementation pending)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docs-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docs plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolved-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolved decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sv-vcf-input/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SV / VCF input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bam-consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BAM consensus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../indel-aware-consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Indel-aware consensus (plan)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -698,17 +1336,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Reference
+    Development
   
 
     
@@ -719,145 +1357,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../DEVELOPER/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Developer
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Developer
+    Development
   
 
           </label>
@@ -870,14 +1375,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ARCHITECTURE/" class="md-nav__link">
+      <a href="../../DEVELOPER/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    vflank — Architecture &amp; Roadmap
+    Developer Guide
   
 
     
@@ -893,147 +1398,6 @@
             
               
                 
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Research notes
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link md-nav__link--active" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Research notes
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sv-vcf-input/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SV + VCF input — design note (M4 / M4.6)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../bam-consensus/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BAM consensus masking — design note (modes C / D)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
   
   
   
@@ -1055,6 +1419,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1251,6 +1623,72 @@
           
             <div class="md-content" data-md-component="content">
               
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../ARCHITECTURE/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Research notes
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -1260,19 +1698,19 @@
   
 
 
-<h1 id="gnomad-graphql-api-findings-limitations-and-design-note">gnomAD GraphQL API — findings, limitations, and design note<a class="headerlink" href="#gnomad-graphql-api-findings-limitations-and-design-note" title="Permanent link">&para;</a></h1>
-<p>Investigation of whether/how to use the public gnomAD API as an alternative
+<h1 id="gnomad-graphql-api-findings-limitations-and-design-note"><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL <abbr title="Application Programming Interface">API</abbr> — findings, limitations, and design note<a class="headerlink" href="#gnomad-graphql-api-findings-limitations-and-design-note" title="Permanent link">&para;</a></h1>
+<p>Investigation of whether/how to use the public <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> as an alternative
 population-frequency masking source (vs downloading per-chromosome VCFs).
 Status: <strong>implemented</strong> — <code>core/popfreq_api.GnomadApiSource</code>, selected via
-<code>--pop-source api</code>. The VCF source (<code>core/popfreq.GnomadStore</code>) and the API
+<code>--pop-source api</code>. The <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source (<code>core/popfreq.GnomadStore</code>) and the <abbr title="Application Programming Interface">API</abbr>
 source are symmetric across <code>--pop-data {genome,exome,both}</code>.</p>
-<p>All facts below were verified against the live endpoint and the gnomAD docs on
+<p>All facts below were verified against the live endpoint and the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> docs on
 2026-06-12.</p>
 <h2 id="summary-recommendation">Summary / recommendation<a class="headerlink" href="#summary-recommendation" title="Permanent link">&para;</a></h2>
 <p>Use the <strong>public hosted endpoint</strong> <code>https://gnomad.broadinstitute.org/api</code>
 (GraphQL over HTTP POST) as an <em>optional</em> masking source, selected with
-<code>--pop-source api</code>. Keep the local-VCF source as the default for reproducible /
-bulk / offline (HPC) runs. The API is ideal for <strong>small cohorts with no local
+<code>--pop-source api</code>. Keep the local-<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source as the default for reproducible /
+bulk / offline (HPC) runs. The <abbr title="Application Programming Interface">API</abbr> is ideal for <strong>small cohorts with no local
 data</strong> (e.g. our 20-variant TP53 test); it is <strong>not</strong> suitable for large cohorts
 because of a hard rate limit (below).</p>
 <p>No new runtime dependency: use the <strong>standard-library <code>urllib.request</code></strong>.
@@ -1300,12 +1738,12 @@ client).</p>
 </thead>
 <tbody>
 <tr>
-<td><code>hg19</code> (GRCh37)</td>
+<td><code>hg19</code> (<abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr>)</td>
 <td><code>GRCh37</code></td>
 <td><code>gnomad_r2_1</code></td>
 </tr>
 <tr>
-<td><code>hg38</code> (GRCh38)</td>
+<td><code>hg38</code> (<abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr>)</td>
 <td><code>GRCh38</code></td>
 <td><code>gnomad_r4</code></td>
 </tr>
@@ -1337,34 +1775,34 @@ canonical internal form.</p>
 <li><code>exome</code>/<code>genome</code> are <code>VariantSequencingTypeData</code>: has <code>af</code> (Float), <code>ac</code>, <code>an</code>,
   <code>populations</code>, <code>faf95</code>, <code>fafmax</code>. <strong><code>af</code> IS available at this level.</strong></li>
 <li><code>VariantPopulation</code>: <code>id, ac, an, homozygote_count, …</code> — <strong>no <code>af</code> field</strong>; the
-  per-population AF must be computed as <code>ac / an</code> (guard <code>an &gt; 0</code>).</li>
+  per-population <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> must be computed as <code>ac / an</code> (guard <code>an &gt; 0</code>).</li>
 <li><code>joint</code> (<code>VariantJointSequencingTypeData</code>) exists <strong>only in v4</strong> (combined
   exome+genome); it has <code>ac/an/populations/fafmax</code> but <strong>no direct <code>af</code></strong> (compute
   <code>ac/an</code>). For v2.1.1 <code>joint</code> is null.</li>
-<li>v4 uses <strong><code>fafmax</code></strong> for the filtering-AF max; there is <strong>no <code>grpmax</code></strong> field
-  (an early guess that the API corrected).</li>
+<li>v4 uses <strong><code>fafmax</code></strong> for the filtering-<abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> max; there is <strong>no <code>grpmax</code></strong> field
+  (an early guess that the <abbr title="Application Programming Interface">API</abbr> corrected).</li>
 </ul>
-<h3 id="af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax">AF rule for masking (matches our VCF behaviour of max(AF, AF_grpmax))<a class="headerlink" href="#af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax" title="Permanent link">&para;</a></h3>
+<h3 id="af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax"><abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> rule for masking (matches our <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> behaviour of max(<abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr>, AF_grpmax))<a class="headerlink" href="#af-rule-for-masking-matches-our-vcf-behaviour-of-maxaf-af_grpmax" title="Permanent link">&para;</a></h3>
 <p>For each variant, SNPs only (<code>len(ref) == 1 and len(alt) == 1</code>):
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>af_overall = max of (genome.af, exome.af) ignoring None
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>af_grpmax  = max over (genome.populations + exome.populations) of ac/an, an&gt;0
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>af = max(af_overall, af_grpmax)
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>mask pos if af &gt;= af_threshold
 </code></pre></div>
-Verified on the real common SNP TP53 P72R (rs1042522, chr17:7579472 GRCh37):
+Verified on the real common <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> TP53 P72R (rs1042522, chr17:7579472 <abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr>):
 <code>exome.af = 0.668</code>, population-max <code>= 0.738</code> — correctly flagged as common.</p>
 <h2 id="limitations-the-important-part">Limitations (the important part)<a class="headerlink" href="#limitations-the-important-part" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Rate limit: 10 requests / IP / 60 s</strong> (gnomAD policy; README confirms IP-level
+<li><strong>Rate limit: 10 requests / IP / 60 s</strong> (<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> policy; README confirms IP-level
    rate limiting in <code>rate-limiting.ts</code>). Exceeding it returns errors / blocks the IP.
    This is the dominant constraint.</li>
 <li><strong>Per-region variant cap.</strong> A region with too many variants returns
    <code>"This region has too many variants to display. Select a smaller region."</code>
    Irrelevant for our ±200 bp windows; relevant if anyone tried whole-gene queries.</li>
-<li><strong>Not for bulk.</strong> gnomAD explicitly directs large/programmatic workloads to the
-   VCF/Hail-table downloads or the gnomAD Toolbox, not the API.</li>
-<li><strong>Reproducibility.</strong> Results are not pinned — gnomAD updates the served data;
-   network is required (no offline/HPC compute nodes). For a clinical ddPCR context,
+<li><strong>Not for bulk.</strong> <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> explicitly directs large/programmatic workloads to the
+   <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>/Hail-table downloads or the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> Toolbox, not the <abbr title="Application Programming Interface">API</abbr>.</li>
+<li><strong>Reproducibility.</strong> Results are not pinned — <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> updates the served data;
+   network is required (no offline/HPC compute nodes). For a clinical <abbr title="digital droplet PCR — the partitioned PCR assay vflank's flanks feed into">ddPCR</abbr> context,
    record the <code>dataset</code> id in the run report for provenance.</li>
 <li><strong>Schema is "subject to change"</strong> (README) — pin the query and add a schema-shape
    check / clear error if fields go missing.</li>
@@ -1381,32 +1819,32 @@ flank). Mitigations bring this down:
 - <strong>Region cache:</strong> identical/overlapping variants (e.g. our 20 identical TP53
   rows) collapse to a single request.
 - Even so: ~10 <em>distinct</em> variant windows/min. ≤~50 distinct variants is comfortable;
-  hundreds means minutes of throttled waiting → prefer local VCF.</p>
+  hundreds means minutes of throttled waiting → prefer local <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>.</p>
 <h2 id="-pop-data-genomeexomeboth-across-both-sources"><code>--pop-data {genome,exome,both}</code> across both sources<a class="headerlink" href="#-pop-data-genomeexomeboth-across-both-sources" title="Permanent link">&para;</a></h2>
-<p><code>--pop-data</code> selects which gnomAD dataset(s) to consult; the masking rule is the
+<p><code>--pop-data</code> selects which <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> dataset(s) to consult; the masking rule is the
 same regardless of source.</p>
 <ul>
-<li><strong>API source:</strong> free — one region query returns both <code>genome{}</code> and <code>exome{}</code>;
+<li><strong><abbr title="Application Programming Interface">API</abbr> source:</strong> free — one region query returns both <code>genome{}</code> and <code>exome{}</code>;
   <code>both</code> = <code>max(genome.af, exome.af, per-pop ac/an)</code>.</li>
-<li><strong>VCF source:</strong> maps to which file set is opened in <code>--pop-vcf-dir</code>:</li>
+<li><strong><abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source:</strong> maps to which file set is opened in <code>--pop-vcf-dir</code>:</li>
 <li><code>genome</code> → <code>gnomad.genomes.*</code> (the current behaviour / what the original tool used)</li>
 <li><code>exome</code>  → <code>gnomad.exomes.*</code></li>
 <li><code>both</code>   → open both per chromosome, mask the <strong>union</strong> of positions (a position
-    is masked if AF ≥ threshold in <em>either</em> cohort).</li>
+    is masked if <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> ≥ threshold in <em>either</em> cohort).</li>
 </ul>
-<p>gnomAD ships <strong>per-chromosome files for both genomes and exomes</strong>, both builds
-(verified): e.g. GRCh37 chr17 genomes 14.5 GB, exomes 3.9 GB (a 63 GB combined
-exome file also exists but we use per-chrom). So the VCF source can support all
+<p><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> ships <strong>per-chromosome files for both genomes and exomes</strong>, both builds
+(verified): e.g. <abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr> chr17 genomes 14.5 GB, exomes 3.9 GB (a 63 GB combined
+exome file also exists but we use per-chrom). So the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source can support all
 three — it just needs the corresponding files present.</p>
-<p>Asymmetry to respect: the API gets all three for free; the VCF source needs the
-files downloaded. <strong>If <code>--pop-data exome</code>/<code>both</code> is requested on the VCF source
+<p>Asymmetry to respect: the <abbr title="Application Programming Interface">API</abbr> gets all three for free; the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source needs the
+files downloaded. <strong>If <code>--pop-data exome</code>/<code>both</code> is requested on the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source
 without the required files, raise a clear error — never silently fall back to
 genome-only.</strong> Today the package ships only genome patterns; adding exome
 patterns (per-chrom, both builds) + union logic is required to enable
-exome/both on the VCF source.</p>
-<p><code>both</code> combine = <strong>max AF across cohorts</strong> (conservative, primer-safe). The
-statistically pooled combine is gnomAD's <code>joint</code> dataset, which exists <strong>only for
-v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code> first.</p>
+exome/both on the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source.</p>
+<p><code>both</code> combine = <strong>max <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> across cohorts</strong> (conservative, primer-safe). The
+statistically pooled combine is <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>'s <code>joint</code> dataset, which exists <strong>only for
+v4 (<abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr>)</strong> — a future v4 refinement; ship max-based <code>both</code> first.</p>
 <p>Filename patterns needed (split genome/exome):
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hg19 genome: gnomad.genomes.r2.1.1.sites.{chrom}.vcf.bgz
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>hg19 exome:  gnomad.exomes.r2.1.1.sites.{chrom}.vcf.bgz
@@ -1418,7 +1856,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
 <li>New <code>core/popfreq_api.py::GnomadApiSource</code> implementing the <strong>same duck-typed
   interface</strong> as <code>GnomadStore</code>: <code>get_positions(bare, start0, end0, af_threshold) -&gt; list[int]</code>.
   Drops in behind <code>ReferenceFlankSource</code> with no core changes.</li>
-<li>CLI: <code>--pop-source {vcf,api}</code> (default <code>vcf</code>). <code>api</code> ignores <code>--pop-vcf-dir</code>.</li>
+<li><abbr title="Command-Line Interface">CLI</abbr>: <code>--pop-source {vcf,api}</code> (default <code>vcf</code>). <code>api</code> ignores <code>--pop-vcf-dir</code>.</li>
 <li>Build→(reference_genome, dataset) mapping as above; <code>--gnomad-dataset</code> override
   for subsets (e.g. <code>gnomad_r2_1_non_cancer</code>).</li>
 <li>HTTP via <code>urllib.request</code>; 30 s timeout; <strong>client-side throttle ≤10/60 s</strong>
@@ -1433,48 +1871,48 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
 <ul>
 <li><strong>Unit (no network):</strong></li>
 <li><code>build_to_dataset(genome_build)</code> mapping.</li>
-<li>Response→positions parser: given saved JSON fixtures (real API responses for a
-    common-SNP region and a rare-only region), assert correct SNP/AF filtering,
-    <code>af = max(overall, ac/an grpmax)</code>, indels excluded, <code>None</code> AF handled.</li>
+<li>Response→positions parser: given saved JSON fixtures (real <abbr title="Application Programming Interface">API</abbr> responses for a
+    common-<abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> region and a rare-only region), assert correct <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr>/<abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> filtering,
+    <code>af = max(overall, ac/an grpmax)</code>, indels excluded, <code>None</code> <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> handled.</li>
 <li>Coordinate conversion (<code>[s0,e0)</code> → <code>start=s0+1, stop=e0</code>).</li>
 <li>Throttle/backoff logic with a fake clock and a fake transport (no real HTTP).</li>
 <li>Error mapping: GraphQL <code>errors</code> array and HTTP failure → <code>PopFreqError</code>.</li>
 <li><strong>Fixtures:</strong> commit 2–3 small real JSON responses under <code>tests/fixtures/gnomad_api/</code>
   (captured once; &lt;5 KB each) so tests are deterministic and offline.</li>
 <li><strong>Integration:</strong> the existing <code>ReferenceFlankSource</code> masking test, but with a
-  stub source object exposing <code>get_positions</code> — confirms the API source is
-  interchangeable with <code>GnomadStore</code> (no real network in CI).</li>
-<li><strong>Optional live smoke test:</strong> one test hitting the real API, marked
-  <code>@pytest.mark.live</code> and <strong>skipped by default</strong> (run manually); keeps CI offline
+  stub source object exposing <code>get_positions</code> — confirms the <abbr title="Application Programming Interface">API</abbr> source is
+  interchangeable with <code>GnomadStore</code> (no real network in <abbr title="Continuous Integration">CI</abbr>).</li>
+<li><strong>Optional live smoke test:</strong> one test hitting the real <abbr title="Application Programming Interface">API</abbr>, marked
+  <code>@pytest.mark.live</code> and <strong>skipped by default</strong> (run manually); keeps <abbr title="Continuous Integration">CI</abbr> offline
   and polite to the shared resource.</li>
 </ul>
 <h2 id="docs-plan">Docs plan<a class="headerlink" href="#docs-plan" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>docs/DEVELOPER.md</code>: add <code>--pop-source api</code> to the CLI section and a "new
+<li><code>docs/DEVELOPER.md</code>: add <code>--pop-source api</code> to the <abbr title="Command-Line Interface">CLI</abbr> section and a "new
   frequency source" note (it already documents the duck-typed interface).</li>
-<li><code>docs/ARCHITECTURE.md</code>: add the API source to the masking modes / popfreq seam.</li>
-<li><code>ddpcr-conventions</code> skill: add the AF rule (max of overall + per-pop ac/an) and
-  the API-vs-VCF tradeoff so future work reasons about it correctly.</li>
-<li><code>README.md</code>: one line under masking — "no-download option via the gnomAD API for
+<li><code>docs/ARCHITECTURE.md</code>: add the <abbr title="Application Programming Interface">API</abbr> source to the masking modes / popfreq seam.</li>
+<li><code>ddpcr-conventions</code> skill: add the <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> rule (max of overall + per-pop ac/an) and
+  the <abbr title="Application Programming Interface">API</abbr>-vs-<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> tradeoff so future work reasons about it correctly.</li>
+<li><code>README.md</code>: one line under masking — "no-download option via the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> for
   small cohorts."</li>
-<li>User-facing guidance everywhere: <strong>API = small/no-download; VCF = bulk/reproducible/HPC.</strong></li>
+<li>User-facing guidance everywhere: <strong><abbr title="Application Programming Interface">API</abbr> = small/no-download; <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> = bulk/reproducible/HPC.</strong></li>
 </ul>
 <h2 id="resolved-decisions">Resolved decisions<a class="headerlink" href="#resolved-decisions" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Default genome build = <code>hg19</code> (GRCh37 / gnomAD v2.1.1).</strong> gnomAD v4 is
-   <strong>GRCh38-only</strong> — there is no v4 GRCh37. This deployment's data is <code>assembly19</code>
-   (hg19 ctDNA) and the existing tool is hg19, so hg19 is the right default. CLI
-   default (<code>small run</code>, <code>list-vcf</code>) changed hg38 → hg19; hg38 users pass <code>-g hg38</code>
+<li><strong>Default genome build = <code>hg19</code> (<abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr> / <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> v2.1.1).</strong> <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> v4 is
+   <strong><abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr>-only</strong> — there is no v4 <abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr>. This deployment's data is <code>assembly19</code>
+   (<abbr title="human genome build 19 (== GRCh37)">hg19</abbr> ctDNA) and the existing tool is <abbr title="human genome build 19 (== GRCh37)">hg19</abbr>, so <abbr title="human genome build 19 (== GRCh37)">hg19</abbr> is the right default. <abbr title="Command-Line Interface">CLI</abbr>
+   default (<code>small run</code>, <code>list-vcf</code>) changed <abbr title="human genome build 38 (== GRCh38)">hg38</abbr> → <abbr title="human genome build 19 (== GRCh37)">hg19</abbr>; <abbr title="human genome build 38 (== GRCh38)">hg38</abbr> users pass <code>-g hg38</code>
    and the build-mismatch guard catches a wrong choice.</li>
 <li><strong>Default population data = <code>genome</code></strong>, exposed as <code>--pop-data {genome,exome,both}</code>.
    Flanks routinely fall in non-coding regions where <strong>exomes have no data</strong>;
    genomes cover the whole genome uniformly; and this matches the existing
-   genomes-VCF behaviour. Verified on TP53 P72R (GRCh37): genome af=0.621 (AN 31k),
-   exome af=0.668 (AN 251k) — both agree it's common. Exome's larger N only helps
+   genomes-<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> behaviour. Verified on TP53 P72R (<abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr>): genome af=0.621 (<abbr title="Allele Number — total number of called chromosomes">AN</abbr> 31k),
+   exome af=0.668 (<abbr title="Allele Number — total number of called chromosomes">AN</abbr> 251k) — both agree it's common. Exome's larger N only helps
    for <em>rare</em> coding variants near the threshold; <code>both</code> (union/max) is the safest
    near exons.</li>
-<li><strong>AF within the chosen dataset:</strong> <code>af = max(seq.af, max(ac/an over populations))</code>,
-   SNPs only — mirrors the VCF source's max(AF, AF_grpmax).</li>
+<li><strong><abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> within the chosen dataset:</strong> <code>af = max(seq.af, max(ac/an over populations))</code>,
+   SNPs only — mirrors the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source's max(<abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr>, AF_grpmax).</li>
 <li><strong>Default <code>--pop-source = vcf</code></strong> (api opt-in). Both sources default to genome
    for parity.</li>
 <li><strong>Fixed safe throttle</strong> (≤10 req/60 s + backoff); no <code>--api-rate</code> knob initially.</li>
@@ -1501,7 +1939,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 18:35:38 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 12, 2026 18:35:38 UTC"><span class="timeago" datetime="2026-06-12T18:35:38+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 12, 2026 18:35:38 UTC">2026-06-12</span>
   </span>
 
     
@@ -1511,7 +1949,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 15:45:27 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 12, 2026 15:45:27 UTC"><span class="timeago" datetime="2026-06-12T15:45:27+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 12, 2026 15:45:27 UTC">2026-06-12</span>
   </span>
 
     
@@ -1528,6 +1966,8 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
@@ -1546,7 +1986,7 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../ARCHITECTURE/" class="md-footer__link md-footer__link--prev" aria-label="Previous: vflank — Architecture &amp;amp; Roadmap">
+          <a href="../../reference/glossary/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Glossary">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1556,20 +1996,20 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
                 Previous
               </span>
               <div class="md-ellipsis">
-                vflank — Architecture &amp; Roadmap
+                Glossary
               </div>
             </div>
           </a>
         
         
           
-          <a href="../sv-vcf-input/" class="md-footer__link md-footer__link--next" aria-label="Next: SV + VCF input — design note (M4 / M4.6)">
+          <a href="../sv-vcf-input/" class="md-footer__link md-footer__link--next" aria-label="Next: SV / VCF input">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                SV + VCF input — design note (M4 / M4.6)
+                SV / VCF input
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1586,13 +2026,36 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2026 Ronak Shah
+      Copyright &copy; 2026 <a href="https://github.com/rhshah">Ronak Shah</a> — built with <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>
+
     </div>
   
   
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/rhshah/vFlank" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/vflank/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
     </a>
   
 </div>
@@ -1610,10 +2073,14 @@ v4 (GRCh38)</strong> — a future v4 refinement; ship max-based <code>both</code
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.path", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../js/timeago.min.js"></script>
+      
+        <script src="../../js/timeago_mkdocs_material.js"></script>
       
     
   </body>

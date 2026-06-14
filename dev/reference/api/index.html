@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/reference/api/">
       
       
-        <link rel="prev" href="../cli/">
+        <link rel="prev" href="../../ARCHITECTURE/">
       
       
-        <link rel="next" href="../../DEVELOPER/">
+        <link rel="next" href="../glossary/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>API - vflank</title>
+        <title>Python API - vflank</title>
       
     
     
@@ -55,6 +55,10 @@
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
+      <link rel="stylesheet" href="../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -71,7 +75,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -101,7 +105,7 @@
     <a href="../.." title="vflank" class="md-header__button md-logo" aria-label="vflank" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -118,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API
+              Python API
             
           </span>
         </div>
@@ -131,20 +135,20 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
       </label>
     
   
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
       </label>
     
   
@@ -174,6 +178,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
@@ -249,17 +258,42 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../getting-started/installation/" class="md-tabs__link">
-        
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
   
   
     
   
   Getting Started
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/small-variants/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User Guide
+
+        </a>
+      </li>
+    
   
 
       
@@ -269,13 +303,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../user-guide/small-variants/" class="md-tabs__link">
+      <a href="../cli/" class="md-tabs__link">
         
   
   
     
   
-  User Guide
+  CLI Reference
 
       </a>
     </li>
@@ -292,13 +326,13 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../cli/" class="md-tabs__link">
+        <a href="../../ARCHITECTURE/" class="md-tabs__link">
           
   
   
     
   
-  Reference
+  How It Works
 
         </a>
       </li>
@@ -311,36 +345,20 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../DEVELOPER/" class="md-tabs__link">
-        
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../DEVELOPER/" class="md-tabs__link">
+          
   
   
     
   
-  Developer
+  Development
 
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../changelog/" class="md-tabs__link">
-        
-  
-  
+        </a>
+      </li>
     
-  
-  Changelog
-
-      </a>
-    </li>
   
 
       
@@ -369,7 +387,7 @@
     <a href="../.." title="vflank" class="md-nav__button md-logo" aria-label="vflank" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"/></svg>
 
     </a>
     vflank
@@ -427,6 +445,8 @@
       
         
       
+        
+      
     
     
     
@@ -443,9 +463,8 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/installation/" class="md-nav__link ">
-              
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -459,14 +478,8 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
+            <span class="md-nav__icon md-icon"></span>
+          </label>
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
@@ -478,6 +491,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -529,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -545,9 +588,8 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <div class="md-nav__link md-nav__container">
-            <a href="../../user-guide/small-variants/" class="md-nav__link ">
-              
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -561,14 +603,8 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
+            <span class="md-nav__icon md-icon"></span>
+          </label>
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
@@ -588,6 +624,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../user-guide/small-variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Small Variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../user-guide/fusions/" class="md-nav__link">
         
   
@@ -595,7 +659,7 @@
   <span class="md-ellipsis">
     
   
-    Fusions / Structural Variants
+    Fusions
   
 
     
@@ -651,7 +715,7 @@
   <span class="md-ellipsis">
     
   
-    Patient Consensus from a BAM
+    BAM Consensus
   
 
     
@@ -676,12 +740,43 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
   
     
     
+      
+        
+      
+        
       
         
       
@@ -703,17 +798,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
   <span class="md-ellipsis">
     
   
-    Reference
+    How It Works
   
 
     
@@ -724,12 +819,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Reference
+    How It Works
   
 
           </label>
@@ -742,14 +837,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../cli/" class="md-nav__link">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CLI
+    Architecture
   
 
     
@@ -786,7 +881,7 @@
   <span class="md-ellipsis">
     
   
-    API
+    Python API
   
 
     
@@ -804,7 +899,7 @@
   <span class="md-ellipsis">
     
   
-    API
+    Python API
   
 
     
@@ -1013,6 +1108,17 @@
   
     <nav class="md-nav" aria-label="FlankResult">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vflank.core.flanks.FlankResult.n_corrected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        n_corrected
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#vflank.core.flanks.FlankResult.upper" class="md-nav__link">
@@ -1716,78 +1822,6 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../DEVELOPER/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Developer
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Developer
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
               
                 
   
@@ -1795,14 +1829,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ARCHITECTURE/" class="md-nav__link">
+      <a href="../glossary/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    vflank — Architecture &amp; Roadmap
+    Glossary
   
 
     
@@ -1829,25 +1863,31 @@
       
         
       
-    
-    
-    
-      
+        
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    
       
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+      
         
           
-          <div class="md-nav__link md-nav__container">
-            <a href="../../research/gnomad-api/" class="md-nav__link ">
-              
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
   
   
   <span class="md-ellipsis">
@@ -1861,17 +1901,11 @@
   
   
 
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
+            <span class="md-nav__icon md-icon"></span>
+          </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1888,6 +1922,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../research/gnomad-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gnomAD API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../research/sv-vcf-input/" class="md-nav__link">
         
   
@@ -1895,7 +1957,7 @@
   <span class="md-ellipsis">
     
   
-    SV + VCF input — design note (M4 / M4.6)
+    SV / VCF input
   
 
     
@@ -1923,7 +1985,35 @@
   <span class="md-ellipsis">
     
   
-    BAM consensus masking — design note (modes C / D)
+    BAM consensus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/indel-aware-consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Indel-aware consensus (plan)
   
 
     
@@ -1954,6 +2044,92 @@
     
       
       
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DEVELOPER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
   
@@ -1975,6 +2151,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2189,6 +2373,17 @@
   
     <nav class="md-nav" aria-label="FlankResult">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vflank.core.flanks.FlankResult.n_corrected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        n_corrected
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#vflank.core.flanks.FlankResult.upper" class="md-nav__link">
@@ -2894,6 +3089,54 @@
           
             <div class="md-content" data-md-component="content">
               
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../ARCHITECTURE/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -2903,7 +3146,7 @@
   
 
 
-<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
+<h1 id="api-reference"><abbr title="Application Programming Interface">API</abbr> Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
 <p>vflank can be used as a library. The pieces compose directly — see the
 <a href="../../DEVELOPER/">Developer Guide</a> for runnable examples. Documentation is
 generated from the source docstrings.</p>
@@ -2966,7 +3209,7 @@ generated from the source docstrings.</p>
 
 
         <p>A single small variant in canonical internal form.</p>
-<p>Coordinates are 1-based, fully-closed <code>[start, end]</code> (MAF convention).
+<p>Coordinates are 1-based, fully-closed <code>[start, end]</code> (<abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> convention).
 <code>chrom</code> is the <em>bare</em> chromosome; <code>raw_chrom</code> preserves the original
 display notation for headers/messages only.</p>
 
@@ -3143,7 +3386,7 @@ display notation for headers/messages only.</p>
         <p>Chromosome notation detection and normalisation.</p>
 <p>All functions here are pure (no I/O) so they are trivially unit-testable. The
 canonical internal form is the <em>bare</em> chromosome string (e.g. <code>"7"</code>, <code>"X"</code>,
-<code>"MT"</code>); callers convert to <code>chr</code>-prefixed form for a given FASTA/VCF at the
+<code>"MT"</code>); callers convert to <code>chr</code>-prefixed form for a given <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>/<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> at the
 last moment via :func:<code>chrom_for_contigs</code>.</p>
 
 
@@ -3365,7 +3608,7 @@ Defaults to True (assume prefixed) when undeterminable.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Convert a bare chromosome to the notation used by a FASTA/VCF.</p>
+        <p>Convert a bare chromosome to the notation used by a <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>/<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>.</p>
 
 
             <details class="mkdocstrings-source">
@@ -3465,7 +3708,7 @@ Defaults to True (assume prefixed) when undeterminable.</p>
         <p>Flank extraction and masking.</p>
 <p>A :class:<code>FlankSource</code> is the strategy seam for <em>where each flank base comes
 from</em>. The reference-backed source implemented here covers modes A (reference)
-and B (reference + population mask). Mode C/D (BAM consensus) will add a
+and B (reference + population mask). Mode C/D (<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus) will add a
 <code>ConsensusFlankSource</code> implementing the same protocol.</p>
 
 
@@ -3537,7 +3780,22 @@ and B (reference + population mask). Mode C/D (BAM consensus) will add a
 <span class="normal"><a href="#__codelineno-0-49">49</a></span>
 <span class="normal"><a href="#__codelineno-0-50">50</a></span>
 <span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="k">class</span><span class="w"> </span><span class="nc">FlankResult</span><span class="p">:</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Left/right flanks, raw and masked, for one variant.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-35" name="__codelineno-0-35"></a>
@@ -3545,19 +3803,34 @@ and B (reference + population mask). Mode C/D (BAM consensus) will add a
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="n">right</span><span class="p">:</span> <span class="nb">str</span>
 <a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">masked_left</span><span class="p">:</span> <span class="nb">str</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">masked_right</span><span class="p">:</span> <span class="nb">str</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="nd">@property</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_masked</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">upper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an uppercased copy (presentation convenience for callers).&quot;&quot;&quot;</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="p">)</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="n">covered</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># flank positions at/above min_depth (BAM consensus)</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">total</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># total flank positions (BAM consensus)</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">inserted</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># flank positions masked for a patient insertion</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>    <span class="nd">@property</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_masked</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="nd">@property</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_corrected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Flank positions where the masked seq is a real base differing from raw.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">m</span> <span class="o">!=</span> <span class="n">r</span> <span class="ow">and</span> <span class="n">m</span> <span class="o">!=</span> <span class="s2">&quot;N&quot;</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="k">for</span> <span class="n">raw</span><span class="p">,</span> <span class="n">msk</span> <span class="ow">in</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="p">))</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">msk</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="p">)</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">upper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an uppercased copy (presentation convenience for callers).&quot;&quot;&quot;</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">covered</span><span class="p">,</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">,</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">inserted</span><span class="p">,</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3570,6 +3843,30 @@ and B (reference + population mask). Mode C/D (BAM consensus) will add a
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="vflank.core.flanks.FlankResult.n_corrected" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">n_corrected</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#vflank.core.flanks.FlankResult.n_corrected" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">n_corrected</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Flank positions where the masked seq is a real base differing from raw.</p>
+
+    </div>
+
+</div>
 
 
 
@@ -3592,21 +3889,27 @@ and B (reference + population mask). Mode C/D (BAM consensus) will add a
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/core/flanks.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="k">def</span><span class="w"> </span><span class="nf">upper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an uppercased copy (presentation convenience for callers).&quot;&quot;&quot;</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>    <span class="p">)</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="k">def</span><span class="w"> </span><span class="nf">upper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an uppercased copy (presentation convenience for callers).&quot;&quot;&quot;</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">masked_left</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">masked_right</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">covered</span><span class="p">,</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">,</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">inserted</span><span class="p">,</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3649,13 +3952,13 @@ and B (reference + population mask). Mode C/D (BAM consensus) will add a
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/vflank/core/flanks.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span>
-<span class="normal"><a href="#__codelineno-0-58">58</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="k">class</span><span class="w"> </span><span class="nc">FlankSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Strategy for producing flanks around a variant.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span> <span class="o">...</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-70">70</a></span>
+<span class="normal"><a href="#__codelineno-0-71">71</a></span>
+<span class="normal"><a href="#__codelineno-0-72">72</a></span>
+<span class="normal"><a href="#__codelineno-0-73">73</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="k">class</span><span class="w"> </span><span class="nc">FlankSource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Strategy for producing flanks around a variant.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3695,8 +3998,8 @@ and B (reference + population mask). Mode C/D (BAM consensus) will add a
 
 
 
-        <p>Flanks pulled from the reference FASTA, optionally masking common SNPs.</p>
-<p>MAF coordinates are 1-based fully-closed <code>[start, end]</code>; pysam uses 0-based
+        <p>Flanks pulled from the reference <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>, optionally masking common SNPs.</p>
+<p><abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> coordinates are 1-based fully-closed <code>[start, end]</code>; pysam uses 0-based
 half-open <code>[start, end)</code>. The left flank is the <code>flank</code> bases ending just
 before the variant; the right flank is the <code>flank</code> bases starting just
 after it. The variant interval itself is excluded from both flanks.</p>
@@ -3710,83 +4013,83 @@ after it. The variant interval itself is excluded from both flanks.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/vflank/core/flanks.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
-<span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span>
-<span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span>
-<span class="normal"><a href="#__codelineno-0-73">73</a></span>
-<span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span>
-<span class="normal"><a href="#__codelineno-0-76">76</a></span>
-<span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span>
-<span class="normal"><a href="#__codelineno-0-79">79</a></span>
-<span class="normal"><a href="#__codelineno-0-80">80</a></span>
-<span class="normal"><a href="#__codelineno-0-81">81</a></span>
-<span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span>
-<span class="normal"><a href="#__codelineno-0-84">84</a></span>
-<span class="normal"><a href="#__codelineno-0-85">85</a></span>
-<span class="normal"><a href="#__codelineno-0-86">86</a></span>
-<span class="normal"><a href="#__codelineno-0-87">87</a></span>
-<span class="normal"><a href="#__codelineno-0-88">88</a></span>
-<span class="normal"><a href="#__codelineno-0-89">89</a></span>
-<span class="normal"><a href="#__codelineno-0-90">90</a></span>
-<span class="normal"><a href="#__codelineno-0-91">91</a></span>
-<span class="normal"><a href="#__codelineno-0-92">92</a></span>
-<span class="normal"><a href="#__codelineno-0-93">93</a></span>
-<span class="normal"><a href="#__codelineno-0-94">94</a></span>
-<span class="normal"><a href="#__codelineno-0-95">95</a></span>
-<span class="normal"><a href="#__codelineno-0-96">96</a></span>
-<span class="normal"><a href="#__codelineno-0-97">97</a></span>
-<span class="normal"><a href="#__codelineno-0-98">98</a></span>
-<span class="normal"><a href="#__codelineno-0-99">99</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="k">class</span><span class="w"> </span><span class="nc">ReferenceFlankSource</span><span class="p">:</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Flanks pulled from the reference FASTA, optionally masking common SNPs.</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    MAF coordinates are 1-based fully-closed ``[start, end]``; pysam uses 0-based</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    half-open ``[start, end)``. The left flank is the ``flank`` bases ending just</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    before the variant; the right flank is the ``flank`` bases starting just</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">    after it. The variant interval itself is excluded from both flanks.</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">flank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">af_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">):</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">reference</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span> <span class="o">=</span> <span class="n">gnomad</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">flank</span> <span class="o">=</span> <span class="n">flank</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">af_threshold</span> <span class="o">=</span> <span class="n">af_threshold</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="n">left_start_0</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">flank</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="n">left_end_0</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>        <span class="n">right_start_0</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="n">right_end_0</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flank</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">left_start_0</span><span class="p">,</span> <span class="n">left_end_0</span><span class="p">)</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">right_start_0</span><span class="p">,</span> <span class="n">right_end_0</span><span class="p">)</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-0-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-0-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#__codelineno-0-101">101</a></span>
+<span class="normal"><a href="#__codelineno-0-102">102</a></span>
+<span class="normal"><a href="#__codelineno-0-103">103</a></span>
+<span class="normal"><a href="#__codelineno-0-104">104</a></span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="k">class</span><span class="w"> </span><span class="nc">ReferenceFlankSource</span><span class="p">:</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Flanks pulled from the reference FASTA, optionally masking common SNPs.</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">    MAF coordinates are 1-based fully-closed ``[start, end]``; pysam uses 0-based</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">    half-open ``[start, end)``. The left flank is the ``flank`` bases ending just</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">    before the variant; the right flank is the ``flank`` bases starting just</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    after it. The variant interval itself is excluded from both flanks.</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84"></a>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>            <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">left_snps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>            <span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">left_start_0</span><span class="p">,</span> <span class="n">left_end_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_threshold</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="p">)</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="n">right_snps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>            <span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">right_start_0</span><span class="p">,</span> <span class="n">right_end_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_threshold</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="p">)</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>            <span class="n">left</span><span class="p">,</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>            <span class="n">right</span><span class="p">,</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>            <span class="n">mask_sequence</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">left_start_0</span><span class="p">,</span> <span class="n">left_snps</span><span class="p">),</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>            <span class="n">mask_sequence</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">right_start_0</span><span class="p">,</span> <span class="n">right_snps</span><span class="p">),</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>        <span class="p">)</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">flank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">af_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">):</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">reference</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span> <span class="o">=</span> <span class="n">gnomad</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">flank</span> <span class="o">=</span> <span class="n">flank</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">af_threshold</span> <span class="o">=</span> <span class="n">af_threshold</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="n">left_start_0</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">flank</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="n">left_end_0</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="n">right_start_0</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="n">right_end_0</span> <span class="o">=</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flank</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">left_start_0</span><span class="p">,</span> <span class="n">left_end_0</span><span class="p">)</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">right_start_0</span><span class="p">,</span> <span class="n">right_end_0</span><span class="p">)</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>            <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>        <span class="n">left_snps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>            <span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">left_start_0</span><span class="p">,</span> <span class="n">left_end_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_threshold</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="p">)</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="n">right_snps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnomad</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>            <span class="n">variant</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">right_start_0</span><span class="p">,</span> <span class="n">right_end_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_threshold</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="p">)</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="k">return</span> <span class="n">FlankResult</span><span class="p">(</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>            <span class="n">left</span><span class="p">,</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>            <span class="n">right</span><span class="p">,</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>            <span class="n">mask_sequence</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">left_start_0</span><span class="p">,</span> <span class="n">left_snps</span><span class="p">),</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>            <span class="n">mask_sequence</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">right_start_0</span><span class="p">,</span> <span class="n">right_snps</span><span class="p">),</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3883,13 +4186,13 @@ after it. The variant interval itself is excluded from both flanks.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Population allele-frequency masking source (gnomAD), local-VCF backend.</p>
-<p>Masking can draw on gnomAD <strong>genome</strong> and/or <strong>exome</strong> data (<code>--pop-data</code>):
+        <p>Population allele-frequency masking source (<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>), local-<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> backend.</p>
+<p>Masking can draw on <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <strong>genome</strong> and/or <strong>exome</strong> data (<code>--pop-data</code>):
 flanks often fall in non-coding regions where only genomes have data, while
 exomes add power in coding regions. <code>both</code> masks the <em>union</em> (a position is
-masked if it is a common SNP in either cohort).</p>
+masked if it is a common <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> in either cohort).</p>
 <p>The hot line-parsing kernel (:func:<code>parse_common_snp_positions</code>) is a pure
-function over an iterable of raw VCF lines, so it is unit-testable without pysam
+function over an iterable of raw <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> lines, so it is unit-testable without pysam
 and is the natural seam to later swap for a Rust/noodles implementation.</p>
 
 
@@ -3926,7 +4229,7 @@ and is the natural seam to later swap for a Rust/noodles implementation.</p>
 
 
 
-        <p>Lazy, per-(kind, chromosome) tabix cache over a directory of gnomAD VCFs.</p>
+        <p>Lazy, per-(kind, chromosome) tabix cache over a directory of <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> VCFs.</p>
 <p>Honours <code>--pop-data</code> (genome / exome / both). For <code>both</code>, queried
 positions are the union across the two cohorts. Tabix handles are opened on
 first use; each file's chr-notation is detected on open so queries use the
@@ -4357,7 +4660,7 @@ gaps (some chromosomes missing) remain warnings at query time.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return the first existing gnomAD file for this chrom/build/kind, else None.</p>
+        <p>Return the first existing <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> file for this chrom/build/kind, else None.</p>
 
 
             <details class="mkdocstrings-source">
@@ -4429,7 +4732,7 @@ gaps (some chromosomes missing) remain warnings at query time.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Resolve the VCF (of one kind) for each chromosome (for coverage reports).</p>
+        <p>Resolve the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> (of one kind) for each chromosome (for coverage reports).</p>
 
 
             <details class="mkdocstrings-source">
@@ -4462,10 +4765,10 @@ gaps (some chromosomes missing) remain warnings at query time.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return 1-based positions of SNPs whose max AF/AF_grpmax &gt;= threshold.</p>
-<p>Only single-base substitutions are considered (REF and every ALT length 1).
-<code>rows</code> is an iterable of raw tab-delimited VCF data lines. Works for both
-genome and exome gnomAD VCFs (identical INFO AF fields).</p>
+        <p>Return 1-based positions of SNPs whose max <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr>/AF_grpmax &gt;= threshold.</p>
+<p>Only single-base substitutions are considered (<abbr title="reference allele">REF</abbr> and every <abbr title="alternate (variant) allele">ALT</abbr> length 1).
+<code>rows</code> is an iterable of raw tab-delimited <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> data lines. Works for both
+genome and exome <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> VCFs (identical INFO <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> fields).</p>
 
 
             <details class="mkdocstrings-source">
@@ -4564,14 +4867,14 @@ genome and exome gnomAD VCFs (identical INFO AF fields).</p>
 
     <div class="doc doc-contents first">
 
-        <p>Population allele-frequency masking source via the gnomAD GraphQL API.</p>
+        <p>Population allele-frequency masking source via the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL <abbr title="Application Programming Interface">API</abbr>.</p>
 <p>An alternative to :class:<code>~vflank.core.popfreq.GnomadStore</code> that needs no local
-VCF download — it queries https://gnomad.broadinstitute.org/api per flank region.
+<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> download — it queries https://gnomad.broadinstitute.org/api per flank region.
 Exposes the same duck-typed <code>get_positions</code> interface, so it drops in behind
 <code>ReferenceFlankSource</code> unchanged.</p>
 <p>Trade-offs (see docs/research/gnomad-api.md): no download and both builds, but
 rate-limited to ~10 requests/IP/60s and not reproducible — best for small
-cohorts; prefer the VCF source for bulk/HPC/reproducible runs.</p>
+cohorts; prefer the <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> source for bulk/HPC/reproducible runs.</p>
 <p>The parsing kernel (:func:<code>parse_api_variants</code>) is pure and unit-testable; HTTP
 and timing are injected so tests run offline.</p>
 
@@ -4609,7 +4912,7 @@ and timing are injected so tests run offline.</p>
 
 
 
-        <p>Masking source backed by the public gnomAD GraphQL API.</p>
+        <p>Masking source backed by the public <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL <abbr title="Application Programming Interface">API</abbr>.</p>
 <p>Region responses are cached (so the two flank queries of identical variants
 reuse one request), requests are throttled to respect the rate limit, and
 transient failures are retried with backoff before raising <code>PopFreqError</code>.</p>
@@ -4906,7 +5209,7 @@ transient failures are retried with backoff before raising <code>PopFreqError</c
 
     <div class="doc doc-contents ">
 
-        <p>GraphQL query for SNP AFs in a region. <code>start</code>/<code>stop</code> are 1-based inclusive.</p>
+        <p>GraphQL query for <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> AFs in a region. <code>start</code>/<code>stop</code> are 1-based inclusive.</p>
 
 
             <details class="mkdocstrings-source">
@@ -4949,7 +5252,7 @@ transient failures are retried with backoff before raising <code>PopFreqError</c
 
     <div class="doc doc-contents ">
 
-        <p>1-based positions of SNPs whose max AF (over kinds) &gt;= threshold.</p>
+        <p>1-based positions of SNPs whose max <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> (over kinds) &gt;= threshold.</p>
 <p>Pure: <code>variants</code> is the GraphQL <code>region.variants</code> list. SNPs only.</p>
 
 
@@ -5011,8 +5314,8 @@ transient failures are retried with backoff before raising <code>PopFreqError</c
 
     <div class="doc doc-contents first">
 
-        <p>Fusion / SV junction construction from breakpoint pairs.</p>
-<p>Builds the chimeric junction sequence for a fusion so a ddPCR probe can span it.</p>
+        <p>Fusion / <abbr title="Structural Variant — a large rearrangement (deletion, duplication, inversion, translocation, fusion)">SV</abbr> junction construction from breakpoint pairs.</p>
+<p>Builds the chimeric junction sequence for a fusion so a <abbr title="digital droplet PCR — the partitioned PCR assay vflank's flanks feed into">ddPCR</abbr> probe can span it.</p>
 <p>Strand convention (matches iCallSV <code>dellyVcf2Tab.py</code>): <code>0</code> = plus/reference,
 <code>1</code> = minus/complement. The fused product reads 5'-&gt;3' as <code>partner1 +
 partner2</code> with <strong>no separator</strong>; partner 1 <em>ends</em> at the junction, partner 2
@@ -5057,7 +5360,7 @@ partner2</code> with <strong>no separator</strong>; partner 1 <em>ends</em> at t
 
 
 
-        <p>A single SV breakpoint. <code>pos</code> is 1-based; <code>strand</code> is 0 (+) or 1 (−).</p>
+        <p>A single <abbr title="Structural Variant — a large rearrangement (deletion, duplication, inversion, translocation, fusion)">SV</abbr> breakpoint. <code>pos</code> is 1-based; <code>strand</code> is 0 (+) or 1 (−).</p>
 
 
 
@@ -5191,7 +5494,7 @@ partner2</code> with <strong>no separator</strong>; partner 1 <em>ends</em> at t
         <p>Construct the fusion junction sequence (partner1 + partner2).</p>
 <p><code>flank</code> is the bases taken from each partner, so the junction is up to
 <code>2*flank</code> bp (shorter if a partner runs off a contig end). The probe is
-designed to span <code>junction_index</code>. <code>masked_sequence</code> is the gnomAD-masked
+designed to span <code>junction_index</code>. <code>masked_sequence</code> is the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>-masked
 junction, or — when <code>bam_source</code> is given — the per-sample patient consensus
 (built in genomic space before reverse-complement).</p>
 
@@ -5356,7 +5659,7 @@ testable.</p>
 
     <div class="doc doc-contents first">
 
-        <p>MAF loading, column remapping/validation, and row -&gt; Variant parsing.</p>
+        <p><abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> loading, column remapping/validation, and row -&gt; Variant parsing.</p>
 
 
 
@@ -5396,7 +5699,7 @@ testable.</p>
 
 
 
-        <p>User-overridable mapping from MAF column names to canonical names.</p>
+        <p>User-overridable mapping from <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> column names to canonical names.</p>
 
 
 
@@ -5470,7 +5773,7 @@ testable.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Read a MAF into a DataFrame (tab-separated, '#'-comment aware).</p>
+        <p>Read a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> into a DataFrame (tab-separated, '#'-comment aware).</p>
 
 
             <details class="mkdocstrings-source">
@@ -5509,7 +5812,7 @@ testable.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Read a MAF, remap required columns to canonical names, and validate.</p>
+        <p>Read a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>, remap required columns to canonical names, and validate.</p>
 <p>Returns the DataFrame with canonical required-column names guaranteed
 present, and optional metadata columns filled with defaults if absent.</p>
 
@@ -5604,7 +5907,7 @@ present, and optional metadata columns filled with defaults if absent.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Convert a MAF row to a :class:<code>Variant</code>, or return a skip reason.</p>
+        <p>Convert a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> row to a :class:<code>Variant</code>, or return a skip reason.</p>
 <p>Returns <code>(variant, None)</code> on success or <code>(None, reason)</code> on a bad row.</p>
 
 
@@ -5728,9 +6031,9 @@ present, and optional metadata columns filled with defaults if absent.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Reference FASTA access with chr-notation detection and build fingerprinting.</p>
+        <p>Reference <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> access with chr-notation detection and build fingerprinting.</p>
 <p>The build-mismatch guard addresses the scariest silent failure in this domain:
-running hg19 coordinates against an hg38 FASTA (or vice versa) returns the wrong
+running <abbr title="human genome build 19 (== GRCh37)">hg19</abbr> coordinates against an <abbr title="human genome build 38 (== GRCh38)">hg38</abbr> <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> (or vice versa) returns the wrong
 sequence with no error. We fingerprint by the length of chromosome 1.</p>
 
 
@@ -5924,7 +6227,7 @@ sequence with no error. We fingerprint by the length of chromosome 1.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Resolve a bare chromosome to this FASTA's actual contig name.</p>
+        <p>Resolve a bare chromosome to this <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>'s actual contig name.</p>
 <p>Auto-detection of <code>chr</code> prefixing is best-effort (it probes chr1-5).
 If the detected form is absent but the other form is present — which can
 happen with unusual or single-contig references — fall back to it rather
@@ -5977,7 +6280,7 @@ than letting pysam raise a confusing KeyError for every variant.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Infer 'hg19'/'hg38' from chr1 length, or None if undeterminable.</p>
+        <p>Infer '<abbr title="human genome build 19 (== GRCh37)">hg19</abbr>'/'<abbr title="human genome build 38 (== GRCh38)">hg38</abbr>' from chr1 length, or None if undeterminable.</p>
 
 
             <details class="mkdocstrings-source">
@@ -6012,7 +6315,7 @@ than letting pysam raise a confusing KeyError for every variant.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return a warning string if the declared build disagrees with the FASTA.</p>
+        <p>Return a warning string if the declared build disagrees with the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>.</p>
 
 
             <details class="mkdocstrings-source">
@@ -6072,7 +6375,7 @@ than letting pysam raise a confusing KeyError for every variant.</p>
 
     <div class="doc doc-contents first">
 
-        <p>FASTA record formatting and writing for the small-variant path.</p>
+        <p><abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> record formatting and writing for the small-variant path.</p>
 
 
 
@@ -6107,7 +6410,7 @@ than letting pysam raise a confusing KeyError for every variant.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Replace characters unsafe in FASTA headers with underscores.</p>
+        <p>Replace characters unsafe in <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> headers with underscores.</p>
 
 
             <details class="mkdocstrings-source">
@@ -6140,15 +6443,15 @@ than letting pysam raise a confusing KeyError for every variant.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Two FASTA records per variant: raw and masked.</p>
+        <p>Two <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> records per variant: raw and masked.</p>
 <p>Keyed on the variant identity (CHR_POS_REF_ALT). When <code>sample</code> is given
-(BAM-consensus mode, where the sequence is patient-specific), the sample is
+(<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>-consensus mode, where the sequence is patient-specific), the sample is
 prefixed so per-(variant, sample) records stay distinct:</p>
 <blockquote>
-<p>[{SAMPLE}<strong HGVSp="HGVSp">]{GENE}</strong><strong CHROM="CHROM">{HGVSc}</strong><em REF="REF">{POS}</em><em POS="POS">{ALT}
-{left}[REF/ALT]{right}
-Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}</em><em ALT="ALT">{REF}</em>
-{masked_left}[REF/ALT]{masked_right}</p>
+<p>[{SAMPLE}<strong HGVSp="HGVSp">]{GENE}</strong><strong CHROM="CHROM">{HGVSc}</strong><em REF="REF">{POS}</em><em POS="POS">{<abbr title="alternate (variant) allele">ALT</abbr>}
+{left}[<abbr title="reference allele">REF</abbr>/<abbr title="alternate (variant) allele">ALT</abbr>]{right}
+Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}</em><em ALT="ALT">{<abbr title="reference allele">REF</abbr>}</em>
+{masked_left}[<abbr title="reference allele">REF</abbr>/<abbr title="alternate (variant) allele">ALT</abbr>]{masked_right}</p>
 </blockquote>
 
 
@@ -6226,7 +6529,7 @@ Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}</em><em ALT="ALT">{REF}</e
 
     <div class="doc doc-contents first">
 
-        <p>Read SV breakpoints from the simple iCallSV / iAnnotateSV TSV.</p>
+        <p>Read <abbr title="Structural Variant — a large rearrangement (deletion, duplication, inversion, translocation, fusion)">SV</abbr> breakpoints from the simple iCallSV / iAnnotateSV TSV.</p>
 <p>Columns are matched <strong>by header name, not position</strong> (<code>SvColumns</code>), so a file
 works regardless of column order or extra columns, as long as the named columns
 are present. Mirrors <code>io/maf.MafColumns</code>.</p>
@@ -6524,9 +6827,10 @@ are present. Mirrors <code>io/maf.MafColumns</code>.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Write a machine-readable TSV run report alongside the FASTA output.</p>
+        <p>Write a machine-readable TSV run report alongside the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> output.</p>
 <p>Aggregate stats and the skip breakdown go in <code>#</code>-comment header lines; the
-per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
+per-variant table follows as proper TSV. Columns are taken from the row keys
+(insertion order), so callers control the columns per run mode.</p>
 
 
 
@@ -6566,7 +6870,9 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/report.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-15">15</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
 <span class="normal"><a href="#__codelineno-0-16">16</a></span>
 <span class="normal"><a href="#__codelineno-0-17">17</a></span>
 <span class="normal"><a href="#__codelineno-0-18">18</a></span>
@@ -6585,28 +6891,28 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
 <span class="normal"><a href="#__codelineno-0-31">31</a></span>
 <span class="normal"><a href="#__codelineno-0-32">32</a></span>
 <span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="k">def</span><span class="w"> </span><span class="nf">write_report</span><span class="p">(</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">summary_rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="n">skip_breakdown</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the run report TSV. Raises OSError on write failure (never silent).&quot;&quot;&quot;</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;# vflank small run report&quot;</span><span class="p">]</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">skip_breakdown</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# skip:</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_COLUMNS</span><span class="p">))</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">summary_rows</span><span class="p">:</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">_COLUMNS</span><span class="p">))</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="n">path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not write report: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">write_report</span><span class="p">(</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="n">summary_rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">skip_breakdown</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the run report TSV. Raises OSError on write failure (never silent).&quot;&quot;&quot;</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;# vflank small run report&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">skip_breakdown</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# skip:</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">summary_rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">summary_rows</span> <span class="k">else</span> <span class="p">[]</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">summary_rows</span><span class="p">:</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">))</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="n">path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not write report: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6642,7 +6948,7 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 20:23:47 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 12, 2026 20:23:47 UTC"><span class="timeago" datetime="2026-06-12T20:23:47+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 12, 2026 20:23:47 UTC">2026-06-12</span>
   </span>
 
     
@@ -6652,7 +6958,7 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 12, 2026 20:23:47 UTC">June 12, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 12, 2026 20:23:47 UTC"><span class="timeago" datetime="2026-06-12T20:23:47+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 12, 2026 20:23:47 UTC">2026-06-12</span>
   </span>
 
     
@@ -6669,6 +6975,8 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
@@ -6687,7 +6995,7 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../cli/" class="md-footer__link md-footer__link--prev" aria-label="Previous: CLI">
+          <a href="../../ARCHITECTURE/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Architecture">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -6697,20 +7005,20 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                CLI
+                Architecture
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../DEVELOPER/" class="md-footer__link md-footer__link--next" aria-label="Next: Developer">
+          <a href="../glossary/" class="md-footer__link md-footer__link--next" aria-label="Next: Glossary">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Developer
+                Glossary
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -6727,13 +7035,36 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2026 Ronak Shah
+      Copyright &copy; 2026 <a href="https://github.com/rhshah">Ronak Shah</a> — built with <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>
+
     </div>
   
   
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/rhshah/vFlank" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/vflank/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
     </a>
   
 </div>
@@ -6751,10 +7082,14 @@ per-variant table follows as proper TSV so it loads cleanly in pandas/R.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.path", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../js/timeago.min.js"></script>
+      
+        <script src="../../js/timeago_mkdocs_material.js"></script>
       
     
   </body>
