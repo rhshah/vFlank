@@ -52,6 +52,28 @@ build is also viable once the small pure kernel is ported to JS. When BAM lands
 (v2), the client-side WASM path keeps patient reads in the browser; a **hybrid**
 (Pages frontend + a small API backend) is the pragmatic middle.
 
+### v1 hosting decision — Render free tier
+
+**Decided: FastAPI on Render's free tier.** Chosen over the static/Pages route
+because it reuses the existing Python core with **no JS port** (see §"the JS
+port" reasoning), and the free tier is ample because v1 is not compute- or
+IO-heavy: one request = two outbound API calls (reference + gnomAD) + a few
+hundred bytes of string masking. No local FASTA/VCF, no pandas/pysam, no large
+in-memory data, nothing persisted — a textbook fit for 512 MB / shared CPU and
+an ephemeral filesystem.
+
+Plan around these free-tier traits (none is a blocker for an internal/demo tool):
+
+- **Spin-down → cold start.** The service sleeps after ~15 min idle; the first
+  request after that takes tens of seconds to wake. Acceptable for v1; if it
+  matters later, add a keep-warm ping or move to a cheap paid tier.
+- **Latency is the external APIs, not Render.** Users wait on the UCSC + gnomAD
+  round-trips. A small in-memory cache covers repeat lookups.
+- **Single instance = one IP.** The free tier is one process, which is the
+  natural place for the in-memory cache *and* the UCSC ~1 req/s throttle — one
+  cache, one rate limiter, no coordination across instances.
+- **Stateless, no disk** — matches the ephemeral filesystem; nothing to persist.
+
 ## 1. Single-variant mode — the primitive
 
 Both CLI entry points are file-first today, but the core is already
