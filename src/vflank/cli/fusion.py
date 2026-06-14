@@ -13,12 +13,14 @@ from pathlib import Path
 import typer
 from rich.table import Table
 
+from .. import __version__
 from ..core.chrom import normalise_chrom
 from ..core.consensus import BamConsensusSource
 from ..core.fusion import build_junction
 from ..core.popfreq_api import dataset_for_build
 from ..errors import ConsensusError, VflankError
 from ..io import breakpoints as bp_io
+from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io.breakpoints import SvColumns
 from ..io.reference import ReferenceFasta
@@ -60,6 +62,10 @@ def run(
     output: Path = typer.Option(
         Path("fusion_junctions.fasta"), "--output", "-o", help="Output FASTA file."
     ),
+    emit_primer3: Path | None = typer.Option(
+        None, "--emit-primer3",
+        help="Also write a Primer3 Boulder-IO input file (one record per junction).",
+    ),
     bam: Path | None = typer.Option(
         None, "--bam", help="Single-sample BAM for patient consensus of the junction flanks."
     ),
@@ -93,17 +99,18 @@ def run(
         )
         bam_resolver, _n_bam = load_bam_resolver(bam, bam_map)
         _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
-             pop_source, af_threshold, output, cols, bam_resolver, policy)
+             pop_source, af_threshold, output, emit_primer3, cols, bam_resolver, policy)
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
         raise typer.Exit(1) from exc
 
 
 def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
-         pop_source, af_threshold, output, cols: SvColumns, bam_resolver, policy):
+         pop_source, af_threshold, output, emit_primer3, cols: SvColumns, bam_resolver, policy):
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
     echo_parameters({
+        "vflank version": __version__,
         "Breakpoints": sv_file, "Reference": ref_genome, "Genome build": genome_build,
         "Flank": f"{flank} bp/partner", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
@@ -112,7 +119,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
             f"on (min-depth={policy.min_depth}, het={policy.het_char}, "
             f"low-cov={policy.lowcov})" if bam_resolver is not None else "off"
         ),
-        "Output": output,
+        "Output": output, "Emit Primer3": emit_primer3 or "off",
     })
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
@@ -177,6 +184,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
         return src
 
     records: list[str] = []
+    primer3_records: list[primer3_io.Primer3Record] = []
     skipped = 0
     n_masked_total = 0
     skip_reasons: list[str] = []
@@ -208,6 +216,10 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
         header = f"{prefix}{label}__{bp}__j{jr.junction_index}"
         records.append(f">{header}\n{jr.sequence}\n")
         records.append(f">Masked__{header}\n{jr.masked_sequence}\n")
+        if emit_primer3 is not None:
+            primer3_records.append(primer3_io.junction_record(
+                header, jr.sequence, jr.masked_sequence, jr.junction_index,
+            ))
         n_masked_total += jr.n_masked
 
         truncated = len(jr.sequence) < 2 * flank
@@ -225,6 +237,8 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
         if src is not None:
             src.close()
     fasta_io.write_fasta(output, records)
+    if emit_primer3 is not None:
+        primer3_io.write_primer3(emit_primer3, primer3_records)
 
     console.rule("[bold green]Results[/bold green]")
     if summary_rows:

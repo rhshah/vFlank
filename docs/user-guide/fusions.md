@@ -50,10 +50,11 @@ The probe is designed to span `junction_index` (the FASTA header records it as
 
 ## Output
 
-One raw + one `Masked__` record per fusion:
+One raw + one `Masked__` record per fusion (the `{SAMPLE}__` prefix appears only
+when a per-sample BAM consensus is used, mirroring `vflank small`):
 
 ```
->{NAME}__{chr1}_{pos1}_{str1}__{chr2}_{pos2}_{str2}__j{index}
+>[{SAMPLE}__]{NAME}__{chr1}_{pos1}_{str1}__{chr2}_{pos2}_{str2}__j{index}
 {junction}
 ```
 

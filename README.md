@@ -86,12 +86,13 @@ Either source honours `--pop-data {genome,exome,both}` (default `genome`).
 cohort. Flanks often fall in non-coding regions where only genomes have data,
 so `genome` is the default.
 
-Each variant yields two FASTA records:
+Each variant yields two FASTA records (the `__{CHROM}_{POS}_{REF}_{ALT}` suffix
+is what keys deduplication; the `{SAMPLE}__` prefix appears only with `--bam`):
 
 ```
->{SAMPLE}__{GENE}__{HGVSp}__{HGVSc}
+>[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}
 {left_flank}[REF/ALT]{right_flank}
->Masked__{SAMPLE}__{GENE}__{HGVSp}__{HGVSc}
+>Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}
 {left_flank_masked}[REF/ALT]{right_flank_masked}
 ```
 

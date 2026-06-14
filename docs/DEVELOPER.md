@@ -33,17 +33,27 @@ gnomAD per-chromosome VCFs (`.bgz` + `.tbi`).
 ```
 src/vflank/
 ├── core/     pure domain logic — NO file/CLI I/O
-│   ├── chrom.py     chromosome notation detect/normalise
-│   ├── variant.py   the Variant value object + validation
-│   ├── flanks.py    FlankSource protocol, ReferenceFlankSource, mask_sequence
-│   └── popfreq.py   gnomAD resolve + parse_common_snp_positions + GnomadStore
+│   ├── chrom.py       chromosome notation detect/normalise
+│   ├── variant.py     the Variant value object + validation
+│   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
+│   ├── popfreq.py     gnomAD resolve + parse_common_snp_positions + GnomadStore
+│   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource)
+│   ├── consensus.py   BAM patient consensus (modes C/D) + insertion flagging
+│   ├── fusion.py      Breakpoint/Fusion model + reverse-complement junction builder
+│   └── skips.py       categorised skip-reason helpers
 ├── io/       file access
-│   ├── maf.py       load/validate MAF, row -> Variant
-│   ├── reference.py ReferenceFasta + genome-build guard
-│   └── fasta.py     header sanitising + record formatting/writing
+│   ├── maf.py         load/validate MAF, row -> Variant
+│   ├── reference.py   ReferenceFasta + genome-build guard
+│   ├── fasta.py       header sanitising + record formatting/writing
+│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
+│   └── report.py      TSV run-report writer
 ├── cli/      Typer commands (presentation only)
-│   ├── app.py       root app, global -v/-q/--debug, version
-│   └── small.py     small-variant commands: run / inspect / list-vcf
+│   ├── app.py         root app, global -v/-q/--debug, version
+│   ├── small.py       small-variant commands: run / inspect / list-vcf
+│   ├── fusion.py      fusion command: run
+│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
+│   ├── _masking.py    shared gnomAD source wiring
+│   └── _ui.py         parameter-echo panel
 ├── logging.py  shared Rich console + logger
 └── errors.py   VflankError hierarchy
 ```

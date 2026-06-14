@@ -33,6 +33,35 @@ def _write_maf(tmp_path):
     return maf
 
 
+def test_version_flag_and_subcommand_agree():
+    from vflank import __version__
+
+    flag = runner.invoke(app, ["--version"])
+    sub = runner.invoke(app, ["version"])
+    assert flag.exit_code == 0 and sub.exit_code == 0
+    assert flag.stdout.strip() == __version__ == sub.stdout.strip()
+
+
+def test_emit_primer3_writes_boulder_io(tmp_path):
+    fasta, seq = _write_reference(tmp_path)
+    maf = _write_maf(tmp_path)
+    out = tmp_path / "out.fasta"
+    p3 = tmp_path / "p3.txt"
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "-r", str(fasta), "-g", "hg19",
+        "-o", str(out), "--flank", "5", "--emit-primer3", str(p3),
+    ])
+    assert result.exit_code == 0, result.output
+    text = p3.read_text()
+    # SEQUENCE_ID matches the FASTA header key; the variant (ref 'A') is the target
+    # after the 5 bp left flank; no gnomAD -> no excluded region.
+    assert "SEQUENCE_ID=TP53__.__.__1_30_A_T" in text
+    assert "SEQUENCE_TEMPLATE=" + seq[24:29] + "A" + seq[30:35] in text
+    assert "SEQUENCE_TARGET=5,1" in text
+    assert "SEQUENCE_EXCLUDED_REGION" not in text
+    assert text.rstrip().endswith("=")
+
+
 def test_run_produces_expected_fasta(tmp_path):
     fasta, seq = _write_reference(tmp_path)
     maf = _write_maf(tmp_path)
@@ -55,6 +84,9 @@ def test_run_produces_expected_fasta(tmp_path):
     assert report.exists()
     rtext = report.read_text()
     assert "# processed\t1" in rtext
+    # Provenance: the vflank version is recorded in the report.
+    from vflank import __version__
+    assert f"# vflank_version\t{__version__}" in rtext
     assert "TP53" in rtext.splitlines()[-1]
 
     lines = out.read_text().splitlines()

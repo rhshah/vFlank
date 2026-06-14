@@ -17,6 +17,7 @@ from rich.progress import (
 )
 from rich.table import Table
 
+from .. import __version__
 from ..core.chrom import detect_series_chr_style, normalise_chrom
 from ..core.consensus import BamConsensusSource, ConsensusFlankSource
 from ..core.flanks import ReferenceFlankSource
@@ -24,6 +25,7 @@ from ..core.popfreq import build_chrom_vcf_map, kinds_for
 from ..core.popfreq_api import dataset_for_build
 from ..core.skips import categorize_skip
 from ..errors import ConsensusError, VflankError
+from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io import maf as maf_io
 from ..io import report as report_io
@@ -93,6 +95,10 @@ def run(
         None, "--report",
         help="Write a per-variant TSV run report (stats + table) to this path.",
     ),
+    emit_primer3: Path | None = typer.Option(
+        None, "--emit-primer3",
+        help="Also write a Primer3 Boulder-IO input file (one record per variant).",
+    ),
     samples: str | None = typer.Option(
         None, "--samples", "-s",
         help="Comma-separated Tumor_Sample_Barcode IDs to include.",
@@ -153,7 +159,7 @@ def run(
         bam_resolver, n_bam = load_bam_resolver(bam, bam_map)
         _run(
             maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-            pop_data, pop_source, output, report, samples, samples_file,
+            pop_data, pop_source, output, report, emit_primer3, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
             uppercase, dedup, bam_resolver, n_bam, policy, require_coverage,
@@ -164,7 +170,7 @@ def run(
 
 
 def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
-         pop_data, pop_source, output, report, samples, samples_file,
+         pop_data, pop_source, output, report, emit_primer3, samples, samples_file,
          cols: MafColumns, uppercase: bool, dedup: bool,
          bam_resolver, n_bam, policy, require_coverage):
     t0 = time.time()
@@ -172,6 +178,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     bam_mode = bam_resolver is not None
     echo_parameters({
+        "vflank version": __version__,
         "MAF": maf_file, "Reference": ref_genome, "Genome build": genome_build,
         "Flank": f"±{flank} bp", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
@@ -185,6 +192,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         ),
         "Require coverage": require_coverage or "off",
         "Output": output, "Report": report or "none",
+        "Emit Primer3": emit_primer3 or "off",
     })
 
     if genome_build not in ("hg19", "hg38"):
@@ -311,6 +319,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     # --- Process variants ---
     records: list[str] = []
+    primer3_records: list[primer3_io.Primer3Record] = []
     skipped = 0
     n_duplicate = 0
     n_masked_total = 0
@@ -383,6 +392,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             n_masked_total += fr.n_masked
             sample_tag = variant.sample if bam_mode else None
             records.extend(fasta_io.format_records(variant, fr, ref, alt, sample=sample_tag))
+            if emit_primer3 is not None:
+                primer3_records.append(primer3_io.small_variant_record(
+                    fasta_io.record_id(variant, ref, alt, sample_tag),
+                    fr.left, fr.right, fr.masked_left, fr.masked_right, ref,
+                ))
 
             row_detail = {
                 "Sample": variant.sample[:32], "Gene": variant.gene,
@@ -418,6 +432,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             src.bam.close()
 
     fasta_io.write_fasta(output, records)
+    if emit_primer3 is not None:
+        primer3_io.write_primer3(emit_primer3, primer3_records)
 
     # --- Summary ---
     elapsed = time.time() - t0
@@ -497,6 +513,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     # --- Optional machine-readable report ---
     if report is not None:
         stats = {
+            # provenance
+            "vflank_version": __version__,
             # run parameters (what was set)
             "maf": maf_file, "reference": ref_genome, "genome_build": genome_build,
             "flank": flank, "af_threshold": af_threshold,
@@ -510,6 +528,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             "bases_masked": n_masked_total,
             "fasta_records": len(records),
         }
+        if emit_primer3 is not None:
+            stats["primer3_records"] = len(primer3_records)
         if api_requests is not None:
             stats["api_requests"] = api_requests
         if bam_mode:
