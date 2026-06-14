@@ -51,6 +51,8 @@ docs = [
     "mkdocs-git-revision-date-localized-plugin>=1.2",
     "mkdocs-section-index>=0.3",
     "mkdocs-mermaid2-plugin>=1.1",
+    "mkdocs-panzoom-plugin>=0.5",
+    "mkdocs-glightbox>=0.4",
 ]
 
 [project.scripts]

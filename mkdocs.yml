@@ -17,8 +17,8 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.tabs
     - navigation.sections
+    - navigation.expand
     - navigation.indexes
     - navigation.path
     - navigation.top
@@ -50,7 +50,20 @@ plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\,(?!\d)|&[lg]t;'
   - section-index
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      zoomable: true
+      draggable: true
   - mermaid2
+  # Pan/zoom for mermaid diagrams (mermaid renders as inline SVG, which the
+  # image lightbox can't grab). Defaults: mermaid true, images false — so this
+  # and glightbox don't both target images.
+  - panzoom:
+      full_screen: true
+      always_show_hint: true
+      key: "none"
   - git-revision-date-localized:
       enable_creation_date: true
       fallback_to_build_date: true
