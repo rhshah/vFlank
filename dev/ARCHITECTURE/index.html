@@ -458,6 +458,18 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="../research/emit-formats/">
+<span class="md-ellipsis">
+    
+  
+    Emit formats (Olivar/Primer3)
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../research/gnomad-api/">
 <span class="md-ellipsis">
     
@@ -792,34 +804,46 @@ Use mouse to pan and zoom
 </div>
 <p>Mode C/D is the differentiator: patient consensus catches <strong>private/rare</strong>
 variants <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> never sees — the ones that silently break a primer for one
-patient. Consensus will be built on <code>bcftools mpileup→call→consensus
---iupac-codes</code> (or pysam pileup), validated against <code>samtools consensus</code>, with
-kindel's <abbr title="insertion or deletion">indel</abbr> reconciliation as a reference for the hard <abbr title="Compact Idiosyncratic Gapped Alignment Report — per-read alignment string (M/I/D/N…)">CIGAR</abbr> cases.</p>
-<p>Implemented today: <code>ReferenceFlankSource</code> (modes A + B). The population-mask
-backend is pluggable behind a duck-typed <code>get_positions</code> interface, with two
-interchangeable implementations selected by <code>--pop-source</code>:
-<code>GnomadStore</code> (local VCFs) and <code>GnomadApiSource</code> (<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL <abbr title="Application Programming Interface">API</abbr>, no
-download, rate-limited). Both honour <code>--pop-data {genome,exome,both}</code> (union for
-<code>both</code>). See <a href="../research/gnomad-api/">research/gnomad-api.md</a>.</p>
+patient. Consensus is delegated to <code>samtools consensus</code> (in-process via
+<code>pysam.samtools</code>), kept reference-length, with a pure low-coverage overlay and
+insertion-site flagging on top. See <a href="../research/bam-consensus/">research/bam-consensus.md</a>.</p>
+<p><strong>All four modes are implemented</strong> (<code>ReferenceFlankSource</code> for A/B,
+<code>ConsensusFlankSource</code> for C/D). The population-mask backend is pluggable behind
+a duck-typed <code>get_positions</code> interface, with two interchangeable implementations
+selected by <code>--pop-source</code>: <code>GnomadStore</code> (local VCFs) and <code>GnomadApiSource</code>
+(<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL <abbr title="Application Programming Interface">API</abbr>, no download, rate-limited). Both honour
+<code>--pop-data {genome,exome,both}</code> (union for <code>both</code>). See
+<a href="../research/gnomad-api/">research/gnomad-api.md</a>.</p>
 <h2 id="module-map">Module map<a class="headerlink" href="#module-map" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>src/vflank/
 <a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>├── core/
-<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>│   ├── chrom.py     notation detect/normalise (pure)
-<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>│   ├── variant.py   Variant dataclass + validation (pure)
-<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>│   ├── flanks.py    FlankSource protocol, ReferenceFlankSource, mask_sequence
-<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>│   ├── popfreq.py   gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
-<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>│   └── popfreq_api.py  gnomAD GraphQL API source (GnomadApiSource) + pure parser
-<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>├── io/
-<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>│   ├── maf.py       load/remap/validate, row → Variant
-<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>│   ├── reference.py ReferenceFasta + genome-build guard
-<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>│   └── fasta.py     header sanitise + record format/write
-<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>├── cli/
-<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>│   ├── app.py       root Typer, global -v/-q/--debug, version
-<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>│   └── small.py     run · inspect · list-vcf
-<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>├── logging.py       Rich console + logger
-<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>└── errors.py        VflankError hierarchy
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>│   ├── chrom.py       notation detect/normalise (pure)
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>│   ├── variant.py     Variant dataclass + validation (pure)
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>│   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>│   ├── popfreq.py     gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>│   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource) + pure parser
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>│   ├── consensus.py   BAM patient consensus (modes C/D): samtools engine, pure
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>│   │                  low-cov overlay, insertion-site flagging
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>│   ├── fusion.py      Breakpoint/Fusion model, reverse-complement junction builder
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>│   └── skips.py       categorised skip/he reporting helpers (pure)
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>├── io/
+<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>│   ├── maf.py         load/remap/validate, row → Variant
+<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>│   ├── reference.py   ReferenceFasta + genome-build guard
+<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>│   ├── fasta.py       header sanitise + record format/write
+<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
+<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>│   └── report.py      TSV run-report writer (flexible columns)
+<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>├── cli/
+<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>│   ├── app.py         root Typer, global -v/-q/--debug, version
+<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>│   ├── small.py       run · inspect · list-vcf (+ masking, BAM, coverage flags)
+<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>│   ├── fusion.py      run (+ masking, BAM flags)
+<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
+<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>│   ├── _masking.py    shared gnomAD source wiring
+<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a>│   └── _ui.py         parameter-echo panel
+<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a>├── logging.py         Rich console + logger
+<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a>└── errors.py          VflankError hierarchy
 </code></pre></div>
-<p>The hot kernels (<code>parse_common_snp_positions</code>, future consensus pileup) are pure
+<p>The hot kernels (<code>parse_common_snp_positions</code>, <code>mask_sequence</code>, the consensus
+overlay) are pure
 functions over plain iterables — the natural seam to later accelerate with Rust
 (rust-htslib for consensus parity with samtools; noodles for pure-Rust <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>
 scanning). Lock correctness in Python first; port the proven bottleneck only.</p>
@@ -860,6 +884,7 @@ removed; the conventions recovered from them (the corrected fusion-junction
 model, iCallSV strand mapping) are captured in
 <a href="../research/sv-vcf-input/">research/sv-vcf-input.md</a>.</p>
 <h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">¶</a></h2>
+<p>Shipped through <strong>v0.2.0</strong> (on PyPI + <abbr title="GitHub Container Registry">GHCR</abbr>):</p>
 <table>
 <thead>
 <tr>
@@ -882,49 +907,82 @@ model, iCallSV strand mapping) are captured in
 <tr>
 <td>M3</td>
 <td>Tests + provenance (unit + integration, build guard)</td>
-<td>🟡 in progress</td>
+<td>✅ done</td>
 </tr>
 <tr>
 <td>M4</td>
-<td>Fusion rewrite (Python 3 + Pydantic config)</td>
-<td>⬜</td>
+<td>Fusion rewrite (Python 3, breakpoint-TSV input)</td>
+<td>✅ done</td>
 </tr>
 <tr>
 <td>M4.5</td>
-<td>Consensus (modes C/D) + <code>--emit-olivar</code> / <code>--emit-primer3</code></td>
-<td>⬜</td>
+<td><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus (modes C/D) + insertion flagging</td>
+<td>✅ done (0.2.0)</td>
 </tr>
 <tr>
 <td>M5</td>
-<td>MkDocs (Material + mkdocstrings)</td>
-<td>⬜</td>
+<td>MkDocs (Material + mkdocstrings, versioned via mike)</td>
+<td>✅ done</td>
 </tr>
 <tr>
 <td>M6</td>
-<td>Release (PyPI via <abbr title="OpenID Connect — the token flow used for PyPI Trusted Publishing">OIDC</abbr>; pysam wheel caveats)</td>
-<td>⬜</td>
+<td>Release (PyPI via <abbr title="OpenID Connect — the token flow used for PyPI Trusted Publishing">OIDC</abbr>; <abbr title="GitHub Container Registry">GHCR</abbr> image)</td>
+<td>✅ done (0.1.0, 0.2.0)</td>
+</tr>
+</tbody>
+</table>
+<p>Next, in priority order (each has a design note in <code>research/</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Next</th>
+<th>Deliverable</th>
+<th>Design note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M4.5-emit</strong></td>
+<td><code>--emit olivar,primer3</code> designer-native output formats</td>
+<td><a href="../research/emit-formats/">emit-formats.md</a></td>
+</tr>
+<tr>
+<td>M-vcf</td>
+<td><abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> input — small-variant <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>, then Delly <code>CT</code>/<code>BND</code> <abbr title="Structural Variant — a large rearrangement (deletion, duplication, inversion, translocation, fusion)">SV</abbr> <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr></td>
+<td><a href="../research/sv-vcf-input/">sv-vcf-input.md</a></td>
+</tr>
+<tr>
+<td>M-<abbr title="insertion or deletion">indel</abbr></td>
+<td>Indel-aware (length-changing) consensus — option 3</td>
+<td><a href="../research/indel-aware-consensus/"><abbr title="insertion or deletion">indel</abbr>-aware-consensus.md</a></td>
 </tr>
 <tr>
 <td>M7</td>
 <td>Nextflow / nf-core pipeline (containerised)</td>
-<td>⬜</td>
+<td>—</td>
+</tr>
+<tr>
+<td>M-rust</td>
+<td>Port the proven hot kernels to Rust (optional)</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
 <h3 id="top-risks">Top risks<a class="headerlink" href="#top-risks" title="Permanent link">¶</a></h3>
 <ol>
-<li>Fusion script intent is undocumented/buggy — recover before M4.</li>
 <li>Reference build mismatch → silent wrong sequence — guarded in <code>reference.py</code>.</li>
 <li>pysam wheel fragility — <abbr title="Continuous Integration">CI</abbr> matrix Linux+macOS; document WSL/conda.</li>
-<li>Indel coordinate edge cases — dedicated tests in M3.</li>
-<li>Olivar GPL/dep isolation — enforced by the out-of-process boundary.</li>
+<li>Indel coordinate edge cases — insertion flagging shipped; length-changing
+   consensus is deferred to M-<abbr title="insertion or deletion">indel</abbr> with its own test matrix.</li>
+<li>Olivar input-schema drift — pin a version and assert columns in the emitter
+   (M4.5-emit); the dependency itself stays out-of-process (GPL isolation).</li>
 </ol>
 <aside class="md-source-file">
 <span class="md-source-file__fact">
 <span class="md-icon" title="Last update">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 02:57:51 UTC"><span class="timeago" datetime="2026-06-14T02:57:51+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 02:57:51 UTC">2026-06-14</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 04:28:20 UTC"><span class="timeago" datetime="2026-06-14T04:28:20+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 04:28:20 UTC">2026-06-14</span>
 </span>
 <span class="md-source-file__fact">
 <span class="md-icon" title="Created">
