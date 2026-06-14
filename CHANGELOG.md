@@ -6,6 +6,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **Primer3 emit** (`--emit-primer3 FILE`) for both `small` and `fusion`: writes
+  Boulder-IO records (`SEQUENCE_ID`/`TEMPLATE`/`TARGET`, and
+  `SEQUENCE_EXCLUDED_REGION` from the masked positions) so a probe/primer design
+  avoids common SNPs and patient-ambiguous sites. The template uses the
+  masked/consensus call, filling `N` sites with the reference base and excluding
+  them — a hard constraint, unlike a degenerate base. The `version` is recorded
+  in the run report and parameter echo.
+
 ## [0.2.0] - 2026-06-14
 
 ### Added

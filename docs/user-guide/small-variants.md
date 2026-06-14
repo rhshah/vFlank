@@ -87,6 +87,29 @@ The same variant seen across multiple samples collapses to **one** record
 `--no-dedup` to emit one record per row instead. The run summary reports how
 many duplicates were collapsed.
 
+## Emit for Primer3
+
+Add `--emit-primer3 primers.txt` to also write a [Primer3](https://primer3.org)
+Boulder-IO input file — one record per variant, ready to hand to a designer:
+
+```bash
+vflank small run variants.maf -r GRCh37.fasta -g hg19 \
+    -o flanks.fasta --emit-primer3 primers.txt
+```
+
+Each record carries:
+
+- `SEQUENCE_TEMPLATE` — the best-known sequence (the masked/consensus call,
+  falling back to the reference base where the call is `N`).
+- `SEQUENCE_TARGET` — the variant span, so the assay covers it.
+- `SEQUENCE_EXCLUDED_REGION` — the masked positions (common SNPs, patient
+  het/low-cov/insertion sites). This is a **hard** "no oligo here" constraint —
+  stronger than a degenerate `N`, which Primer3 may still design over.
+
+`SEQUENCE_ID` matches the FASTA header key, so the two outputs cross-reference.
+The same flag works on `vflank fusion run` (one record per junction, targeted to
+span the breakpoint). Olivar emit is [planned](../research/emit-formats.md).
+
 ## Safety nets
 
 - **Genome-build guard** — if the FASTA's chr1 length disagrees with

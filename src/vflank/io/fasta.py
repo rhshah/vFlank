@@ -18,6 +18,18 @@ def safe_header(s: str) -> str:
     return _UNSAFE_RE.sub("_", s.strip())
 
 
+def record_id(variant: Variant, ref: str, alt: str, sample: str | None = None) -> str:
+    """The shared record key: ``[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}``.
+
+    Used for both FASTA headers and Primer3 ``SEQUENCE_ID`` so records cross-reference.
+    """
+    key = f"{variant.chrom}_{variant.start}_{ref}_{alt}"
+    fields = [variant.gene, variant.protein, variant.cdna, key]
+    if sample is not None:
+        fields.insert(0, sample)
+    return "__".join(safe_header(s) for s in fields)
+
+
 def format_records(
     variant: Variant, flanks: FlankResult, ref: str, alt: str, sample: str | None = None
 ) -> list[str]:
@@ -32,11 +44,7 @@ def format_records(
     >Masked__[{SAMPLE}__]{GENE}__{HGVSp}__{HGVSc}__{CHROM}_{POS}_{REF}_{ALT}
     {masked_left}[REF/ALT]{masked_right}
     """
-    key = f"{variant.chrom}_{variant.start}_{ref}_{alt}"
-    fields = [variant.gene, variant.protein, variant.cdna, key]
-    if sample is not None:
-        fields.insert(0, sample)
-    base = "__".join(safe_header(s) for s in fields)
+    base = record_id(variant, ref, alt, sample)
     return [
         f">{base}\n{flanks.left}[{ref}/{alt}]{flanks.right}\n",
         f">Masked__{base}\n{flanks.masked_left}[{ref}/{alt}]{flanks.masked_right}\n",

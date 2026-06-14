@@ -1,9 +1,15 @@
 # Research & plan — designer-native emit formats (Olivar / Primer3)
 
-Status: **design / not yet implemented.** This is milestone **M4.5-emit** — the
-half of the consensus milestone that did not ship in 0.2.0. It is the feature
-that makes vflank a *pipeline front-end* rather than a FASTA generator: turning a
-masked target into the exact input two downstream designers expect.
+Status: **Primer3 emit implemented** (`--emit-primer3`, Unreleased);
+**Olivar emit still planned.** This is milestone **M4.5-emit** — the half of the
+consensus milestone that did not ship in 0.2.0. It is the feature that makes
+vflank a *pipeline front-end* rather than a FASTA generator: turning a masked
+target into the exact input two downstream designers expect.
+
+The first phase landed as a direct emitter (`io/emit_primer3.py`) that reads the
+existing `FlankResult` / `JunctionResult` rather than a separate `EmitRecord`
+refactor — the `EmitRecord` model below remains the target once the Olivar
+emitter (which needs the same masked-coordinate stream) is added.
 
 ## Why this is the priority
 
@@ -117,10 +123,12 @@ thin `io/` writer over the shared `EmitRecord` stream.
 
 ## Provenance
 
-Every emitted file gets a header comment with the **vflank version**, the
-parameter set, and the genome build — the same provenance now printed in the run
-report (see [the version-in-report work](#); M-version). A designer artifact you
-find six months later must say which vflank built it.
+Boulder-IO has **no comment syntax**, so the Primer3 file can't carry an inline
+provenance header — the **vflank version** is instead recorded in the run report
+(`# vflank_version`) and the parameter echo. Olivar's CSV/BED *can* take a
+comment header, so its emitter will stamp version + parameters directly. Either
+way, a designer artifact you find six months later must be traceable to the
+vflank run that built it.
 
 ## Module placement
 
@@ -145,11 +153,12 @@ cli/    --emit / --records wiring; one EmitRecord stream fanned to writers
 
 ## Phasing
 
-1. **`EmitRecord` + refactor FASTA** onto it (no behaviour change; `--records`
-   lands here).
-2. **Primer3 emitter** (the simpler, fully-specified format) for small + fusion.
+1. ✅ **Primer3 emitter** (`--emit-primer3`) for small + fusion — done, reading
+   the existing flank/junction results directly.
+2. **`EmitRecord` + refactor FASTA** onto it (`--records {both,masked,raw}`
+   lands here), so Olivar and FASTA share the masked-coordinate stream.
 3. **Olivar emitter** after confirming its input schema against a pinned version.
-4. **Provenance headers + docs + the Olivar/Primer3 round-trip CI marker.**
+4. **Olivar/Primer3 round-trip CI marker** (run the real tools on emitted files).
 
 ## Risks / open questions
 
