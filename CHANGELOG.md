@@ -6,14 +6,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-14
+
 ### Added
 - **Primer3 emit** (`--emit-primer3 FILE`) for both `small` and `fusion`: writes
   Boulder-IO records (`SEQUENCE_ID`/`TEMPLATE`/`TARGET`, and
   `SEQUENCE_EXCLUDED_REGION` from the masked positions) so a probe/primer design
   avoids common SNPs and patient-ambiguous sites. The template uses the
   masked/consensus call, filling `N` sites with the reference base and excluding
-  them — a hard constraint, unlike a degenerate base. The `version` is recorded
-  in the run report and parameter echo.
+  them — a hard constraint, unlike a degenerate base.
+- **Version provenance**: the vflank version is recorded in the run report
+  (`# vflank_version`) and the parameter echo, and a root `--version` flag is
+  available alongside the `version` subcommand.
+
+### Docs
+- Refreshed the architecture roadmap and module maps to the shipped state, added
+  a glossary + abbreviation tooltips, mermaid diagrams (pan/zoom), a slate+amber
+  palette, a "Reading a record" explainer, and the Olivar/Primer3 emit-formats
+  research note.
 
 ## [0.2.0] - 2026-06-14
 
@@ -62,6 +72,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   categorised skip summary + optional TSV run report.
 - Documentation site (MkDocs Material) and GitHub Actions CI.
 
-[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/rhshah/vFlank/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rhshah/vFlank/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rhshah/vFlank/releases/tag/v0.1.0
