@@ -34,7 +34,15 @@ from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
 from ._reference import make_reference_source, validate_ref_source
-from ._ui import echo_parameters
+from ._ui import (
+    PANEL_ADVANCED,
+    PANEL_BAM,
+    PANEL_FILTER,
+    PANEL_MAF_COLS,
+    PANEL_MASKING,
+    PANEL_REFERENCE,
+    echo_parameters,
+)
 
 app = typer.Typer(no_args_is_help=True)
 log = get_logger()
@@ -66,14 +74,17 @@ def run(
     ref_genome: Path | None = typer.Option(
         None, "--ref-genome", "-r",
         help="Indexed reference FASTA (.fai required). Required unless --ref-source api.",
+        rich_help_panel=PANEL_REFERENCE,
     ),
     ref_source: str = typer.Option(
         "file", "--ref-source",
         help="Reference backend: file (local FASTA, default) or api (UCSC, no download).",
+        rich_help_panel=PANEL_REFERENCE,
     ),
     pop_vcf_dir: Path | None = typer.Option(
         None, "--pop-vcf-dir", "-d",
         help="Directory of per-chromosome gnomAD VCF bgz files. Omit to skip masking.",
+        rich_help_panel=PANEL_MASKING,
     ),
     genome_build: str = typer.Option(
         "hg19", "--genome-build", "-g",
@@ -83,15 +94,18 @@ def run(
         200, "--flank", "-f", min=1, max=10_000, help="Bases on each side of the variant."
     ),
     af_threshold: float = typer.Option(
-        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP."
+        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP.",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_data: str = typer.Option(
         "genome", "--pop-data",
         help="gnomAD data to mask against: genome (default), exome, or both (union).",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_source: str = typer.Option(
         "vcf", "--pop-source",
         help="Masking backend: vcf (local gnomAD VCFs) or api (gnomAD GraphQL, no download).",
+        rich_help_panel=PANEL_MASKING,
     ),
     output: Path = typer.Option(
         Path("flanking_sequences.fasta"), "--output", "-o", help="Output FASTA file."
@@ -107,46 +121,62 @@ def run(
     samples: str | None = typer.Option(
         None, "--samples", "-s",
         help="Comma-separated Tumor_Sample_Barcode IDs to include.",
+        rich_help_panel=PANEL_FILTER,
     ),
     samples_file: Path | None = typer.Option(
         None, "--samples-file",
         help="File of sample IDs, one per line (# comments allowed).",
+        rich_help_panel=PANEL_FILTER,
     ),
-    chrom_col: str = typer.Option(MafColumns.chrom, "--chrom-col"),
-    start_col: str = typer.Option(MafColumns.start, "--start-col"),
-    end_col: str = typer.Option(MafColumns.end, "--end-col"),
-    ref_col: str = typer.Option(MafColumns.ref, "--ref-col"),
-    alt_col: str = typer.Option(MafColumns.alt, "--alt-col"),
-    gene_col: str = typer.Option(MafColumns.gene, "--gene-col"),
-    prot_col: str = typer.Option(MafColumns.protein, "--prot-col"),
-    cdna_col: str = typer.Option(MafColumns.cdna, "--cdna-col"),
-    sample_col: str = typer.Option(MafColumns.sample, "--sample-col"),
+    chrom_col: str = typer.Option(MafColumns.chrom, "--chrom-col", rich_help_panel=PANEL_MAF_COLS),
+    start_col: str = typer.Option(MafColumns.start, "--start-col", rich_help_panel=PANEL_MAF_COLS),
+    end_col: str = typer.Option(MafColumns.end, "--end-col", rich_help_panel=PANEL_MAF_COLS),
+    ref_col: str = typer.Option(MafColumns.ref, "--ref-col", rich_help_panel=PANEL_MAF_COLS),
+    alt_col: str = typer.Option(MafColumns.alt, "--alt-col", rich_help_panel=PANEL_MAF_COLS),
+    gene_col: str = typer.Option(MafColumns.gene, "--gene-col", rich_help_panel=PANEL_MAF_COLS),
+    prot_col: str = typer.Option(MafColumns.protein, "--prot-col", rich_help_panel=PANEL_MAF_COLS),
+    cdna_col: str = typer.Option(MafColumns.cdna, "--cdna-col", rich_help_panel=PANEL_MAF_COLS),
+    sample_col: str = typer.Option(
+        MafColumns.sample, "--sample-col", rich_help_panel=PANEL_MAF_COLS
+    ),
     uppercase: bool = typer.Option(
-        True, "--uppercase/--no-uppercase", help="Uppercase flanking sequences."
+        True, "--uppercase/--no-uppercase", help="Uppercase flanking sequences.",
+        rich_help_panel=PANEL_ADVANCED,
     ),
     dedup: bool = typer.Option(
         True, "--dedup/--no-dedup",
         help="Emit one record per unique variant (CHR_POS_REF_ALT), collapsing samples.",
+        rich_help_panel=PANEL_ADVANCED,
     ),
     bam: Path | None = typer.Option(
-        None, "--bam", help="Single-sample BAM for patient consensus (modes C/D)."
+        None, "--bam", help="Single-sample BAM for patient consensus (modes C/D).",
+        rich_help_panel=PANEL_BAM,
     ),
     bam_map: Path | None = typer.Option(
         None, "--bam-map",
         help="TSV (Tumor_Sample_Barcode<TAB>bam_path) for cohort consensus.",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_depth: int = typer.Option(20, "--bam-min-depth", help="Min depth to trust a base."),
-    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract", help="Fraction to call a base."),
-    bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
+    bam_min_depth: int = typer.Option(
+        20, "--bam-min-depth", help="Min depth to trust a base.", rich_help_panel=PANEL_BAM
+    ),
+    bam_call_fract: float = typer.Option(
+        0.9, "--bam-call-fract", help="Fraction to call a base.", rich_help_panel=PANEL_BAM
+    ),
+    bam_het_char: str = typer.Option(
+        "N", "--bam-het-char", help="Het output: N or iupac.", rich_help_panel=PANEL_BAM
+    ),
     bam_lowcov: str = typer.Option(
         "gnomad", "--bam-lowcov",
         help="Low-coverage base: n (mask) | reference | gnomad (default: REF + gnomAD).",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
-    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
+    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq", rich_help_panel=PANEL_BAM),
+    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq", rich_help_panel=PANEL_BAM),
     require_coverage: float = typer.Option(
         0.0, "--require-coverage", min=0.0, max=1.0,
         help="Flag BAM-consensus variants whose flanks are < this fraction covered (0=off).",
+        rich_help_panel=PANEL_BAM,
     ),
 ):
     """Extract flanking sequences for every variant in a MAF and write a FASTA.
