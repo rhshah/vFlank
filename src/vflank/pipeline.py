@@ -20,24 +20,36 @@ from __future__ import annotations
 from collections import Counter
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import pandas as pd
 
+from .core.chrom import normalise_chrom
 from .core.consensus import BamConsensusSource, ConsensusFlankSource
 from .core.flanks import FlankSource, ReferenceFlankSource
 from .core.fusion import build_junction
 from .core.skips import categorize_skip
 from .core.variant import Variant
-from .errors import ConsensusError
+from .errors import ConsensusError, VflankError
 from .io import breakpoints as bp_io
 from .io import emit_primer3 as primer3_io
 from .io import fasta as fasta_io
 from .io import maf as maf_io
-from .io.breakpoints import SvColumns
-from .io.maf import MafColumns
+from .io.breakpoints import SvColumns, SvInput
+from .io.maf import MAF_CHR, MafColumns, MafInput
 from .logging import get_logger
+from .sources import make_pop_source, make_reference_source, validate_run_options
 
 log = get_logger()
+
+__all__ = [
+    # batteries-included entrypoints (build sources -> run -> RunResult)
+    "run_small", "run_fusion",
+    # streaming primitives (caller drives progress / accumulation)
+    "iter_small", "iter_fusion", "collect",
+    # data types
+    "RunResult", "Processed", "Skipped", "Duplicate", "Outcome",
+]
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,6 +100,8 @@ class RunResult:
     n_consensus: int = 0
     n_flagged: int = 0
     n_inserted: int = 0
+    ref_api_requests: int | None = None   # UCSC reference API calls (--ref-source api)
+    api_requests: int | None = None       # gnomAD API calls (--pop-source api)
 
 
 def iter_small(
@@ -372,3 +386,127 @@ def collect(outcomes: Iterable[Outcome]) -> RunResult:
     # category instead of a wall of identical messages.
     r.skip_breakdown = Counter(categorize_skip(m) for m in r.skip_messages)
     return r
+
+
+# --- Batteries-included entrypoints ---------------------------------------
+# build sources from config -> run -> close -> RunResult. These are what a web
+# service / notebook calls; the CLI keeps its own streaming flow (for the
+# progress bar and per-source status lines) but shares iter_small/iter_fusion,
+# the source factories, and validate_run_options with these.
+
+
+def run_small(
+    maf: MafInput,
+    *,
+    genome_build: str,
+    cols: MafColumns | None = None,
+    ref_source: str = "file",
+    ref_genome: Path | None = None,
+    pop_source: str = "vcf",
+    pop_vcf_dir: Path | None = None,
+    pop_data: str = "genome",
+    flank: int = 200,
+    af_threshold: float = 0.001,
+    dedup: bool = True,
+    uppercase: bool = True,
+    sample_filter: set[str] | None = None,
+    emit_primer3: bool = False,
+) -> RunResult:
+    """Run the small-variant pipeline end to end and return a :class:`RunResult`.
+
+    Builds the reference and (optional) gnomAD sources from the given options,
+    loads the MAF (a path or an open buffer), runs the per-variant orchestration,
+    closes the sources, and returns records + per-variant rows + skips + counts.
+    Presentation-free: raises :class:`VflankError` on bad options; never prints.
+    BAM consensus is a CLI-only path for now and is not exposed here.
+    """
+    cols = cols or MafColumns()
+    validate_run_options(genome_build, ref_source, pop_source, pop_data, pop_vcf_dir)
+
+    reference = make_reference_source(ref_source, ref_genome, genome_build)
+    gnomad = None
+    try:
+        build_warn = reference.check_build(genome_build)
+        if build_warn:
+            log.warning("%s", build_warn)
+
+        df = maf_io.load_maf(maf, cols)
+        if sample_filter is not None:
+            if cols.sample not in df.columns:
+                raise VflankError(f"Sample column '{cols.sample}' not found; cannot filter.")
+            df = df[df[cols.sample].astype(str).isin(sample_filter)].copy()
+            if df.empty:
+                raise VflankError("No variants remain after sample filtering.")
+
+        maf_chroms = {
+            b for b, _err in (normalise_chrom(c) for c in df[MAF_CHR].dropna().unique()) if b
+        }
+        gnomad = make_pop_source(pop_source, pop_vcf_dir, genome_build, pop_data, maf_chroms)
+
+        result = collect(iter_small(
+            df, cols=cols, reference=reference, gnomad=gnomad, flank=flank,
+            af_threshold=af_threshold, dedup=dedup, uppercase=uppercase,
+            emit_primer3=emit_primer3,
+        ))
+        result.ref_api_requests = (
+            getattr(reference, "request_count", None) if ref_source == "api" else None
+        )
+        result.api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
+        return result
+    finally:
+        reference.close()
+        if gnomad is not None:
+            gnomad.close()
+
+
+def run_fusion(
+    sv_table: SvInput,
+    *,
+    genome_build: str,
+    cols: SvColumns | None = None,
+    ref_source: str = "file",
+    ref_genome: Path | None = None,
+    pop_source: str = "vcf",
+    pop_vcf_dir: Path | None = None,
+    pop_data: str = "genome",
+    flank: int = 200,
+    af_threshold: float = 0.001,
+    emit_primer3: bool = False,
+) -> RunResult:
+    """Run the fusion pipeline end to end and return a :class:`RunResult`.
+
+    Mirrors :func:`run_small`: builds sources, loads the breakpoint table (path
+    or buffer), builds junctions, closes sources. Presentation-free.
+    """
+    cols = cols or SvColumns()
+    validate_run_options(genome_build, ref_source, pop_source, pop_data, pop_vcf_dir)
+
+    reference = make_reference_source(ref_source, ref_genome, genome_build)
+    gnomad = None
+    try:
+        build_warn = reference.check_build(genome_build)
+        if build_warn:
+            log.warning("%s", build_warn)
+
+        df = bp_io.load_sv_table(sv_table, cols)
+        bp_chroms = {
+            b
+            for col in (cols.chr1, cols.chr2)
+            for b, _err in (normalise_chrom(v) for v in df[col].dropna().unique())
+            if b
+        }
+        gnomad = make_pop_source(pop_source, pop_vcf_dir, genome_build, pop_data, bp_chroms)
+
+        result = collect(iter_fusion(
+            df, cols=cols, reference=reference, gnomad=gnomad, flank=flank,
+            af_threshold=af_threshold, emit_primer3=emit_primer3,
+        ))
+        result.ref_api_requests = (
+            getattr(reference, "request_count", None) if ref_source == "api" else None
+        )
+        result.api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
+        return result
+    finally:
+        reference.close()
+        if gnomad is not None:
+            gnomad.close()

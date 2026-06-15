@@ -9,10 +9,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import IO
 
 from ..core.chrom import normalise_chrom
 from ..core.fusion import Breakpoint, Fusion
 from ..errors import SvError
+
+# A path or an open text/binary buffer (e.g. an uploaded file in a web service).
+SvInput = Path | str | IO[str] | IO[bytes]
 
 
 @dataclass
@@ -33,8 +37,11 @@ class SvColumns:
 _REQUIRED_FIELDS = ("chr1", "pos1", "str1", "chr2", "pos2", "str2")
 
 
-def read_sv_table(path: Path):
-    """Read the TSV into a DataFrame (tab-separated, '#'-comment aware)."""
+def read_sv_table(path: SvInput):
+    """Read the TSV into a DataFrame (tab-separated, '#'-comment aware).
+
+    ``path`` is a filesystem path or an open text/binary buffer.
+    """
     import pandas as pd
 
     try:
@@ -43,7 +50,7 @@ def read_sv_table(path: Path):
         raise SvError(f"Could not read SV table: {exc}") from exc
 
 
-def load_sv_table(path: Path, cols: SvColumns):
+def load_sv_table(path: SvInput, cols: SvColumns):
     """Read and validate that the required columns exist (by name)."""
     df = read_sv_table(path)
     if df.empty:

@@ -183,24 +183,23 @@ is a move, not a rewrite.
 3. ✅ **PR3 — fusion.** `iter_fusion`, same treatment; `Processed` generalised
    (the unused `variant` field dropped) so `collect` is shared. **Done.**
 
-**Deferred until the web service exists (no speculative code — CLAUDE.md):** the
-following have **no caller** until `vFlank-webapp` is scaffolded, so building them
-now would be unused code. They land *with* that work, or when the CLI is routed
-through `run_small` to give it a real caller:
+Once the `vFlank-webapp` repo existed (a real consumer), the rest landed:
 
-2. **PR2 — `config.py` + `sources.py` + `run_small`.** Move validators and the
-   source factories out of `cli/`; add `SmallConfig`/`FusionConfig` +
-   `run_small`/`run_fusion(config) -> RunResult` (build sources → iterate →
-   collect → close → assemble stats + request counts). This is non-speculative
-   the moment the CLI `_run` routes through it (eliminating the source-build +
-   close duplication between CLI and web).
-4. **PR4 — buffer input.** `load_maf` / `load_sv_table` accept a path *or* a
-   file-like buffer so a service needn't touch a temp file.
-5. **PR5 — public API + docs.** `__all__`, a "Using vflank as a library" section
-   for `run_small`/`run_fusion` + `RunResult`. Ship as **0.5.0**.
+2. ✅ **PR2 — `sources.py` + `run_small`/`run_fusion`.** Moved the source
+   factories out of `cli/` into `vflank/sources.py` (+ a shared
+   `validate_run_options` the CLI and `run_*` both call — no duplicate
+   validation); added `run_small`/`run_fusion(input, *, ...) -> RunResult` that
+   build sources → load → orchestrate → close, surfacing the API request counts
+   on `RunResult`. **Done.**
+4. ✅ **PR4 — buffer input.** `load_maf` / `load_sv_table` accept a path *or* an
+   open buffer (`MafInput` / `SvInput`); `pandas.read_csv` already supports both.
+   **Done.**
+5. ✅ **PR5 — public API + docs.** `pipeline.__all__`, a "Using vflank as a
+   library" section for `run_small`/`run_fusion` + `RunResult`, and the module
+   maps updated. Ship as **0.5.0**. **Done.**
 
-The keystone (PR1+PR3) is done and `develop` is shippable; the rest is pulled by
-the consumer, not pushed ahead of it.
+The keystone (PR1+PR3) decoupled the orchestration; PR2/4/5 turned it into a
+clean library API the web service consumes.
 
 ## Testing strategy
 

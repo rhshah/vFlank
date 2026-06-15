@@ -19,7 +19,8 @@ for the full plan, scope boundary, and milestone roadmap.
 src/vflank/
 ├── core/   chrom · variant · flanks · popfreq · popfreq_api · reference_api · consensus · fusion · skips
 ├── io/     maf · reference · fasta · breakpoints · report · emit_primer3   ← file access
-├── pipeline.py  per-variant orchestration (presentation-free use case; cli → pipeline → io → core)
+├── sources.py   reference/gnomAD source factories from config (cli + pipeline share)
+├── pipeline.py  orchestration + run_small/run_fusion entrypoints (presentation-free; cli → pipeline → {sources,io,core})
 ├── cli/    app (root) · small (run/inspect/list-vcf) · fusion (run)
 ├── logging.py · errors.py
 tests/      unit/ · integration/

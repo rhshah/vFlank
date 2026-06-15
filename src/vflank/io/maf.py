@@ -4,10 +4,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import IO
 
 from ..core.chrom import normalise_chrom
 from ..core.variant import Variant, validate_allele, validate_coordinates
 from ..errors import MafError
+
+# A path or an already-open text/binary buffer (e.g. an uploaded file in a web
+# service). pandas.read_csv accepts both, so the loaders take either.
+MafInput = Path | str | IO[str] | IO[bytes]
 
 # Standard TCGA/MSK MAF column names.
 MAF_CHR = "Chromosome"
@@ -38,8 +43,11 @@ class MafColumns:
     sample: str = MAF_SAMPLE
 
 
-def read_maf(path: Path, *, n_rows: int | None = None):
-    """Read a MAF into a DataFrame (tab-separated, '#'-comment aware)."""
+def read_maf(path: MafInput, *, n_rows: int | None = None):
+    """Read a MAF into a DataFrame (tab-separated, '#'-comment aware).
+
+    ``path`` is a filesystem path or an open text/binary buffer.
+    """
     import pandas as pd
 
     try:
@@ -48,7 +56,7 @@ def read_maf(path: Path, *, n_rows: int | None = None):
         raise MafError(f"Could not read MAF: {exc}") from exc
 
 
-def load_maf(path: Path, cols: MafColumns):
+def load_maf(path: MafInput, cols: MafColumns):
     """Read a MAF, remap required columns to canonical names, and validate.
 
     Returns the DataFrame with canonical required-column names guaranteed

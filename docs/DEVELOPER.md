@@ -43,25 +43,28 @@ src/vflank/
 │   ├── fusion.py      Breakpoint/Fusion model + reverse-complement junction builder
 │   └── skips.py       categorised skip-reason helpers
 ├── io/       file access
-│   ├── maf.py         load/validate MAF, row -> Variant
+│   ├── maf.py         load/validate MAF (path or buffer), row -> Variant
 │   ├── reference.py   ReferenceFasta + genome-build guard
 │   ├── fasta.py       header sanitising + record formatting/writing
-│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
+│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (path or buffer)
+│   ├── emit_primer3.py Primer3 Boulder-IO writer
 │   └── report.py      TSV run-report writer
+├── sources.py  reference/gnomAD source factories from config (validate + build)
+├── pipeline.py the use case: iter_small/iter_fusion + collect + run_small/run_fusion
 ├── cli/      Typer commands (presentation only)
 │   ├── app.py         root app, global -v/-q/--debug, version
 │   ├── small.py       small-variant commands: run / inspect / list-vcf
 │   ├── fusion.py      fusion command: run
 │   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
-│   ├── _masking.py    shared gnomAD source wiring
 │   └── _ui.py         parameter-echo panel
 ├── logging.py  shared Rich console + logger
 └── errors.py   VflankError hierarchy
 ```
 
-**Import direction is one-way:** `cli → io → core`. `core` imports nothing from
-`io`/`cli`; `io` imports from `core` but not `cli`. Keep it that way — it is what
-makes `core` unit-testable without pysam, pandas, or Typer.
+**Import direction is one-way:** `cli → pipeline → {sources, io} → core`. `core`
+imports nothing from the layers above it; `pipeline` coordinates `sources`/`io`/
+`core` but imports no `cli`/Rich/Typer. Keep it that way — it is what makes
+`core` and `pipeline` unit-testable without pysam, pandas, or Typer.
 
 ---
 
@@ -119,7 +122,37 @@ unit suite still runs in a minimal environment.
 
 ## 5. Use vflank as a library
 
-The pieces are designed to be composed directly. Minimal end-to-end example
+### The high-level entrypoints (what a web service / notebook calls)
+
+`vflank.pipeline.run_small` / `run_fusion` run the whole pipeline — build the
+reference + gnomAD sources from options, load the input (a path **or** an open
+buffer), orchestrate, close — and return a `RunResult` (records, per-variant
+rows, categorised skips, counts, API-request tallies). No printing, no files
+written; the caller decides what to render or persist.
+
+```python
+import io
+from vflank.pipeline import run_small
+
+maf = io.StringIO(open("variants.maf").read())     # a path works too
+result = run_small(
+    maf, genome_build="hg19",
+    ref_source="api",                               # UCSC — no local FASTA
+    pop_source="api",                               # gnomAD — no download
+    flank=200, emit_primer3=True,
+)
+print(result.n_processed, result.n_skipped, len(result.records))
+open("out.fasta", "w").writelines(result.records)
+```
+
+For incremental progress or custom accumulation, drop to the streaming
+primitives `iter_small(df, ...)` / `iter_fusion(df, ...)` (generators of
+`Processed | Skipped | Duplicate`) plus `collect(...)` — this is exactly how the
+CLI drives its progress bar. See `docs/research/orchestration-extraction.md`.
+
+### Composing the lower-level pieces
+
+The building blocks are also usable directly. Minimal end-to-end example
 against an indexed FASTA (no gnomAD; masked == raw):
 
 ```python

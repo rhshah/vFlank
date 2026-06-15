@@ -27,9 +27,8 @@ from ..io import maf as maf_io
 from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
 from ..logging import console
+from ..sources import make_pop_source, make_reference_source, validate_run_options
 from ._bam import build_consensus_policy, load_bam_resolver
-from ._masking import make_pop_source, validate_pop_options
-from ._reference import make_reference_source, validate_ref_source
 from ._ui import (
     PANEL_ADVANCED,
     PANEL_BAM,
@@ -227,12 +226,7 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
         "Emit Primer3": emit_primer3 or "off",
     })
 
-    if genome_build not in ("hg19", "hg38"):
-        raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
-    validate_ref_source(ref_source)
-    validate_pop_options(pop_source, pop_data)
-    if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
-        raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
+    validate_run_options(genome_build, ref_source, pop_source, pop_data, pop_vcf_dir)
 
     sample_filter = _load_sample_filter(samples, samples_file)
     if sample_filter is not None:
