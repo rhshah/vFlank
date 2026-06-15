@@ -27,7 +27,13 @@ from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
 from ._reference import make_reference_source, validate_ref_source
-from ._ui import echo_parameters
+from ._ui import (
+    PANEL_BAM,
+    PANEL_MASKING,
+    PANEL_REFERENCE,
+    PANEL_SV_COLS,
+    echo_parameters,
+)
 
 app = typer.Typer(no_args_is_help=True)
 log = get_logger()
@@ -41,10 +47,12 @@ def run(
     ref_genome: Path | None = typer.Option(
         None, "--ref-genome", "-r",
         help="Indexed reference FASTA (.fai required). Required unless --ref-source api.",
+        rich_help_panel=PANEL_REFERENCE,
     ),
     ref_source: str = typer.Option(
         "file", "--ref-source",
         help="Reference backend: file (local FASTA, default) or api (UCSC, no download).",
+        rich_help_panel=PANEL_REFERENCE,
     ),
     genome_build: str = typer.Option("hg19", "--genome-build", "-g", help="hg19 or hg38."),
     flank: int = typer.Option(
@@ -54,15 +62,19 @@ def run(
     pop_vcf_dir: Path | None = typer.Option(
         None, "--pop-vcf-dir", "-d",
         help="Directory of gnomAD VCFs to mask junction flanks. Omit to skip masking.",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_data: str = typer.Option(
-        "genome", "--pop-data", help="gnomAD data to mask against: genome, exome, or both."
+        "genome", "--pop-data", help="gnomAD data to mask against: genome, exome, or both.",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_source: str = typer.Option(
-        "vcf", "--pop-source", help="Masking backend: vcf or api (no download)."
+        "vcf", "--pop-source", help="Masking backend: vcf or api (no download).",
+        rich_help_panel=PANEL_MASKING,
     ),
     af_threshold: float = typer.Option(
-        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP."
+        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP.",
+        rich_help_panel=PANEL_MASKING,
     ),
     output: Path = typer.Option(
         Path("fusion_junctions.fasta"), "--output", "-o", help="Output FASTA file."
@@ -72,27 +84,32 @@ def run(
         help="Also write a Primer3 Boulder-IO input file (one record per junction).",
     ),
     bam: Path | None = typer.Option(
-        None, "--bam", help="Single-sample BAM for patient consensus of the junction flanks."
+        None, "--bam", help="Single-sample BAM for patient consensus of the junction flanks.",
+        rich_help_panel=PANEL_BAM,
     ),
     bam_map: Path | None = typer.Option(
-        None, "--bam-map", help="TSV (sample<TAB>bam_path) for per-fusion consensus."
+        None, "--bam-map", help="TSV (sample<TAB>bam_path) for per-fusion consensus.",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_depth: int = typer.Option(20, "--bam-min-depth"),
-    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract"),
-    bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
+    bam_min_depth: int = typer.Option(20, "--bam-min-depth", rich_help_panel=PANEL_BAM),
+    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract", rich_help_panel=PANEL_BAM),
+    bam_het_char: str = typer.Option(
+        "N", "--bam-het-char", help="Het output: N or iupac.", rich_help_panel=PANEL_BAM
+    ),
     bam_lowcov: str = typer.Option(
-        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad."
+        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad.",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
-    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
-    chr1_col: str = typer.Option(SvColumns.chr1, "--chr1-col"),
-    pos1_col: str = typer.Option(SvColumns.pos1, "--pos1-col"),
-    str1_col: str = typer.Option(SvColumns.str1, "--str1-col"),
-    chr2_col: str = typer.Option(SvColumns.chr2, "--chr2-col"),
-    pos2_col: str = typer.Option(SvColumns.pos2, "--pos2-col"),
-    str2_col: str = typer.Option(SvColumns.str2, "--str2-col"),
-    name_col: str = typer.Option(SvColumns.name, "--name-col"),
-    sample_col: str = typer.Option(SvColumns.sample, "--sample-col"),
+    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq", rich_help_panel=PANEL_BAM),
+    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq", rich_help_panel=PANEL_BAM),
+    chr1_col: str = typer.Option(SvColumns.chr1, "--chr1-col", rich_help_panel=PANEL_SV_COLS),
+    pos1_col: str = typer.Option(SvColumns.pos1, "--pos1-col", rich_help_panel=PANEL_SV_COLS),
+    str1_col: str = typer.Option(SvColumns.str1, "--str1-col", rich_help_panel=PANEL_SV_COLS),
+    chr2_col: str = typer.Option(SvColumns.chr2, "--chr2-col", rich_help_panel=PANEL_SV_COLS),
+    pos2_col: str = typer.Option(SvColumns.pos2, "--pos2-col", rich_help_panel=PANEL_SV_COLS),
+    str2_col: str = typer.Option(SvColumns.str2, "--str2-col", rich_help_panel=PANEL_SV_COLS),
+    name_col: str = typer.Option(SvColumns.name, "--name-col", rich_help_panel=PANEL_SV_COLS),
+    sample_col: str = typer.Option(SvColumns.sample, "--sample-col", rich_help_panel=PANEL_SV_COLS),
 ):
     """Build fusion-junction sequences for a breakpoint table and write a FASTA."""
     cols = SvColumns(
