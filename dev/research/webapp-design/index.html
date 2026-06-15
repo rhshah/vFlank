@@ -3,12 +3,12 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="Variant-aware flanking-sequence extraction and masking for ddPCR assay design" name="description"/>
-<link href="https://rhshah.github.io/vFlank/dev/research/bam-consensus/" rel="canonical"/>
-<link href="../sv-vcf-input/" rel="prev"/>
-<link href="../indel-aware-consensus/" rel="next"/>
+<link href="https://rhshah.github.io/vFlank/dev/research/webapp-design/" rel="canonical"/>
+<link href="../webapp-repo-structure/" rel="prev"/>
+<link href="../orchestration-extraction/" rel="next"/>
 <link href="../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6" name="generator"/>
-<title>BAM consensus - vflank</title>
+<title>Web app UI/UX &amp; backend (plan) - vflank</title>
 <link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -36,7 +36,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#bam-consensus-masking-design-note-modes-c-d">
+<a class="md-skip" href="#vflank-webapp-uiux-backend-design">
           Skip to content
         </a>
 </div>
@@ -62,7 +62,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              BAM consensus
+              Web app UI/UX &amp; backend (plan)
             
           </span>
 </div>
@@ -439,20 +439,8 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-<span class="md-ellipsis">
-    
-  
-    BAM consensus
-  
-
-    
-  </span>
-<span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../bam-consensus/">
 <span class="md-ellipsis">
     
   
@@ -462,140 +450,6 @@
     
   </span>
 </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#goal">
-<span class="md-ellipsis">
-      
-        Goal
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#per-position-consensus-policy">
-<span class="md-ellipsis">
-      
-        Per-position consensus policy
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#gnomad-layering-mode-d">
-<span class="md-ellipsis">
-      
-        gnomAD layering (mode D)
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#het-and-indel-representation">
-<span class="md-ellipsis">
-      
-        Het and indel representation
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#engine-samtools-consensus-via-pysam-hybrid">
-<span class="md-ellipsis">
-      
-        Engine — samtools consensus via pysam (hybrid)
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#performance-parallelism">
-<span class="md-ellipsis">
-      
-        Performance &amp; parallelism
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#sample-bam-mapping">
-<span class="md-ellipsis">
-      
-        Sample → BAM mapping
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#output-granularity-the-data-model-change">
-<span class="md-ellipsis">
-      
-        Output granularity (the data-model change)
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#end-to-end-small-variants">
-<span class="md-ellipsis">
-      
-        End-to-end — small variants
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#end-to-end-fusions">
-<span class="md-ellipsis">
-      
-        End-to-end — fusions
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#cli-surface">
-<span class="md-ellipsis">
-      
-        CLI surface
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#testing-validation">
-<span class="md-ellipsis">
-      
-        Testing &amp; validation
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#risks">
-<span class="md-ellipsis">
-      
-        Risks
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#build-phases">
-<span class="md-ellipsis">
-      
-        Build phases
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../indel-aware-consensus/">
@@ -633,8 +487,20 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../webapp-design/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    Web app UI/UX &amp; backend (plan)
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
 <span class="md-ellipsis">
     
   
@@ -644,6 +510,166 @@
     
   </span>
 </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-the-library-now-gives-the-webapp">
+<span class="md-ellipsis">
+      
+        What the library now gives the webapp
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#backend">
+<span class="md-ellipsis">
+      
+        Backend
+      
+    </span>
+</a>
+<nav aria-label="Backend" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stack">
+<span class="md-ellipsis">
+      
+        Stack
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#endpoints">
+<span class="md-ellipsis">
+      
+        Endpoints
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#request-response-pydantic">
+<span class="md-ellipsis">
+      
+        Request / response (Pydantic)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#policy-the-service-owns-not-the-library">
+<span class="md-ellipsis">
+      
+        Policy the service owns (not the library)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#concurrency-rate-limit-cache-the-one-real-subtlety">
+<span class="md-ellipsis">
+      
+        Concurrency, rate-limit, cache — the one real subtlety
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deployment-render-free-tier">
+<span class="md-ellipsis">
+      
+        Deployment (Render free tier)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security">
+<span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#frontend-uiux">
+<span class="md-ellipsis">
+      
+        Frontend — UI/UX
+      
+    </span>
+</a>
+<nav aria-label="Frontend — UI/UX" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#one-page-three-moments-describe-run-read-the-result">
+<span class="md-ellipsis">
+      
+        One page, three moments: describe → run → read the result
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#layout-top-to-bottom">
+<span class="md-ellipsis">
+      
+        Layout (top to bottom)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#principles">
+<span class="md-ellipsis">
+      
+        Principles
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starter-repo-layout-vflank-webapp">
+<span class="md-ellipsis">
+      
+        Starter repo layout (vFlank-webapp)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#phasing">
+<span class="md-ellipsis">
+      
+        Phasing
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#open-questions">
+<span class="md-ellipsis">
+      
+        Open questions
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../orchestration-extraction/">
@@ -728,127 +754,153 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#goal">
+<a class="md-nav__link" href="#what-the-library-now-gives-the-webapp">
 <span class="md-ellipsis">
       
-        Goal
+        What the library now gives the webapp
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#per-position-consensus-policy">
+<a class="md-nav__link" href="#backend">
 <span class="md-ellipsis">
       
-        Per-position consensus policy
+        Backend
+      
+    </span>
+</a>
+<nav aria-label="Backend" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stack">
+<span class="md-ellipsis">
+      
+        Stack
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#gnomad-layering-mode-d">
+<a class="md-nav__link" href="#endpoints">
 <span class="md-ellipsis">
       
-        gnomAD layering (mode D)
+        Endpoints
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#het-and-indel-representation">
+<a class="md-nav__link" href="#request-response-pydantic">
 <span class="md-ellipsis">
       
-        Het and indel representation
+        Request / response (Pydantic)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#engine-samtools-consensus-via-pysam-hybrid">
+<a class="md-nav__link" href="#policy-the-service-owns-not-the-library">
 <span class="md-ellipsis">
       
-        Engine — samtools consensus via pysam (hybrid)
+        Policy the service owns (not the library)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#performance-parallelism">
+<a class="md-nav__link" href="#concurrency-rate-limit-cache-the-one-real-subtlety">
 <span class="md-ellipsis">
       
-        Performance &amp; parallelism
+        Concurrency, rate-limit, cache — the one real subtlety
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#sample-bam-mapping">
+<a class="md-nav__link" href="#deployment-render-free-tier">
 <span class="md-ellipsis">
       
-        Sample → BAM mapping
+        Deployment (Render free tier)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#output-granularity-the-data-model-change">
+<a class="md-nav__link" href="#security">
 <span class="md-ellipsis">
       
-        Output granularity (the data-model change)
+        Security
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#frontend-uiux">
+<span class="md-ellipsis">
+      
+        Frontend — UI/UX
+      
+    </span>
+</a>
+<nav aria-label="Frontend — UI/UX" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#one-page-three-moments-describe-run-read-the-result">
+<span class="md-ellipsis">
+      
+        One page, three moments: describe → run → read the result
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#end-to-end-small-variants">
+<a class="md-nav__link" href="#layout-top-to-bottom">
 <span class="md-ellipsis">
       
-        End-to-end — small variants
+        Layout (top to bottom)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#end-to-end-fusions">
+<a class="md-nav__link" href="#principles">
 <span class="md-ellipsis">
       
-        End-to-end — fusions
+        Principles
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starter-repo-layout-vflank-webapp">
+<span class="md-ellipsis">
+      
+        Starter repo layout (vFlank-webapp)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#cli-surface">
+<a class="md-nav__link" href="#phasing">
 <span class="md-ellipsis">
       
-        CLI surface
+        Phasing
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#testing-validation">
+<a class="md-nav__link" href="#open-questions">
 <span class="md-ellipsis">
       
-        Testing &amp; validation
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#risks">
-<span class="md-ellipsis">
-      
-        Risks
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#build-phases">
-<span class="md-ellipsis">
-      
-        Build phases
+        Open questions
       
     </span>
 </a>
@@ -885,101 +937,124 @@
 </ol>
 </nav>
 <article class="md-content__inner md-typeset">
-<h1 id="bam-consensus-masking-design-note-modes-c-d"><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus masking — design note (modes C / D)<a class="headerlink" href="#bam-consensus-masking-design-note-modes-c-d" title="Permanent link">¶</a></h1>
-<p>Patient-specific flank generation from a sample <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>, for both small variants and
-fusions. Status: <strong>implemented</strong> (small + fusion). User guide:
-<a href="../../user-guide/consensus/">user-guide/consensus.md</a>. Decisions taken: full
-consensus (not mask-only), <code>--bam</code> + <code>--bam-map</code>, per-(variant, sample) output.</p>
-<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">¶</a></h2>
-<p><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> masking is a <em>population</em> prior. With the patient's own reads we can do
-better: build the flank from the <strong>patient's actual sequence</strong> so a primer/probe
-matches the real template, and <code>N</code> only where the patient is genuinely
-ambiguous. This catches <strong>private/rare</strong> variants <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> never saw.</p>
-<ul>
-<li><strong>Mode C</strong> = <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus only.</li>
-<li><strong>Mode D</strong> = <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus, with <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> as the fallback where the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> is blind.</li>
-</ul>
-<h2 id="per-position-consensus-policy">Per-position consensus policy<a class="headerlink" href="#per-position-consensus-policy" title="Permanent link">¶</a></h2>
-<p>For each flank position, pile up reads passing <code>min_mapq</code> / <code>min_baseq</code>, with
-<code>ignore_overlaps=True</code> (don't double-count overlapping mates). Then:</p>
+<h1 id="vflank-webapp-uiux-backend-design">vFlank-webapp — UI/UX &amp; backend design<a class="headerlink" href="#vflank-webapp-uiux-backend-design" title="Permanent link">¶</a></h1>
+<p>Status: <strong>proposed</strong> (2026-06-15). The detailed design for the
+<a href="../webapp-repo-structure/">separate <code>vFlank-webapp</code> repo</a>, now that the library
+prerequisites shipped in <strong>0.5.0</strong> (<code>vflank.pipeline.run_small</code>/<code>run_fusion</code>,
+buffer input). Scope is <strong>v1</strong> per <a href="../web-app-and-hosting/">web-app-and-hosting.md</a>:
+single-variant / tiny-batch, modes A/B (reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>, <strong>no <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>, no PHI</strong>),
+UCSC + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> APIs, FastAPI on Render. <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>/WASM is v2.</p>
+<h2 id="what-the-library-now-gives-the-webapp">What the library now gives the webapp<a class="headerlink" href="#what-the-library-now-gives-the-webapp" title="Permanent link">¶</a></h2>
+<p>The webapp is thin because 0.5.0 did the work: one call does everything.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_small</span>      <span class="c1"># or run_fusion</span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="n">result</span> <span class="o">=</span> <span class="n">run_small</span><span class="p">(</span>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    <span class="n">uploaded_buffer</span><span class="p">,</span> <span class="n">genome_build</span><span class="o">=</span><span class="s2">"hg19"</span><span class="p">,</span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>    <span class="n">ref_source</span><span class="o">=</span><span class="s2">"api"</span><span class="p">,</span> <span class="n">pop_source</span><span class="o">=</span><span class="s2">"api"</span><span class="p">,</span>     <span class="c1"># no local files</span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>    <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">emit_primer3</span><span class="o">=</span><span class="n">want_primer3</span><span class="p">,</span>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="p">)</span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="c1"># result: records, rows, skip_messages, skip_breakdown, n_processed/n_skipped,</span>
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="c1">#         ref_api_requests, api_requests</span>
+</code></pre></div>
+<p>The webapp adds only: HTTP, a form, a record cap, error→status mapping, and
+rendering. <strong>All input validation is inherited</strong> (bad build/options →
+<code>VflankError</code>; bad rows → per-row skips).</p>
+<h2 id="backend">Backend<a class="headerlink" href="#backend" title="Permanent link">¶</a></h2>
+<h3 id="stack">Stack<a class="headerlink" href="#stack" title="Permanent link">¶</a></h3>
+<p>FastAPI + uvicorn; Jinja2 for the one server-rendered page; Pydantic for the
+request/response models; <strong>no database</strong>. <code>pip install "vflank&gt;=0.5"</code>. Stateless
+→ matches Render's ephemeral filesystem.</p>
+<h3 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
-<th>Condition (depth ≥ <code>min_depth</code>)</th>
-<th>Output base</th>
+<th>Method · path</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>homozygous-<abbr title="reference allele">REF</abbr> (ref frac ≥ <code>consensus_fraction</code>, e.g. 0.9)</td>
-<td>reference base</td>
+<td><code>GET /</code></td>
+<td>the single-page form (server-rendered)</td>
 </tr>
 <tr>
-<td>homozygous-<abbr title="alternate (variant) allele">ALT</abbr> (one alt ≥ <code>consensus_fraction</code>)</td>
-<td><strong>patient <abbr title="alternate (variant) allele">ALT</abbr> base</strong> (consensus correction)</td>
+<td><code>POST /api/run</code></td>
+<td>run the pipeline → JSON <code>{records, rows, skips, stats}</code></td>
 </tr>
 <tr>
-<td>heterozygous (minor allele ≥ <code>het_fraction</code>, e.g. 0.25)</td>
-<td><code>N</code> (or <abbr title="International Union of Pure and Applied Chemistry — degenerate base codes (R, Y, S, W, K, M…)">IUPAC</abbr>)</td>
+<td><code>GET /api/run.fasta</code> <em>(or <code>?format=fasta</code>)</em></td>
+<td>same, returned as a <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> download</td>
 </tr>
 <tr>
-<td>patient <abbr title="insertion or deletion">indel</abbr></td>
-<td>reflected in the consensus (samtools is <abbr title="insertion or deletion">indel</abbr>-aware)</td>
-</tr>
-<tr>
-<td><strong>depth &lt; <code>min_depth</code></strong></td>
-<td>see <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> layering</td>
+<td><code>GET /healthz</code></td>
+<td>liveness (for keep-warm pings)</td>
 </tr>
 </tbody>
 </table>
-<p>This policy is realised through <code>samtools consensus</code> options (<code>--call-fract</code> →
-<abbr title="homozygous — two identical alleles at a locus">hom</abbr> calls, default/<code>--ambig</code> → <abbr title="heterozygous — two different alleles at a locus">het</abbr>, <code>--min-depth</code>) plus our low-coverage overlay
-(below). Rationale: a primer over a <abbr title="heterozygous — two different alleles at a locus">het</abbr> site → allele dropout; over a <abbr title="homozygous — two identical alleles at a locus">hom</abbr>-<abbr title="alternate (variant) allele">ALT</abbr>
-site the reference would mismatch <em>every</em> template, so we use the patient base;
-low coverage → we can't confirm, so don't trust it.</p>
-<h2 id="gnomad-layering-mode-d"><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> layering (mode D)<a class="headerlink" href="#gnomad-layering-mode-d" title="Permanent link">¶</a></h2>
-<p>The principle: <strong>patient-specific where we have coverage; population prior where
-we don't.</strong></p>
+<h3 id="request-response-pydantic">Request / response (Pydantic)<a class="headerlink" href="#request-response-pydantic" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">RunRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"small"</span><span class="p">,</span> <span class="s2">"fusion"</span><span class="p">]</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>    <span class="n">genome_build</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"hg19"</span><span class="p">,</span> <span class="s2">"hg38"</span><span class="p">]</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>                       <span class="c1"># pasted table OR assembled from the structured form</span>
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>    <span class="n">flank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>    <span class="n">af_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a>    <span class="n">pop_data</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"genome"</span><span class="p">,</span> <span class="s2">"exome"</span><span class="p">,</span> <span class="s2">"both"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"genome"</span>
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>    <span class="n">emit_primer3</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a>    <span class="n">dedup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>
+<a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="k">class</span><span class="w"> </span><span class="nc">RunResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a>    <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>              <span class="c1"># FASTA records (raw + masked)</span>
+<a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>    <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>                <span class="c1"># per-variant detail</span>
+<a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>    <span class="n">skips</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>           <span class="c1"># categorised skip breakdown</span>
+<a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a>    <span class="n">skip_examples</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a>    <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span>                     <span class="c1"># processed/skipped, api requests, elapsed</span>
+<a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a>    <span class="n">primer3</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>             <span class="c1"># Boulder-IO text if requested</span>
+</code></pre></div>
+<p>The handler writes <code>text</code> to an in-memory <code>io.StringIO</code> and calls
+<code>run_small</code>/<code>run_fusion(buf, ref_source="api", pop_source="api", …)</code>.</p>
+<h3 id="policy-the-service-owns-not-the-library">Policy the service owns (not the library)<a class="headerlink" href="#policy-the-service-owns-not-the-library" title="Permanent link">¶</a></h3>
 <ul>
-<li><code>depth ≥ min_depth</code> → the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> is authoritative (table above). <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> is ignored
-  at that position (if the patient is confidently <abbr title="homozygous — two identical alleles at a locus">hom</abbr>-<abbr title="alternate (variant) allele">ALT</abbr>, a primer matching the
-  patient base works even though <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> flags the site as common).</li>
-<li><code>depth &lt; min_depth</code> → fall back to <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>: <code>N</code> if it's a common <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> there, else
-  the reference base.</li>
+<li><strong>≤ 10-record cap</strong> <em>after</em> parse → <code>422</code> with "the hosted tool accepts ≤10
+  records; use the <abbr title="Command-Line Interface">CLI</abbr>/PyPI package for bulk." Protects the shared instance and
+  the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> rate limit. Deliberately <strong>not</strong> a cap in <code>run_small</code> (it would
+  regress local batch users).</li>
+<li><strong>Max upload / body size</strong> (e.g. 256 KB) at the ASGI layer.</li>
+<li><strong>Error mapping:</strong> <code>VflankError</code>/<code>MafError</code>/<code>SvError</code> → <code>400</code>/<code>422</code> with the
+  message; per-row skips are <strong>data</strong>, returned in the body, never 500s.</li>
 </ul>
-<p><code>--bam-lowcov {n,reference,gnomad}</code> controls the low-coverage base: <code>n</code> (mask),
-<code>reference</code>, or <code>gnomad</code> (<strong>default</strong>: the reference base, with <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> N-masking
-common SNPs when a population source is given). So below <code>min_depth</code> (default
-20×) we fall back to <strong><abbr title="reference allele">REF</abbr> + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr></strong> — an uncovered variant just behaves like a
-normal no-<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> run (not all-N). Without a population source, <code>gnomad</code> is plain
-<code>reference</code>.</p>
-<h2 id="het-and-indel-representation">Het and <abbr title="insertion or deletion">indel</abbr> representation<a class="headerlink" href="#het-and-indel-representation" title="Permanent link">¶</a></h2>
-<ul>
-<li><code>--bam-het-char {N,iupac}</code> (default <code>N</code>) → maps to <code>samtools consensus</code>
-  default (<code>N</code>) vs <code>--ambig</code> (<abbr title="International Union of Pure and Applied Chemistry — degenerate base codes (R, Y, S, W, K, M…)">IUPAC</abbr> R/Y/S/W/K/M). <code>N</code> is the safe default for
-  primer design.</li>
-<li><strong>Indels: reference-frame (v1).</strong> <code>samtools consensus</code> is <abbr title="insertion or deletion">indel</abbr>-aware, but its
-  <abbr title="insertion or deletion">indel</abbr> output changes the sequence length, which breaks the position-by-position
-  overlay and flank concatenation. So we run it with <code>--show-ins no --show-del
-  yes</code> to keep the consensus <strong>reference-length</strong>. Both <abbr title="insertion or deletion">indel</abbr> kinds are flagged,
-  not lost:</li>
-<li><strong>Deletions</strong> become <code>*</code> → <code>N</code> directly in the engine output (a patient
-    deletion disrupts the flank, so the position is masked).</li>
-<li><strong>Insertions</strong> would otherwise be dropped silently by <code>--show-ins no</code>. To
-    avoid a silent failure we independently scan read CIGARs
-    (<code>insertion_sites()</code>, same primary/<abbr title="Mapping Quality — Phred-scaled confidence a read is correctly placed">MQ</abbr> filter as the depth array) and <strong>mask
-    the anchor base — the reference position immediately before the insertion —
-    to <code>N</code></strong> when the insertion is supported by ≥ <code>1 − call_fract</code> of spanning
-    reads at ≥ <code>min_depth</code>. The count is surfaced as <code>NInserted</code> per variant and
-    an <code>Insertion sites</code> line in the run summary.</li>
-</ul>
-<p>Reads are scanned via <code>fetch</code> + <abbr title="Compact Idiosyncratic Gapped Alignment Report — per-read alignment string (M/I/D/N…)">CIGAR</abbr> walk rather than pileup: pysam's default
-  pileup stepper silently drops reads in some BAMs (e.g. subset/sliced BAMs),
-  which would under-count insertions. True <abbr title="insertion or deletion">indel</abbr>-aware (length-changing)
-  consensus — keeping the patient's actual inserted bases — is a deferred
-  enhancement (see <a href="../indel-aware-consensus/">option 3 plan</a>).</p>
-<p>The three read scans (base calls, depth, insertion anchors) combine into the
-final masked flank like so:</p>
+<h3 id="concurrency-rate-limit-cache-the-one-real-subtlety">Concurrency, rate-limit, cache — the one real subtlety<a class="headerlink" href="#concurrency-rate-limit-cache-the-one-real-subtlety" title="Permanent link">¶</a></h3>
+<p><code>run_small</code> is synchronous (urllib + pandas), so run it in a threadpool
+(<code>await run_in_threadpool(run_small, …)</code>) to keep the event loop free.</p>
+<p><strong>The catch:</strong> <code>run_small</code> builds a <em>fresh</em> <code>ReferenceApiSource</code> per call, so its
+~1 req/s UCSC throttle is <strong>per-request, not global</strong>. Under concurrency, N
+requests can each hit UCSC at 1/s → N req/s total, which UCSC may block (it has
+blocked apps before). Options, cheapest first:</p>
+<ol>
+<li><strong>v1, low traffic:</strong> accept it; add a small per-process <strong>response cache</strong>
+   (LRU keyed on <code>(mode, build, sha256(text), params)</code>) so repeats are free, and
+   a per-IP request limiter (<code>slowapi</code>). Good enough for a demo/internal tool.</li>
+<li><strong>Shared source / global limiter:</strong> have the app hold one long-lived
+   <code>ReferenceApiSource</code> (one throttle + one window cache for everyone) and drive
+   the pipeline via the streaming primitives <code>iter_small</code>/<code>collect</code> with that
+   injected source — instead of <code>run_small</code> building its own. This is the clean
+   answer and motivates a tiny future library change: <strong>let <code>run_small</code>/
+   <code>run_fusion</code> accept optional pre-built <code>reference=</code>/<code>gnomad=</code> sources</strong> (inject
+   over build). Recommended once traffic is non-trivial.</li>
+</ol>
+<p>Recommendation: ship v1 with option 1 + a response cache; add the
+inject-sources enhancement to vflank when option 2 is needed (it's a small,
+non-breaking addition with a real caller — not speculative then).</p>
+<h3 id="deployment-render-free-tier">Deployment (Render free tier)<a class="headerlink" href="#deployment-render-free-tier" title="Permanent link">¶</a></h3>
+<p><code>render.yaml</code>: a web service, <code>pip install -e .</code>, <code>uvicorn app:app --host 0.0.0.0
+--port $PORT</code>. Plan for the free-tier traits already noted in the hosting note:
+cold-start after idle (acceptable; optional keep-warm cron hitting <code>/healthz</code>),
+single instance (the natural home for the cache + limiter), latency dominated by
+the external APIs.</p>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">¶</a></h3>
+<p>No auth (public, no PHI). HTTPS via Render. Same-origin server-rendered page →
+<strong>no CORS</strong> needed. Strict input size + record caps. No secrets (the APIs are
+unauthenticated). Add <code>slowapi</code> per-IP limiting to be polite to UCSC/<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>.</p>
+<h2 id="frontend-uiux">Frontend — UI/UX<a class="headerlink" href="#frontend-uiux" title="Permanent link">¶</a></h2>
+<h3 id="one-page-three-moments-describe-run-read-the-result">One page, three moments: <strong>describe → run → read the result</strong><a class="headerlink" href="#one-page-three-moments-describe-run-read-the-result" title="Permanent link">¶</a></h3>
 <div class="panzoom-box" data-key="none" id="panzoom0" oncontextmenu="return false;">
 <nav class="panzoom-nav">
 <button class="panzoom-reset panzoom-button">
@@ -996,154 +1071,108 @@ final masked flank like so:</p>
 </svg>
 </button>
 </nav>
-<pre class="mermaid"><code>flowchart TD
-    R["reads in window"] --&gt; SC["samtools consensus<br/>--show-ins no --show-del yes"]
-    R --&gt; DEP["window_depth<br/>per-position"]
-    R --&gt; INS["insertion_sites<br/>CIGAR walk"]
-    SC --&gt; CALL["per-base call<br/>reference-length · del → N"]
-    CALL --&gt; OV{"depth ≥ min_depth?"}
-    DEP --&gt; OV
-    OV --&gt;|yes| KEEP["keep patient call"]
-    OV --&gt;|no| LOW["low-cov overlay<br/>REF, or N if gnomAD SNP"]
-    KEEP --&gt; ANCHOR{"insertion anchor?"}
-    LOW --&gt; ANCHOR
-    INS --&gt; ANCHOR
-    ANCHOR --&gt;|yes| MN["mask N"] --&gt; OUT["masked flank"]
-    ANCHOR --&gt;|no| OUT
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as User
+    participant B as Browser (form + htmx)
+    participant API as FastAPI /api/run
+    participant V as vflank.run_small
+    U-&gt;&gt;B: pick mode/build, enter variant(s)
+    B-&gt;&gt;API: POST form (htmx, no full reload)
+    API-&gt;&gt;V: run_small(buffer, ref_source=api, pop_source=api)
+    V--&gt;&gt;API: RunResult
+    API--&gt;&gt;B: swap in the results panel
+    B--&gt;&gt;U: masked flanks, downloads, skips
 </code></pre>
 <div class="panzoom-info-box panzoom-info-box-bottom">
 Use mouse to pan and zoom
 </div>
 </div>
-<h2 id="engine-samtools-consensus-via-pysam-hybrid">Engine — <code>samtools consensus</code> via pysam (hybrid)<a class="headerlink" href="#engine-samtools-consensus-via-pysam-hybrid" title="Permanent link">¶</a></h2>
-<p>The base-calling is delegated to <strong><code>samtools consensus</code></strong>, called in-process via
-<code>pysam.samtools.consensus(...)</code> — bundled with pysam (verified; no extra system
-dependency; <code>bcftools</code> is <em>not</em> bundled in this build). It is the validated
-htslib implementation and is <abbr title="insertion or deletion">indel</abbr>-aware, so we do not reimplement consensus.</p>
-<p>We add a thin, <strong>pure</strong> overlay for the two things samtools doesn't do:</p>
+<h3 id="layout-top-to-bottom">Layout (top to bottom)<a class="headerlink" href="#layout-top-to-bottom" title="Permanent link">¶</a></h3>
 <ol>
-<li><strong><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> low-coverage layering</strong> — get a depth array over the window
-   (<code>pysam.AlignmentFile.count_coverage</code>, in-process), and at positions below
-   <code>--bam-min-depth</code> replace the call with the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> decision (<code>N</code> if a common
-   <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> there, else the reference base). "Patient where covered, population where
-   blind."</li>
-<li><strong>Variant-of-interest exclusion</strong> — already handled (flank windows are
-   strictly outside <code>[start, end]</code>).</li>
+<li><strong>Header</strong> — name + one-line "Mask variant flanks for <abbr title="digital droplet PCR — the partitioned PCR assay vflank's flanks feed into">ddPCR</abbr> assay design — no
+   install, no upload of patient data." Slate+amber "Highlighter" palette, reused
+   from the docs for brand continuity.</li>
+<li><strong>Mode</strong> — a segmented toggle: <strong>Small variant</strong> ↔ <strong>Fusion</strong>.</li>
+<li><strong>Build</strong> — <abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr>/<abbr title="human genome build 19 (== GRCh37)">hg19</abbr> ↔ <abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr>/<abbr title="human genome build 38 (== GRCh38)">hg38</abbr>.</li>
+<li><strong>Input</strong> — two tabs:</li>
+<li><strong>Structured (default, the nice single-variant UX):</strong> for <em>small</em>, four
+     fields <code>chr · pos · ref · alt</code> (+ optional gene); for <em>fusion</em>, two
+     breakpoints <code>chr:pos:strand</code>. A <strong>"＋ add row"</strong> lets you enter a handful.
+     The browser assembles a minimal <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>/breakpoint-TSV string and posts it —
+     <strong>so v1 gets the structured form with no library change</strong> (no <code>make_variant</code>
+     needed; the table is built client-side). A <strong>"Load example"</strong> button fills
+     a known variant (e.g. BRAF V600E).</li>
+<li><strong>Paste / upload:</strong> a textarea (paste a small <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>/TSV) or file picker, for
+     people who already have a file.</li>
+<li><strong>Advanced (collapsed):</strong> flank size (slider 10–400, default 200), <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr>
+   threshold, pop-data (genome/exome/both), "also emit Primer3", dedup.</li>
+<li><strong>Run</strong> button → loading state ("Querying reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>…", a spinner;
+   latency is the external APIs).</li>
+<li><strong>Results panel</strong> (swapped in via htmx):</li>
+<li>Per variant: the masked flank rendered <strong>monospace</strong>, the variant shown as
+     <code>[REF/ALT]</code> and <strong>masked <code>N</code>s highlighted in amber</strong> — the same "Reading a
+     record" treatment as the docs. A <strong>Raw ↔ Masked</strong> toggle (the <code>--records</code>
+     idea).</li>
+<li><strong>Downloads:</strong> <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>, Primer3 (if emitted), TSV report.</li>
+<li><strong>Skips</strong> surfaced inline as a friendly list ("2 rows skipped — non-numeric
+     position"), never as an error.</li>
+<li>A quiet stats line: processed / skipped · reference+<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> calls · time.</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>core/consensus.py
-<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>  run_samtools_consensus(bam, chrom, start, stop, opts) -&gt; str   # impure (pysam.samtools)
-<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>  window_depth(bam, chrom, start0, end0) -&gt; list[int]            # impure (count_coverage)
-<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>  apply_lowcov_overlay(seq, depth, region_start0, ref_seq,       # PURE, unit-tested
-<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>                       gnomad_positions, min_depth) -&gt; str
-<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>BamConsensusSource(bam_path, policy, engine="samtools")  # per-sample, lazy-open + cache
-<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>ConsensusFlankSource(reference, bam_source, gnomad=None, flank=...)  # FlankSource (small)
-</code></pre></div>
-<p>The consensus changes the <em>sequence</em>, so <code>ConsensusFlankSource</code> is a
-<strong>FlankSource</strong> (not a mask source). It reuses the existing <code>FlankResult</code>:
-<code>raw</code> = reference flanks; <code>masked</code> = the patient consensus. The
-2-records-per-target contract is unchanged — <code>Masked__</code> simply becomes the
-patient-specific assay template.</p>
-<p><strong>Pluggable engine</strong> (<code>--bam-engine {samtools,pileup}</code>, default <code>samtools</code>): the
-default delegates to samtools; a future pure-pysam-pileup engine can be added
-behind the same <code>BamConsensusSource</code> interface for in-process speed — exactly
-the pattern used for the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <code>vcf</code>/<code>api</code> backends. The overlay is engine-independent.</p>
-<h2 id="performance-parallelism">Performance &amp; parallelism<a class="headerlink" href="#performance-parallelism" title="Permanent link">¶</a></h2>
-<p><code>samtools consensus</code> is a subprocess per region, so cost scales with
-(variants × samples). This is <strong>not</strong> optimised inside vflank — the tool stays a
-clean per-unit processor and <strong>Nextflow fans the work out</strong> (per-sample,
-per-chromosome, or per-region) at the pipeline layer. The swappable <code>pileup</code>
-engine remains an option if single-process throughput ever matters.</p>
-<h2 id="sample-bam-mapping">Sample → <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> mapping<a class="headerlink" href="#sample-bam-mapping" title="Permanent link">¶</a></h2>
+<h3 id="principles">Principles<a class="headerlink" href="#principles" title="Permanent link">¶</a></h3>
 <ul>
-<li><code>--bam SAMPLE.bam</code> — single sample (require a one-sample <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>, or combine with
-  <code>--samples</code>).</li>
-<li><code>--bam-map samples.tsv</code> — <code>sample&lt;TAB&gt;bam_path</code> for cohorts (explicit/auditable).</li>
-<li>A sample with no <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> → <strong>warn</strong>, fall back to reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> (mode B) for
-  that sample (never silent).</li>
+<li><strong>Progressive enhancement.</strong> The <code>GET /</code> form works without JS (full POST →
+  rendered results). <strong>htmx</strong> enhances it: POST the form, swap only the results
+  panel — no SPA build step, tiny payload, matches the "no JS toolchain for v1"
+  decision.</li>
+<li><strong>No patient-data framing.</strong> Copy makes clear only public reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>
+  data flow through the tool (v1 has no <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>); reinforces trust.</li>
+<li><strong>Accessibility.</strong> Keyboard-navigable, ARIA labels, never color-only (masked
+  regions get a mark <strong>and</strong> an underline); respects reduced-motion.</li>
+<li><strong>Responsive.</strong> The form is small; works on a phone.</li>
 </ul>
-<h2 id="output-granularity-the-data-model-change">Output granularity (the data-model change)<a class="headerlink" href="#output-granularity-the-data-model-change" title="Permanent link">¶</a></h2>
-<p><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus is <strong>sample-specific</strong>, so dedup changes:</p>
-<ul>
-<li><strong>With any <code>--bam*</code>:</strong> dedup key = <code>(CHR_POS_REF_ALT, sample)</code> → one record per
-  (variant, sample); the <strong>sample returns to the header</strong>
-  (<code>&gt;{SAMPLE}__{GENE}__{HGVSp}__{HGVSc}__{CHR}_{POS}_{REF}_{ALT}</code>). Applied to all
-  records for a consistent granularity, even <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>-less samples (which get mode B).</li>
-<li><strong>Without <code>--bam*</code>:</strong> unchanged — dedup by <code>CHR_POS_REF_ALT</code>, no sample tag.</li>
-</ul>
-<h2 id="end-to-end-small-variants">End-to-end — small variants<a class="headerlink" href="#end-to-end-small-variants" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>for each (variant, sample):
-<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>    bam = bam_for(sample)                     # --bam or --bam-map; may be None
-<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>    raw    = reference flanks
-<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>    masked = ConsensusFlankSource(reference, bam, gnomad).fetch(variant)
-<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>             # per-position policy + gnomAD layering at low coverage
-<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>emit (raw, masked); dedup key (CHR_POS_REF_ALT, sample); sample in header
+<h2 id="starter-repo-layout-vflank-webapp">Starter repo layout (vFlank-webapp)<a class="headerlink" href="#starter-repo-layout-vflank-webapp" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>vFlank-webapp/
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>├── app/
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>│   ├── main.py            FastAPI app: GET / , POST /api/run , /healthz
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>│   ├── models.py          RunRequest / RunResponse (Pydantic)
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>│   ├── service.py         thin wrapper over vflank.run_small/run_fusion + the cap/cache
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>│   ├── templates/         index.html (Jinja2) + the results partial (htmx swap)
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>│   └── static/            style.css (slate+amber), a little htmx + vanilla JS
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>├── tests/                 endpoint tests (TestClient): happy path, cap, bad input, skips
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>├── pyproject.toml         deps: fastapi, uvicorn, jinja2, vflank&gt;=0.5  (+ slowapi)
+<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>├── render.yaml            Render web service
+<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>├── Dockerfile             optional (parity with GHCR pattern)
+<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>└── README.md              this design, condensed
 </code></pre></div>
-<h2 id="end-to-end-fusions">End-to-end — fusions<a class="headerlink" href="#end-to-end-fusions" title="Permanent link">¶</a></h2>
-<p>Each partner flank is an ordinary reference window (reads spanning the <em>junction</em>
-won't align — that's fusion evidence — but the partner flanks pile up normally).
-The consensus is built in <strong>genomic (plus-strand) space, then reverse-complemented</strong>
-— our existing trick: <code>revcomp</code> of a consensus segment is just the complement
-(real bases complement; <code>N</code>→<code>N</code>), so consensus-before-<abbr title="reverse complement — the antiparallel strand read 5'→3'">revcomp</abbr> is correct.</p>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>_segment(reference, bp, flank, *, donor, bam_source, gnomad):
-<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>    window = genomic flank window
-<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>    seq = bam_source.consensus(window, ref_seq, gnomad)    # samtools + lowcov overlay
-<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>    return revcomp(seq) if rc else seq
-<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>junction = partner1 + partner2 ; one record per (fusion, sample)
-</code></pre></div>
-<p>The breakpoint TSV's optional <code>sample</code> column drives <code>bam_for(sample)</code>.</p>
-<h2 id="cli-surface"><abbr title="Command-Line Interface">CLI</abbr> surface<a class="headerlink" href="#cli-surface" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>vflank small run MAF -r REF -g hg19 \
-<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>    --bam-map samples.tsv \            # or --bam single.bam
-<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>    --bam-min-depth 20 --bam-het-fraction 0.25 \
-<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>    --bam-consensus-fraction 0.9 --bam-min-baseq 20 --bam-min-mapq 20 \
-<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>    --bam-het-char N --bam-lowcov gnomad \
-<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>    --pop-source api                   # gnomAD fallback for low-coverage
-<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a># fusion: identical --bam* flags; uses the TSV sample column
-</code></pre></div>
-<h2 id="testing-validation">Testing &amp; validation<a class="headerlink" href="#testing-validation" title="Permanent link">¶</a></h2>
+<h2 id="phasing">Phasing<a class="headerlink" href="#phasing" title="Permanent link">¶</a></h2>
 <ul>
-<li><strong>Synthetic <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> fixtures</strong> (pysam writes SAM/<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> in-process): <abbr title="heterozygous — two different alleles at a locus">het</abbr> → <code>N</code>/<abbr title="International Union of Pure and Applied Chemistry — degenerate base codes (R, Y, S, W, K, M…)">IUPAC</abbr>;
-  <abbr title="homozygous — two identical alleles at a locus">hom</abbr>-<abbr title="alternate (variant) allele">ALT</abbr> → patient base; <abbr title="homozygous — two identical alleles at a locus">hom</abbr>-<abbr title="reference allele">REF</abbr> → reference; low-coverage → per <code>--bam-lowcov</code>;
-  <abbr title="insertion or deletion">indel</abbr> → reflected (not masked). End-to-end through <code>pysam.samtools.consensus</code>.</li>
-<li>The <strong>pure <code>apply_lowcov_overlay</code></strong> gets exhaustive unit tests with no <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>.</li>
-<li><strong>Oracle:</strong> the engine <em>is</em> <code>samtools consensus</code>, so it is self-validating for
-  the calling; the overlay is what we test. <code>bcftools</code> is unavailable in-process
-  (not bundled), so any bcftools cross-check is a manual/optional step.</li>
+<li><strong>v1</strong> — the above: structured/paste input, modes A/B, <abbr title="Application Programming Interface">API</abbr> sources, downloads.</li>
+<li><strong>v1.1</strong> — if a richer single-variant form is wanted server-side, add
+  <code>vflank.core.make_variant</code>/<code>make_fusion</code> (the deferred builders) so structured
+  input can skip the client-side table assembly; add the <strong>inject-sources</strong>
+  option to <code>run_small</code> for a shared throttle/cache under load.</li>
+<li><strong>v2</strong> — <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> via client-side WASM (biowasm/Aioli) + a JS port of the pure
+  overlay; PHI stays in the browser. Likely a static/hybrid front-end then.</li>
 </ul>
-<h2 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">¶</a></h2>
+<h2 id="open-questions">Open questions<a class="headerlink" href="#open-questions" title="Permanent link">¶</a></h2>
 <ul>
-<li><strong>Build match</strong> — the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> must be aligned to the same build as <code>--genome-build</code>
-  / the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>; mismatched coordinates give wrong calls. Sanity-check contig
-  lengths against the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> header.</li>
-<li><strong>Performance</strong> — subprocess per region; not optimised in vflank (Nextflow fans
-  out; <code>pileup</code> engine is the in-process fallback). Lazy-open + cache <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> handles;
-  cache <code>(sample, window)</code>.</li>
-<li><strong><code>.bai</code> required</strong>; clear error if missing.</li>
-<li><strong>samtools availability</strong> — bundled with pysam, so no external install; pin a
-  pysam floor that includes <code>samtools consensus</code> (samtools ≥ 1.16).</li>
+<li>Keep-warm vs. accept cold starts on the free tier (start by accepting).</li>
+<li>Per-IP limit thresholds (be conservative toward UCSC/<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>).</li>
+<li>Whether to show a small sequence-logo / position ruler in the result (nice,
+  not v1).</li>
 </ul>
-<h2 id="build-phases">Build phases<a class="headerlink" href="#build-phases" title="Permanent link">¶</a></h2>
-<ol>
-<li><code>core/consensus.py</code> — <code>run_samtools_consensus</code> + <code>window_depth</code> +
-   pure <code>apply_lowcov_overlay</code>, with synthetic-<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> tests.</li>
-<li><code>BamConsensusSource</code> + <code>ConsensusFlankSource</code>; small-variant integration
-   (per-(variant,sample) dedup, <code>--bam</code>/<code>--bam-map</code>, header change).</li>
-<li>Fusion integration (consensus-before-<abbr title="reverse complement — the antiparallel strand read 5'→3'">revcomp</abbr> in <code>_segment</code>).</li>
-<li><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> low-coverage overlay polish + docs; <code>--bam-engine</code> knob (samtools
-   default; <code>pileup</code> engine deferred).</li>
-</ol>
 <aside class="md-source-file">
 <span class="md-source-file__fact">
 <span class="md-icon" title="Last update">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 02:57:51 UTC"><span class="timeago" datetime="2026-06-14T02:57:51+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 02:57:51 UTC">2026-06-14</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:44:00 UTC"><span class="timeago" datetime="2026-06-15T14:44:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:44:00 UTC">2026-06-15</span>
 </span>
 <span class="md-source-file__fact">
 <span class="md-icon" title="Created">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 13, 2026 20:59:37 UTC"><span class="timeago" datetime="2026-06-13T20:59:37+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 13, 2026 20:59:37 UTC">2026-06-13</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:44:00 UTC"><span class="timeago" datetime="2026-06-15T14:44:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:44:00 UTC">2026-06-15</span>
 </span>
 </aside>
 </article>
@@ -1158,7 +1187,7 @@ The consensus is built in <strong>genomic (plus-strand) space, then reverse-comp
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: SV / VCF input" class="md-footer__link md-footer__link--prev" href="../sv-vcf-input/">
+<a aria-label="Previous: Web app repo structure (plan)" class="md-footer__link md-footer__link--prev" href="../webapp-repo-structure/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </div>
@@ -1167,17 +1196,17 @@ The consensus is built in <strong>genomic (plus-strand) space, then reverse-comp
                 Previous
               </span>
 <div class="md-ellipsis">
-                SV / VCF input
+                Web app repo structure (plan)
               </div>
 </div>
 </a>
-<a aria-label="Next: Indel-aware consensus (plan)" class="md-footer__link md-footer__link--next" href="../indel-aware-consensus/">
+<a aria-label="Next: Orchestration extraction (plan)" class="md-footer__link md-footer__link--next" href="../orchestration-extraction/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                Indel-aware consensus (plan)
+                Orchestration extraction (plan)
               </div>
 </div>
 <div class="md-footer__button md-icon">
