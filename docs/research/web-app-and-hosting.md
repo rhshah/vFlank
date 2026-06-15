@@ -14,18 +14,22 @@ input (the patient BAM) is computed client-side in the browser and never
 uploaded.** Batch/cohort work stays where it is today: server-side CLI + local
 files, fanned out by Nextflow.
 
-Recommended path, in order:
+Recommended path, in order (note the dependency: the service can't be fileless
+on Render without the API sources, so they come **first**):
 
-1. **Thin web service over the existing pipeline** — reuse `io/maf.load_maf` +
-   the existing per-row loop as a *library* (no new CLI command, no refactor).
-   The service owns a small-input cap and HTTP error mapping; **all existing
-   input validation is inherited**. See the v1 implementation note (§1).
-2. **API-backed sources** — gnomAD API exists (`--pop-source api`); add a
-   reference API source (see `genome-api.md`). **Reference choice is
+1. **API-backed sources — the v1 prerequisite.** Render has no local FASTA/VCF
+   (hg19/hg38 are ~3 GB each; the disk is ephemeral), so the reference and
+   population data *must* come from APIs. gnomAD already exists
+   (`--pop-source api`); the one new core piece v1 needs is a **reference API
+   source** (`ReferenceApiSource`, see `genome-api.md`). **Reference choice is
    host-dependent** (verified below): **UCSC** behind a server (nicer coords, no
-   CORS needed), **Ensembl** for a static/browser app (CORS-safe). Together these
-   make a stateless server possible (no local FASTA/VCF).
-3. **UI** — a thin front-end over the service (small-file upload / paste).
+   CORS needed — our case), **Ensembl** for a static/browser app (CORS-safe).
+2. **Thin web service over the existing pipeline** — reuse `io/maf.load_maf` +
+   the existing per-row loop as a *library* (no new CLI command, no refactor),
+   run with `--ref-source api --pop-source api` so it touches no local files.
+   The service owns a small-input cap and HTTP error mapping; **all existing
+   input validation is inherited**. See §1.
+3. **UI** — a thin 3-control front-end over the service (see §1, "The v1 form").
 4. **WASM-BAM** — `samtools` via biowasm/Aioli, client-side, for the
    patient-consensus path; keeps PHI in the browser (v2).
 
@@ -117,7 +121,22 @@ What the service adds — at its own layer, not in core:
 Scope guardrail (per CLAUDE.md): the service emits the masked target sequence and
 the Olivar / Primer3 emit formats; it does not become a primer designer.
 
-### Deferred (only if a form UX is later preferred)
+### The v1 form (3 controls)
+
+The UI is a **parameter + upload** form — not a structured per-variant form — so
+it maps one-to-one onto existing pipeline parameters and needs no `make_variant`:
+
+| Form control | Maps to | Notes |
+|---|---|---|
+| **Small vs Fusion** | `small run` vs `fusion run` pipeline | both paths already exist |
+| **GRCh37 vs GRCh38** | `--genome-build hg19` / `hg38` | both builds supported end-to-end |
+| **Upload file** | MAF (small) or breakpoint TSV (fusion) | service writes to a temp file → `load_maf` / `load_sv_table` |
+
+Everything else takes a default hidden in v1 (flank ±200, AF threshold 0.001,
+pop-data genome) and is exposed later if needed. Sources are fixed for the
+hosted service: `--ref-source api` (UCSC) + `--pop-source api`.
+
+### Deferred (only if a structured-variant form UX is later preferred)
 
 A browser **form** (type `chr/pos/ref/alt`, or two breakpoints) is a nicer
 single-variant UX than uploading a tiny MAF, but it needs structured input that
@@ -138,14 +157,23 @@ if/when it's wanted.
 - **gnomAD**: already implemented (`core/popfreq_api.GnomadApiSource`,
   `--pop-source api`). Rate limit (~10 req/60 s) rules out bulk but is a
   non-issue for interactive single-variant use (~1 request per variant window).
-- **Reference**: proposed `ReferenceApiSource` mirroring `ReferenceFasta.fetch()`
-  — see `genome-api.md`. UCSC preferred (0-based half-open coords + `hg19`/`hg38`
-  genome names match the codebase exactly; no coordinate translation).
+- **Reference**: `ReferenceApiSource` mirroring `ReferenceFasta.fetch()` — see
+  `genome-api.md`. UCSC preferred (0-based half-open coords + `hg19`/`hg38`
+  genome names match the codebase exactly; no coordinate translation). **This is
+  the one new core piece v1 requires** — without it the hosted service has no
+  reference, since Render carries no local FASTA. Wire it behind a
+  `--ref-source file|api` flag mirroring `--pop-source`.
 
-With both, a single-variant server needs **no local FASTA/VCF** — it can be a
-small stateless container. Reference sequence is immutable, so the
-reproducibility caveat that keeps the gnomAD API *optional* does not apply to the
-reference API.
+With both, the hosted service needs **no local FASTA/VCF** — it can be a small
+stateless container. Reference sequence is immutable, so the reproducibility
+caveat that keeps the gnomAD API *optional* does not apply to the reference API.
+
+**Build-guard consequence.** Today `ReferenceFasta` fingerprints the build by
+chr1 length to catch hg19/hg38 mix-ups. With an API reference there is no local
+FASTA to fingerprint, so the service instead **trusts the build the form
+selects** (the API serves exactly that assembly). `ReferenceApiSource` should
+still pass the selected build through to the API and surface a clear error if
+the API rejects it — no silent fallback.
 
 ## 3. BAM input — deferred to v2 (the one input that can't be an API)
 
