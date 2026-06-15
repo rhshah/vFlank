@@ -642,10 +642,10 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#starter-repo-layout-vflank-webapp">
+<a class="md-nav__link" href="#complete-repo-layout-vflank-webapp">
 <span class="md-ellipsis">
       
-        Starter repo layout (vFlank-webapp)
+        Complete repo layout (vFlank-webapp)
       
     </span>
 </a>
@@ -879,10 +879,10 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#starter-repo-layout-vflank-webapp">
+<a class="md-nav__link" href="#complete-repo-layout-vflank-webapp">
 <span class="md-ellipsis">
       
-        Starter repo layout (vFlank-webapp)
+        Complete repo layout (vFlank-webapp)
       
     </span>
 </a>
@@ -974,7 +974,11 @@ request/response models; <strong>no database</strong>. <code>pip install "vflank
 <tbody>
 <tr>
 <td><code>GET /</code></td>
-<td>the single-page form (server-rendered)</td>
+<td>the single-page app (grid + upload, server-rendered shell)</td>
+</tr>
+<tr>
+<td><code>POST /api/validate</code></td>
+<td><strong>parse-only</strong> (no sequence fetches): per-row skip reasons for live grid validation</td>
 </tr>
 <tr>
 <td><code>POST /api/run</code></td>
@@ -1094,16 +1098,27 @@ Use mouse to pan and zoom
    from the docs for brand continuity.</li>
 <li><strong>Mode</strong> — a segmented toggle: <strong>Small variant</strong> ↔ <strong>Fusion</strong>.</li>
 <li><strong>Build</strong> — <abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr>/<abbr title="human genome build 19 (== GRCh37)">hg19</abbr> ↔ <abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr>/<abbr title="human genome build 38 (== GRCh38)">hg38</abbr>.</li>
-<li><strong>Input</strong> — two tabs:</li>
-<li><strong>Structured (default, the nice single-variant UX):</strong> for <em>small</em>, four
-     fields <code>chr · pos · ref · alt</code> (+ optional gene); for <em>fusion</em>, two
-     breakpoints <code>chr:pos:strand</code>. A <strong>"＋ add row"</strong> lets you enter a handful.
-     The browser assembles a minimal <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>/breakpoint-TSV string and posts it —
-     <strong>so v1 gets the structured form with no library change</strong> (no <code>make_variant</code>
-     needed; the table is built client-side). A <strong>"Load example"</strong> button fills
-     a known variant (e.g. BRAF V600E).</li>
-<li><strong>Paste / upload:</strong> a textarea (paste a small <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>/TSV) or file picker, for
-     people who already have a file.</li>
+<li><strong>Input — an editable grid + file upload (one unified component).</strong> An
+   <strong><a href="https://tabulator.info">Tabulator</a></strong> grid (MIT, one CDN <code>&lt;script&gt;</code>, no
+   build step) is the primary input — one row = a single variant, a handful of
+   rows = a small batch, so it subsumes the old "structured form / + add row".</li>
+<li><strong>Three ways in, all landing in the same grid:</strong> type directly; <strong>paste a
+     block from Excel</strong> (Tabulator's clipboard module); or <strong>upload a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>/TSV
+     file</strong>, which <em>populates the grid</em> so the user can review and <strong>edit</strong> it
+     before running. A <strong>"Load example"</strong> button seeds a known variant
+     (BRAF V600E).</li>
+<li><strong>Columns switch by mode:</strong> small → <code>Chromosome · Start · End · Ref · Alt ·
+     Gene</code>; fusion → <code>chr1 · pos1 · str1 · chr2 · pos2 · str2 · name</code>.</li>
+<li><strong>Validate before submit (no duplicated logic):</strong> Tabulator does cheap
+     client-side hints (numeric position, <code>ACGT</code>/<code>-</code> allele, non-empty chrom) for
+     instant per-cell feedback; a debounced <strong><code>POST /api/validate</code></strong> runs
+     vflank's <em>own</em> <code>load_maf</code> + <code>parse_variant_row</code> (parse-only — <strong>no</strong> UCSC/
+     <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> fetches) and returns authoritative per-row reasons, which the grid
+     paints onto the offending cells. So validation is vflank-correct, feels
+     instant, and is <strong>not reimplemented</strong> in JS. On Run, <code>table.validate()</code>
+     gates the POST; the server's skips remain the final word.</li>
+<li>The browser assembles the <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>/breakpoint TSV from the grid and posts it —
+     <strong>no <code>make_variant</code> library change needed.</strong></li>
 <li><strong>Advanced (collapsed):</strong> flank size (slider 10–400, default 200), <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr>
    threshold, pop-data (genome/exome/both), "also emit Primer3", dedup.</li>
 <li><strong>Run</strong> button → loading state ("Querying reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>…", a spinner;
@@ -1130,20 +1145,48 @@ Use mouse to pan and zoom
   regions get a mark <strong>and</strong> an underline); respects reduced-motion.</li>
 <li><strong>Responsive.</strong> The form is small; works on a phone.</li>
 </ul>
-<h2 id="starter-repo-layout-vflank-webapp">Starter repo layout (vFlank-webapp)<a class="headerlink" href="#starter-repo-layout-vflank-webapp" title="Permanent link">¶</a></h2>
+<h2 id="complete-repo-layout-vflank-webapp">Complete repo layout (vFlank-webapp)<a class="headerlink" href="#complete-repo-layout-vflank-webapp" title="Permanent link">¶</a></h2>
+<p>Built to the <strong>same quality bar as vflank</strong> — git-flow, a ruff/mypy/pytest gate,
+<abbr title="Continuous Integration">CI</abbr>, docs, containerised — right-sized for an <em>app</em> (no PyPI publish; "release" =
+a Render deploy).</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>vFlank-webapp/
 <a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>├── app/
-<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>│   ├── main.py            FastAPI app: GET / , POST /api/run , /healthz
-<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>│   ├── models.py          RunRequest / RunResponse (Pydantic)
-<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>│   ├── service.py         thin wrapper over vflank.run_small/run_fusion + the cap/cache
-<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>│   ├── templates/         index.html (Jinja2) + the results partial (htmx swap)
-<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>│   └── static/            style.css (slate+amber), a little htmx + vanilla JS
-<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>├── tests/                 endpoint tests (TestClient): happy path, cap, bad input, skips
-<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>├── pyproject.toml         deps: fastapi, uvicorn, jinja2, vflank&gt;=0.5  (+ slowapi)
-<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>├── render.yaml            Render web service
-<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>├── Dockerfile             optional (parity with GHCR pattern)
-<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>└── README.md              this design, condensed
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>│   ├── __init__.py        __version__
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>│   ├── main.py            FastAPI app + routes (/, /api/validate, /api/run, /healthz)
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>│   ├── models.py          RunRequest / RunResponse / ValidateResponse (Pydantic)
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>│   ├── service.py         thin layer over vflank.run_small/run_fusion: cap, cache, error map
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>│   ├── validate.py        parse-only validation (vflank load_maf + parse_*_row, no fetches)
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>│   ├── grid.py            grid-rows &lt;-&gt; MAF/TSV text assembly (+ column schema per mode)
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>│   ├── settings.py        env config (max records, body size, cache size, rate limit)
+<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>│   ├── templates/         index.html (Jinja2 shell) + results/_partial.html (htmx swap)
+<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>│   └── static/            style.css (slate+amber), app.js (Tabulator init + htmx glue),
+<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>│                          vendored tabulator.min.js/css, htmx.min.js
+<a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a>├── tests/
+<a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a>│   ├── test_api.py        TestClient: happy path, ≤10 cap (422), bad input, skips surfaced
+<a href="#__codelineno-2-15" id="__codelineno-2-15" name="__codelineno-2-15"></a>│   ├── test_validate.py   /api/validate row reasons match vflank's parse output
+<a href="#__codelineno-2-16" id="__codelineno-2-16" name="__codelineno-2-16"></a>│   ├── test_grid.py       grid&lt;-&gt;TSV assembly round-trips (unit, no server)
+<a href="#__codelineno-2-17" id="__codelineno-2-17" name="__codelineno-2-17"></a>│   └── conftest.py        a tiny indexed FASTA fixture / mock the API sources
+<a href="#__codelineno-2-18" id="__codelineno-2-18" name="__codelineno-2-18"></a>├── docs/                  (MkDocs Material — mirrors vflank, or a strong README only)
+<a href="#__codelineno-2-19" id="__codelineno-2-19" name="__codelineno-2-19"></a>│   ├── index.md  ·  deploy.md  ·  api.md  ·  developer.md
+<a href="#__codelineno-2-20" id="__codelineno-2-20" name="__codelineno-2-20"></a>├── .github/workflows/
+<a href="#__codelineno-2-21" id="__codelineno-2-21" name="__codelineno-2-21"></a>│   ├── ci.yml             ruff + mypy + pytest (push to main/develop + PRs)
+<a href="#__codelineno-2-22" id="__codelineno-2-22" name="__codelineno-2-22"></a>│   └── docs.yml           (optional) build/deploy the docs
+<a href="#__codelineno-2-23" id="__codelineno-2-23" name="__codelineno-2-23"></a>├── pyproject.toml         deps: fastapi, uvicorn[standard], jinja2, python-multipart,
+<a href="#__codelineno-2-24" id="__codelineno-2-24" name="__codelineno-2-24"></a>│                          vflank&gt;=0.5,&lt;0.6, slowapi ; dev: pytest, httpx, ruff, mypy
+<a href="#__codelineno-2-25" id="__codelineno-2-25" name="__codelineno-2-25"></a>├── render.yaml            Render web service (IaC)
+<a href="#__codelineno-2-26" id="__codelineno-2-26" name="__codelineno-2-26"></a>├── Dockerfile             container (local parity; optional GHCR image)
+<a href="#__codelineno-2-27" id="__codelineno-2-27" name="__codelineno-2-27"></a>├── .dockerignore · .gitignore
+<a href="#__codelineno-2-28" id="__codelineno-2-28" name="__codelineno-2-28"></a>├── CLAUDE.md              working guide for this repo (gate, git-flow, deploy)
+<a href="#__codelineno-2-29" id="__codelineno-2-29" name="__codelineno-2-29"></a>├── CONTRIBUTING.md · CHANGELOG.md · LICENSE (Apache-2.0, matches vflank)
+<a href="#__codelineno-2-30" id="__codelineno-2-30" name="__codelineno-2-30"></a>└── README.md              what it is, run locally, deploy, link to the docs
 </code></pre></div>
+<p><strong>Conventions carried over from vflank:</strong> git-flow (<code>main</code> = deployed,
+<code>develop</code> = integration), the <strong>ruff + mypy + pytest gate</strong> before any change,
+typed code, <code>__version__</code> + a CHANGELOG, the slate+amber palette. <strong>Dropped
+(not applicable to an app):</strong> PyPI/<abbr title="OpenID Connect — the token flow used for PyPI Trusted Publishing">OIDC</abbr> publish and versioned <code>mike</code> docs —
+deploys are continuous via Render on push to <code>main</code>; a Docker image to <abbr title="GitHub Container Registry">GHCR</abbr> is
+optional for portability. <code>vflank</code> is pinned to a compatible range
+(<code>&gt;=0.5,&lt;0.6</code>) and bumped deliberately.</p>
 <h2 id="phasing">Phasing<a class="headerlink" href="#phasing" title="Permanent link">¶</a></h2>
 <ul>
 <li><strong>v1</strong> — the above: structured/paste input, modes A/B, <abbr title="Application Programming Interface">API</abbr> sources, downloads.</li>
@@ -1166,7 +1209,7 @@ Use mouse to pan and zoom
 <span class="md-icon" title="Last update">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:44:00 UTC"><span class="timeago" datetime="2026-06-15T14:44:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:44:00 UTC">2026-06-15</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 15:05:50 UTC"><span class="timeago" datetime="2026-06-15T15:05:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 15:05:50 UTC">2026-06-15</span>
 </span>
 <span class="md-source-file__fact">
 <span class="md-icon" title="Created">
