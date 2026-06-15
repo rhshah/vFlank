@@ -6,6 +6,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-15
+
+### Added
+- **Library API.** `vflank.pipeline.run_small` / `run_fusion(input, *, …) ->
+  RunResult` run the whole pipeline (build sources → load → orchestrate → close)
+  and return records, per-variant rows, categorised skips, counts, and API
+  request tallies — no printing, no files written. Plus the streaming primitives
+  `iter_small` / `iter_fusion` + `collect` for incremental use. This is the
+  groundwork for hosting vflank as a service.
+- **Buffer input.** `load_maf` / `load_sv_table` accept a path *or* an open
+  text/binary buffer, so a service needn't round-trip through a temp file.
+
+### Changed (internal)
+- Extracted the per-variant orchestration out of the CLI into a presentation-free
+  `vflank.pipeline` use-case layer (no Typer/Rich); the CLIs are now thin shells
+  over it. Source construction moved to `vflank.sources`. CLI behaviour is
+  unchanged. `pipeline.py` is now type-checked in the gate.
+
 ## [0.4.0] - 2026-06-14
 
 ### Added
@@ -98,7 +116,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   categorised skip summary + optional TSV run report.
 - Documentation site (MkDocs Material) and GitHub Actions CI.
 
-[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/rhshah/vFlank/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rhshah/vFlank/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rhshah/vFlank/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rhshah/vFlank/compare/v0.1.0...v0.2.0

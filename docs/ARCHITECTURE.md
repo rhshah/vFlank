@@ -93,17 +93,19 @@ src/vflank/
 │   ├── fusion.py      Breakpoint/Fusion model, reverse-complement junction builder
 │   └── skips.py       categorised skip/he reporting helpers (pure)
 ├── io/
-│   ├── maf.py         load/remap/validate, row → Variant
+│   ├── maf.py         load/remap/validate (path or buffer), row → Variant
 │   ├── reference.py   ReferenceFasta + genome-build guard
 │   ├── fasta.py       header sanitise + record format/write
-│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
+│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (path or buffer)
+│   ├── emit_primer3.py Primer3 Boulder-IO writer (EmitRecord -> SEQUENCE_* tags)
 │   └── report.py      TSV run-report writer (flexible columns)
+├── sources.py        reference/gnomAD source factories from config (validate + build)
+├── pipeline.py       use case: iter_small/iter_fusion + collect + run_small/run_fusion
 ├── cli/
 │   ├── app.py         root Typer, global -v/-q/--debug, version
 │   ├── small.py       run · inspect · list-vcf (+ masking, BAM, coverage flags)
 │   ├── fusion.py      run (+ masking, BAM flags)
 │   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
-│   ├── _masking.py    shared gnomAD source wiring
 │   └── _ui.py         parameter-echo panel
 ├── logging.py         Rich console + logger
 └── errors.py          VflankError hierarchy

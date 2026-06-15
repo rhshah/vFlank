@@ -17,8 +17,10 @@ for the full plan, scope boundary, and milestone roadmap.
 
 ```
 src/vflank/
-├── core/   chrom · variant · flanks · popfreq · popfreq_api · fusion · skips
-├── io/     maf · reference · fasta · breakpoints · report   ← file access
+├── core/   chrom · variant · flanks · popfreq · popfreq_api · reference_api · consensus · fusion · skips
+├── io/     maf · reference · fasta · breakpoints · report · emit_primer3   ← file access
+├── sources.py   reference/gnomAD source factories from config (cli + pipeline share)
+├── pipeline.py  orchestration + run_small/run_fusion entrypoints (presentation-free; cli → pipeline → {sources,io,core})
 ├── cli/    app (root) · small (run/inspect/list-vcf) · fusion (run)
 ├── logging.py · errors.py
 tests/      unit/ · integration/
@@ -36,7 +38,7 @@ strand mapping, etc.).
 
 ```bash
 python -m ruff check src tests
-python -m mypy src/vflank/core src/vflank/io
+python -m mypy src/vflank/core src/vflank/io src/vflank/pipeline.py
 python -m pytest
 ```
 
