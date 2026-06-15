@@ -29,7 +29,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
 <body data-md-color-accent="custom" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
@@ -552,13 +552,31 @@
       
     </span>
 </a>
-<nav aria-label="Unreleased" class="md-nav">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#040-2026-06-14">
+<span class="md-ellipsis">
+      
+        0.4.0 - 2026-06-14
+      
+    </span>
+</a>
+<nav aria-label="0.4.0 - 2026-06-14" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#added">
 <span class="md-ellipsis">
       
         Added
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#changed">
+<span class="md-ellipsis">
+      
+        Changed
       
     </span>
 </a>
@@ -626,7 +644,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#changed">
+<a class="md-nav__link" href="#changed_1">
 <span class="md-ellipsis">
       
         Changed
@@ -687,13 +705,31 @@
       
     </span>
 </a>
-<nav aria-label="Unreleased" class="md-nav">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#040-2026-06-14">
+<span class="md-ellipsis">
+      
+        0.4.0 - 2026-06-14
+      
+    </span>
+</a>
+<nav aria-label="0.4.0 - 2026-06-14" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
 <a class="md-nav__link" href="#added">
 <span class="md-ellipsis">
       
         Added
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#changed">
+<span class="md-ellipsis">
+      
+        Changed
       
     </span>
 </a>
@@ -761,7 +797,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#changed">
+<a class="md-nav__link" href="#changed_1">
 <span class="md-ellipsis">
       
         Changed
@@ -823,7 +859,8 @@
 <p>All notable changes to this project are documented here. The format is based on
 <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project
 adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="unreleased"><a href="https://github.com/rhshah/vFlank/compare/v0.3.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">¶</a></h2>
+<h2 id="unreleased"><a href="https://github.com/rhshah/vFlank/compare/v0.4.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">¶</a></h2>
+<h2 id="040-2026-06-14"><a href="https://github.com/rhshah/vFlank/compare/v0.3.0...v0.4.0">0.4.0</a> - 2026-06-14<a class="headerlink" href="#040-2026-06-14" title="Permanent link">¶</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">¶</a></h3>
 <ul>
 <li><strong>No-download reference via the UCSC <abbr title="Application Programming Interface">API</abbr></strong> (<code>--ref-source api</code>) for both
@@ -838,11 +875,18 @@ adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>
   request count in the run summary and <code>--report</code> stats. See
   <code>docs/research/genome-api.md</code>.</li>
 </ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>--help</code> for <code>small</code>/<code>fusion</code> now groups options into labelled panels
+  (input, reference, masking, <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>, output) for readability.</li>
+</ul>
 <h3 id="docs">Docs<a class="headerlink" href="#docs" title="Permanent link">¶</a></h3>
 <ul>
-<li>Added a web-app/hosting design note (<code>docs/research/web-app-and-hosting.md</code>)
-  and the reference-<abbr title="Application Programming Interface">API</abbr> note (<code>docs/research/genome-api.md</code>); recorded the
-  pluggable reference source in the architecture and developer guides.</li>
+<li>Added a <strong>Recommended Usage</strong> page, a web-app/hosting design note
+  (<code>docs/research/web-app-and-hosting.md</code>), and the reference-<abbr title="Application Programming Interface">API</abbr> note
+  (<code>docs/research/genome-api.md</code>); recorded the pluggable reference source in the
+  architecture and developer guides; added PyPI/<abbr title="GitHub Container Registry">GHCR</abbr>/DeepWiki badges to the
+  README and docs landing page.</li>
 </ul>
 <h2 id="030-2026-06-14"><a href="https://github.com/rhshah/vFlank/compare/v0.2.0...v0.3.0">0.3.0</a> - 2026-06-14<a class="headerlink" href="#030-2026-06-14" title="Permanent link">¶</a></h2>
 <h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">¶</a></h3>
@@ -889,7 +933,7 @@ adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>
   shows masked sequences with inline highlighting, before/after diffs, and
   clickable annotations.</li>
 </ul>
-<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">¶</a></h3>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">¶</a></h3>
 <ul>
 <li>Adopted <strong>git-flow</strong> (<code>main</code> = releases, <code>develop</code> = integration) and reworked
   <abbr title="Continuous Integration">CI</abbr> accordingly: a docs-build guard on every PR, versioned docs deployed with
