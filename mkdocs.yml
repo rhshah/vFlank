@@ -152,6 +152,7 @@ nav:
           - Indel-aware consensus (plan): research/indel-aware-consensus.md
           - Web app & hosting (plan): research/web-app-and-hosting.md
           - Web app repo structure (plan): research/webapp-repo-structure.md
+          - Web app UI/UX & backend (plan): research/webapp-design.md
           - Orchestration extraction (plan): research/orchestration-extraction.md
   - Development:
       - Developer Guide: DEVELOPER.md
