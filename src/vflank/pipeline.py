@@ -25,12 +25,15 @@ import pandas as pd
 
 from .core.consensus import BamConsensusSource, ConsensusFlankSource
 from .core.flanks import FlankSource, ReferenceFlankSource
+from .core.fusion import build_junction
 from .core.skips import categorize_skip
 from .core.variant import Variant
 from .errors import ConsensusError
+from .io import breakpoints as bp_io
 from .io import emit_primer3 as primer3_io
 from .io import fasta as fasta_io
 from .io import maf as maf_io
+from .io.breakpoints import SvColumns
 from .io.maf import MafColumns
 from .logging import get_logger
 
@@ -39,17 +42,16 @@ log = get_logger()
 
 @dataclass(frozen=True, slots=True)
 class Processed:
-    """A variant that produced records."""
+    """A variant or fusion that produced records (raw + masked)."""
 
-    variant: Variant
     records: list[str]                 # FASTA: raw + masked
-    detail: dict                       # the per-variant report/summary row
+    detail: dict                       # the per-item report/summary row
     primer3: primer3_io.Primer3Record | None
     n_masked: int
-    n_inserted: int
     used_consensus: bool
-    flagged: bool
-    truncation: str | None             # warning text, or None
+    n_inserted: int = 0                # small/BAM only
+    flagged: bool = False              # small/--require-coverage only
+    truncation: str | None = None      # small only: per-variant truncation message
 
 
 @dataclass(frozen=True, slots=True)
@@ -237,7 +239,7 @@ def iter_small(
                 detail["Flagged"] = flagged
 
             yield Processed(
-                variant=variant, records=records, detail=detail, primer3=primer3,
+                records=records, detail=detail, primer3=primer3,
                 n_masked=fr.n_masked, n_inserted=fr.inserted or 0,
                 used_consensus=used_consensus, flagged=flagged, truncation=truncation,
             )
@@ -247,6 +249,99 @@ def iter_small(
             if bam is not None:
                 try:
                     bam.close()
+                except Exception as exc:  # noqa: BLE001  (cleanup must not mask the run)
+                    log.debug("Closing consensus BAM for %s failed: %s", sample, exc)
+
+
+def iter_fusion(
+    df: pd.DataFrame,
+    *,
+    cols: SvColumns,
+    reference,
+    gnomad,
+    flank: int,
+    af_threshold: float,
+    bam_resolver=None,
+    policy=None,
+    emit_primer3: bool = False,
+) -> Iterator[Outcome]:
+    """Yield one :class:`Outcome` per breakpoint row (:class:`Processed` or
+    :class:`Skipped` — fusions are not deduplicated).
+
+    Owns the per-sample BAM cache and closes it on exit (``finally``). Where a
+    sample has no usable BAM the masking falls back to gnomAD only — logged once
+    per sample, never silently.
+    """
+    bam_mode = bam_resolver is not None
+    bam_cache: dict[str, BamConsensusSource | None] = {}
+    bam_warned: set[str] = set()
+
+    def _bam_for(sample: str) -> BamConsensusSource | None:
+        if not bam_mode or not sample:
+            return None
+        if sample in bam_cache:
+            return bam_cache[sample]
+        path = bam_resolver(sample)
+        src: BamConsensusSource | None = None
+        if path is not None:
+            try:
+                src = BamConsensusSource(path, policy)
+            except ConsensusError as exc:
+                if sample not in bam_warned:
+                    log.warning("BAM unusable for %s (%s) — gnomAD masking only", sample, exc)
+                    bam_warned.add(sample)
+        elif sample not in bam_warned:
+            log.warning("No BAM for sample %s — gnomAD masking only", sample)
+            bam_warned.add(sample)
+        bam_cache[sample] = src
+        return src
+
+    try:
+        for row_idx, row in df.iterrows():
+            fusion, reason = bp_io.parse_fusion_row(row, cols)
+            if fusion is None:  # reason is set by contract when fusion is None
+                yield Skipped(message=f"row {row_idx} — {reason}")
+                continue
+            bam_source = _bam_for(fusion.sample)
+            try:
+                jr = build_junction(
+                    reference, fusion, flank, gnomad=gnomad,
+                    af_threshold=af_threshold, bam_source=bam_source,
+                )
+            except Exception as exc:  # noqa: BLE001  (any junction failure -> reported skip)
+                yield Skipped(message=f"row {row_idx} {fusion.name} — junction error: {exc}")
+                continue
+
+            label = fasta_io.safe_header(fusion.name or "fusion")
+            bp = (f"{fusion.bp1.chrom}_{fusion.bp1.pos}_{fusion.bp1.strand}__"
+                  f"{fusion.bp2.chrom}_{fusion.bp2.pos}_{fusion.bp2.strand}")
+            prefix = f"{fasta_io.safe_header(fusion.sample)}__" if fusion.sample else ""
+            header = f"{prefix}{label}__{bp}__j{jr.junction_index}"
+            records = [
+                f">{header}\n{jr.sequence}\n",
+                f">Masked__{header}\n{jr.masked_sequence}\n",
+            ]
+            primer3 = (
+                primer3_io.junction_record(
+                    header, jr.sequence, jr.masked_sequence, jr.junction_index
+                )
+                if emit_primer3 else None
+            )
+            detail = {
+                "Name": fusion.name or ".", "BP1": f"{fusion.bp1.chrom}:{fusion.bp1.pos}",
+                "BP2": f"{fusion.bp2.chrom}:{fusion.bp2.pos}",
+                "Len": len(jr.sequence), "Junction": jr.junction_index,
+                "N": jr.n_masked, "Trunc": len(jr.sequence) < 2 * flank,
+            }
+            yield Processed(
+                records=records, detail=detail, primer3=primer3,
+                n_masked=jr.n_masked, used_consensus=bam_source is not None,
+            )
+    finally:
+        for sample, src in bam_cache.items():
+            if src is not None:
+                try:
+                    src.close()
                 except Exception as exc:  # noqa: BLE001  (cleanup must not mask the run)
                     log.debug("Closing consensus BAM for %s failed: %s", sample, exc)
 

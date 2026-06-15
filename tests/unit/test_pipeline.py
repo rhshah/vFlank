@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import pandas as pd
 
+from vflank.io.breakpoints import SvColumns
 from vflank.io.maf import MafColumns
-from vflank.pipeline import Duplicate, Processed, Skipped, collect, iter_small
+from vflank.pipeline import Duplicate, Processed, Skipped, collect, iter_fusion, iter_small
 
 SEQ = "".join("ACGT"[i % 4] for i in range(60))
 
@@ -96,3 +97,51 @@ def test_collect_accumulates_counts_and_breakdown():
     assert sum(result.skip_breakdown.values()) == 1
     assert result.skip_breakdown.most_common(1)  # it's a Counter (CLI summary uses this)
     assert len(result.records) == 2  # raw + masked for the one processed variant
+
+
+# --- fusion path -----------------------------------------------------------
+
+_SV_COLS = ["chr1", "pos1", "str1", "chr2", "pos2", "str2", "name", "sample"]
+
+
+def _sv_df(rows: list[list]) -> pd.DataFrame:
+    return pd.DataFrame(rows, columns=_SV_COLS)
+
+
+def _sv_row(chr1="1", pos1=20, str1=0, chr2="1", pos2=40, str2=0, name="FUSE", sample=""):
+    return [chr1, pos1, str1, chr2, pos2, str2, name, sample]
+
+
+def _iter_fusion(df, **kw):
+    opts = dict(cols=SvColumns(), reference=FakeReference(SEQ), gnomad=None,
+                flank=5, af_threshold=0.001)
+    opts.update(kw)
+    return iter_fusion(df, **opts)
+
+
+def test_fusion_processed_emits_junction_record():
+    o = next(iter(_iter_fusion(_sv_df([_sv_row()]))))
+    assert isinstance(o, Processed)
+    assert o.records[0].startswith(">FUSE__")
+    assert o.records[1].startswith(">Masked__FUSE__")
+    assert o.detail["Name"] == "FUSE" and "Junction" in o.detail
+    assert o.primer3 is None
+
+
+def test_fusion_bad_row_is_skipped():
+    outcomes = list(_iter_fusion(_sv_df([_sv_row(chr1="")])))  # invalid chromosome
+    assert len(outcomes) == 1 and isinstance(outcomes[0], Skipped)
+    assert outcomes[0].message.startswith("row 0")
+
+
+def test_fusion_emit_primer3():
+    o = next(iter(_iter_fusion(_sv_df([_sv_row()]), emit_primer3=True)))
+    assert isinstance(o, Processed) and o.primer3 is not None
+
+
+def test_fusion_collect_counts():
+    result = collect(_iter_fusion(_sv_df([_sv_row(), _sv_row(chr1="")])))
+    assert result.n_processed == 1
+    assert result.n_skipped == 1
+    assert result.n_duplicate == 0          # fusions are not deduplicated
+    assert len(result.records) == 2
