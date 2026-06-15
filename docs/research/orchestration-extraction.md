@@ -175,22 +175,32 @@ is a move, not a rewrite.
 
 ## Implementation plan (PR-sized, gate green at each step)
 
-1. **PR1 — `pipeline.iter_small` + `collect` (small path), behaviour-preserving.**
-   Lift the loop and `_source_for`/cache out of `_run` into `iter_small`; `_run`
+1. ✅ **PR1 — `pipeline.iter_small` + `collect` (small path), behaviour-preserving.**
+   Lifted the loop and `_source_for`/cache out of `_run` into `iter_small`; `_run`
    consumes the generator and keeps *all* presentation, writes, and cleanup of
-   reference/gnomAD. No output changes. Add direct unit tests for `iter_small`
-   (no `CliRunner`): a Processed, a Skipped (bad row), a Duplicate, a truncation.
-2. **PR2 — `config.py` + `sources.py` + `run_small`.** Move validators and the
-   source factories; add `SmallConfig` + `run_small(config)`. CLI builds a
-   `SmallConfig` and may call `run_small` or keep the streaming path for progress.
-3. **PR3 — fusion.** `iter_fusion` / `run_fusion`, same treatment as PR1–2.
-4. **PR4 — buffer input.** `load_maf` / `load_sv_table` accept a path *or* a
-   file-like buffer (one-line each) so a service needn't touch a temp file.
-5. **PR5 — public API + docs.** `vflank.pipeline` exports, `__all__`, and a
-   "Using vflank as a library" section documenting `run_small`/`run_fusion` and
-   `RunResult`. Ship as **0.5.0**.
+   reference/gnomAD. No output changes. Direct pysam-free unit tests for
+   `iter_small`. `pipeline.py` added to the mypy gate. **Done.**
+3. ✅ **PR3 — fusion.** `iter_fusion`, same treatment; `Processed` generalised
+   (the unused `variant` field dropped) so `collect` is shared. **Done.**
 
-Each PR is independently reviewable and leaves `main` shippable.
+**Deferred until the web service exists (no speculative code — CLAUDE.md):** the
+following have **no caller** until `vFlank-webapp` is scaffolded, so building them
+now would be unused code. They land *with* that work, or when the CLI is routed
+through `run_small` to give it a real caller:
+
+2. **PR2 — `config.py` + `sources.py` + `run_small`.** Move validators and the
+   source factories out of `cli/`; add `SmallConfig`/`FusionConfig` +
+   `run_small`/`run_fusion(config) -> RunResult` (build sources → iterate →
+   collect → close → assemble stats + request counts). This is non-speculative
+   the moment the CLI `_run` routes through it (eliminating the source-build +
+   close duplication between CLI and web).
+4. **PR4 — buffer input.** `load_maf` / `load_sv_table` accept a path *or* a
+   file-like buffer so a service needn't touch a temp file.
+5. **PR5 — public API + docs.** `__all__`, a "Using vflank as a library" section
+   for `run_small`/`run_fusion` + `RunResult`. Ship as **0.5.0**.
+
+The keystone (PR1+PR3) is done and `develop` is shippable; the rest is pulled by
+the consumer, not pushed ahead of it.
 
 ## Testing strategy
 
