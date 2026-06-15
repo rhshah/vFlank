@@ -10,7 +10,7 @@
         <link rel="canonical" href="https://rhshah.github.io/vFlank/dev/DEVELOPER/">
       
       
-        <link rel="prev" href="../research/indel-aware-consensus/">
+        <link rel="prev" href="../research/web-app-and-hosting/">
       
       
         <link rel="next" href="../changelog/">
@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -807,6 +807,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -914,6 +918,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../research/genome-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference (genome) API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../research/sv-vcf-input/" class="md-nav__link">
         
   
@@ -978,6 +1010,34 @@
     
   
     Indel-aware consensus (plan)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/web-app-and-hosting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web app &amp; hosting (plan)
   
 
     
@@ -1222,6 +1282,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#add-a-new-reference-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a new reference source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#add-a-new-cli-subcommand-or-sub-app" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1430,6 +1501,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#add-a-new-reference-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a new reference source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#add-a-new-cli-subcommand-or-sub-app" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1573,24 +1655,25 @@ bundled): an indexed reference <abbr title="text format for nucleotide sequences
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>│   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>│   ├── popfreq.py     gnomAD resolve + parse_common_snp_positions + GnomadStore
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>│   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource)
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>│   ├── consensus.py   BAM patient consensus (modes C/D) + insertion flagging
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>│   ├── fusion.py      Breakpoint/Fusion model + reverse-complement junction builder
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>│   └── skips.py       categorised skip-reason helpers
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>├── io/       file access
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>│   ├── maf.py         load/validate MAF, row -&gt; Variant
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>│   ├── reference.py   ReferenceFasta + genome-build guard
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>│   ├── fasta.py       header sanitising + record formatting/writing
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>│   └── report.py      TSV run-report writer
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>├── cli/      Typer commands (presentation only)
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>│   ├── app.py         root app, global -v/-q/--debug, version
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>│   ├── small.py       small-variant commands: run / inspect / list-vcf
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>│   ├── fusion.py      fusion command: run
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>│   ├── _masking.py    shared gnomAD source wiring
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>│   └── _ui.py         parameter-echo panel
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>├── logging.py  shared Rich console + logger
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>└── errors.py   VflankError hierarchy
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>│   ├── reference_api.py reference sequence via the UCSC API (ReferenceApiSource)
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>│   ├── consensus.py   BAM patient consensus (modes C/D) + insertion flagging
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>│   ├── fusion.py      Breakpoint/Fusion model + reverse-complement junction builder
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>│   └── skips.py       categorised skip-reason helpers
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>├── io/       file access
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>│   ├── maf.py         load/validate MAF, row -&gt; Variant
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>│   ├── reference.py   ReferenceFasta + genome-build guard
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>│   ├── fasta.py       header sanitising + record formatting/writing
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>│   └── report.py      TSV run-report writer
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>├── cli/      Typer commands (presentation only)
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>│   ├── app.py         root app, global -v/-q/--debug, version
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>│   ├── small.py       small-variant commands: run / inspect / list-vcf
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>│   ├── fusion.py      fusion command: run
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>│   ├── _masking.py    shared gnomAD source wiring
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>│   └── _ui.py         parameter-echo panel
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>├── logging.py  shared Rich console + logger
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>└── errors.py   VflankError hierarchy
 </code></pre></div>
 <p><strong>Import direction is one-way:</strong> <code>cli → io → core</code>. <code>core</code> imports nothing from
 <code>io</code>/<code>cli</code>; <code>io</code> imports from <code>core</code> but not <code>cli</code>. Keep it that way — it is what
@@ -1610,14 +1693,17 @@ makes <code>core</code> unit-testable without pysam, pandas, or Typer.</p>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># No-download masking via the gnomAD API instead of local VCFs:</span>
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-r<span class="w"> </span>/path/GRCh37.fasta<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span>--pop-source<span class="w"> </span>api
 <a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># Preview MAF columns before a run (catches column-name mismatches)</span>
-<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>vflank<span class="w"> </span>small<span class="w"> </span>inspect<span class="w"> </span>variants.maf
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># Fully no-download: reference from the UCSC API too (no local FASTA needed):</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span>--ref-source<span class="w"> </span>api<span class="w"> </span>--pop-source<span class="w"> </span>api
 <a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
-<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1"># Verify which gnomAD per-chromosome VCFs are found in a directory</span>
-<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>vflank<span class="w"> </span>small<span class="w"> </span>list-vcf<span class="w"> </span>/path/gnomad_v4/<span class="w"> </span>--genome-build<span class="w"> </span>hg38
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1"># Preview MAF columns before a run (catches column-name mismatches)</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>vflank<span class="w"> </span>small<span class="w"> </span>inspect<span class="w"> </span>variants.maf
 <a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>
-<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="c1"># Global verbosity (before the subcommand): -v debug, -q quiet, --debug + tracebacks</span>
-<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>vflank<span class="w"> </span>-v<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>...
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="c1"># Verify which gnomAD per-chromosome VCFs are found in a directory</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>vflank<span class="w"> </span>small<span class="w"> </span>list-vcf<span class="w"> </span>/path/gnomad_v4/<span class="w"> </span>--genome-build<span class="w"> </span>hg38
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="c1"># Global verbosity (before the subcommand): -v debug, -q quiet, --debug + tracebacks</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>vflank<span class="w"> </span>-v<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>...
 </code></pre></div>
 <p><code>vflank small run --help</code> documents every option. Status output goes to
 <strong>stderr</strong>; the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> goes to the <code>--output</code> file.</p>
@@ -1718,6 +1804,22 @@ implementations already exist and are interchangeable:</p>
 </ul>
 <p>Both honour <code>--pop-data</code> via <code>kinds_for(...)</code>. To add another source (dbSNP,
 1000G), implement the same <code>get_positions</code> and add a <code>--pop-source</code> branch.</p>
+<h3 id="add-a-new-reference-source">Add a new reference source<a class="headerlink" href="#add-a-new-reference-source" title="Permanent link">¶</a></h3>
+<p><code>ReferenceFlankSource</code> depends (duck-typed) on a reference exposing
+<code>fetch(bare, start_0based, end_0based) -&gt; str</code> (0-based half-open) plus
+<code>check_build(declared) -&gt; str | None</code>, <code>has_chr</code>, and <code>close()</code>. Two
+implementations exist, selected by <code>--ref-source</code> via <code>cli/_reference.make_reference_source</code>:</p>
+<ul>
+<li><code>io/reference.ReferenceFasta</code> — local indexed <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> (<code>--ref-source file</code>,
+  default); fingerprints the build by chr1 length.</li>
+<li><code>core/reference_api.ReferenceApiSource</code> — UCSC getData/sequence <abbr title="Application Programming Interface">API</abbr>
+  (<code>--ref-source api</code>, no download). Pure kernels <code>build_url</code> /
+  <code>parse_sequence_response</code>; HTTP/throttle/clock injected for offline tests;
+  trusts the requested build (no local sequence to fingerprint); exposes
+  <code>request_count</code> for monitoring. See <a href="../research/genome-api/">research/genome-api.md</a>.</li>
+</ul>
+<p>A short window off a contig end must return a <strong>short string</strong> (not raise) —
+truncation is reported by the <abbr title="Command-Line Interface">CLI</abbr>, matching the pysam contract.</p>
 <h3 id="add-a-new-cli-subcommand-or-sub-app">Add a new <abbr title="Command-Line Interface">CLI</abbr> subcommand or sub-app<a class="headerlink" href="#add-a-new-cli-subcommand-or-sub-app" title="Permanent link">¶</a></h3>
 <p><code>cli/app.py</code> mounts sub-apps with <code>app.add_typer(...)</code>. Add a command to the
 existing <code>small</code> app, or create a new module (e.g. <code>cli/fusion.py</code>) exposing
@@ -1842,7 +1944,7 @@ needs it:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 04:28:20 UTC"><span class="timeago" datetime="2026-06-14T04:28:20+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 04:28:20 UTC">2026-06-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 01:42:09 UTC"><span class="timeago" datetime="2026-06-15T01:42:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 01:42:09 UTC">2026-06-15</span>
   </span>
 
     
@@ -1889,7 +1991,7 @@ needs it:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer">
         
           
-          <a href="../research/indel-aware-consensus/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Indel-aware consensus (plan)">
+          <a href="../research/web-app-and-hosting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Web app &amp; hosting (plan)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
@@ -1899,7 +2001,7 @@ needs it:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Indel-aware consensus (plan)
+                Web app &amp; hosting (plan)
               </div>
             </div>
           </a>

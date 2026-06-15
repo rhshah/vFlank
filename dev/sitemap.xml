@@ -2,78 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/ARCHITECTURE/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/DEVELOPER/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/changelog/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/getting-started/installation/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/getting-started/quickstart/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/includes/abbreviations/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/reference/api/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/reference/cli/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/reference/glossary/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/research/bam-consensus/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/research/emit-formats/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
+    </url>
+    <url>
+         <loc>https://rhshah.github.io/vFlank/dev/research/genome-api/</loc>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/research/gnomad-api/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/research/indel-aware-consensus/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/research/sv-vcf-input/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
+    </url>
+    <url>
+         <loc>https://rhshah.github.io/vFlank/dev/research/web-app-and-hosting/</loc>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/user-guide/consensus/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/user-guide/fusions/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/user-guide/masking/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
     <url>
          <loc>https://rhshah.github.io/vFlank/dev/user-guide/small-variants/</loc>
-         <lastmod>2026-06-14</lastmod>
+         <lastmod>2026-06-15</lastmod>
     </url>
 </urlset>
