@@ -13,17 +13,15 @@ from pathlib import Path
 import typer
 from rich.table import Table
 
-from .. import __version__
+from .. import __version__, pipeline
 from ..core.chrom import normalise_chrom
-from ..core.consensus import BamConsensusSource
-from ..core.fusion import build_junction
 from ..core.popfreq_api import dataset_for_build
-from ..errors import ConsensusError, VflankError
+from ..errors import VflankError
 from ..io import breakpoints as bp_io
 from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io.breakpoints import SvColumns
-from ..logging import console, get_logger
+from ..logging import console
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
 from ._reference import make_reference_source, validate_ref_source
@@ -36,7 +34,6 @@ from ._ui import (
 )
 
 app = typer.Typer(no_args_is_help=True)
-log = get_logger()
 
 
 @app.command()
@@ -177,11 +174,8 @@ def _run(sv_file, ref_genome, ref_source, genome_build, flank, pop_vcf_dir, pop_
     elif gnomad is not None:
         console.print(f"[bold]Masking:[/bold] {pop_vcf_dir}  [dim](pop-data={pop_data})[/dim]")
 
-    # --- BAM consensus (per-fusion patient sequence) ---
+    # --- BAM consensus status (per-fusion patient sequence) ---
     bam_mode = bam_resolver is not None
-    bam_cache: dict[str, object] = {}   # sample -> BamConsensusSource | None
-    bam_warned: set[str] = set()
-    n_consensus = 0
     if bam_mode:
         console.print(
             f"[bold]BAM consensus:[/bold] on  [dim](min-depth={policy.min_depth}, "
@@ -189,80 +183,29 @@ def _run(sv_file, ref_genome, ref_source, genome_build, flank, pop_vcf_dir, pop_
         )
     console.print(f"[bold]Flank:[/bold] {flank} bp/partner (junction ≤ {2 * flank} bp)\n")
 
-    def _bam_for(sample: str):
-        if not bam_mode or not sample:
-            return None
-        if sample in bam_cache:
-            return bam_cache[sample]
-        path = bam_resolver(sample)
-        src = None
-        if path is not None:
-            try:
-                src = BamConsensusSource(path, policy)
-            except ConsensusError as exc:
-                if sample not in bam_warned:
-                    log.warning("BAM unusable for %s (%s) — gnomAD masking only", sample, exc)
-                    bam_warned.add(sample)
-        elif sample not in bam_warned:
-            log.warning("No BAM for sample %s — gnomAD masking only", sample)
-            bam_warned.add(sample)
-        bam_cache[sample] = src
-        return src
+    # Orchestration in pipeline.iter_fusion (presentation-free; owns the
+    # per-sample BAM cache + its cleanup).
+    result = pipeline.collect(pipeline.iter_fusion(
+        df, cols=cols, reference=reference, gnomad=gnomad, flank=flank,
+        af_threshold=af_threshold, bam_resolver=bam_resolver, policy=policy,
+        emit_primer3=emit_primer3 is not None,
+    ))
 
-    records: list[str] = []
-    primer3_records: list[primer3_io.Primer3Record] = []
-    skipped = 0
-    n_masked_total = 0
-    skip_reasons: list[str] = []
-    summary_rows: list[dict] = []
-
-    for row_idx, row in df.iterrows():
-        fusion, reason = bp_io.parse_fusion_row(row, cols)
-        if reason is not None:
-            skip_reasons.append(f"row {row_idx} — {reason}")
-            skipped += 1
-            continue
-        bam_source = _bam_for(fusion.sample)
-        try:
-            jr = build_junction(
-                reference, fusion, flank, gnomad=gnomad,
-                af_threshold=af_threshold, bam_source=bam_source,
-            )
-        except Exception as exc:  # noqa: BLE001
-            skip_reasons.append(f"row {row_idx} {fusion.name} — junction error: {exc}")
-            skipped += 1
-            continue
-        if bam_source is not None:
-            n_consensus += 1
-
-        label = fasta_io.safe_header(fusion.name or "fusion")
-        bp = f"{fusion.bp1.chrom}_{fusion.bp1.pos}_{fusion.bp1.strand}__" \
-             f"{fusion.bp2.chrom}_{fusion.bp2.pos}_{fusion.bp2.strand}"
-        prefix = f"{fasta_io.safe_header(fusion.sample)}__" if fusion.sample else ""
-        header = f"{prefix}{label}__{bp}__j{jr.junction_index}"
-        records.append(f">{header}\n{jr.sequence}\n")
-        records.append(f">Masked__{header}\n{jr.masked_sequence}\n")
-        if emit_primer3 is not None:
-            primer3_records.append(primer3_io.junction_record(
-                header, jr.sequence, jr.masked_sequence, jr.junction_index,
-            ))
-        n_masked_total += jr.n_masked
-
-        truncated = len(jr.sequence) < 2 * flank
-        summary_rows.append({
-            "Name": fusion.name or ".", "BP1": f"{fusion.bp1.chrom}:{fusion.bp1.pos}",
-            "BP2": f"{fusion.bp2.chrom}:{fusion.bp2.pos}",
-            "Len": len(jr.sequence), "Junction": jr.junction_index,
-            "N": jr.n_masked, "Trunc": truncated,
-        })
-
+    # The caller owns reference + gnomAD and closes them; the BAM sources are
+    # owned and already closed by iter_fusion.
     ref_api_requests = getattr(reference, "request_count", None) if ref_source == "api" else None
     reference.close()
     if gnomad is not None:
         gnomad.close()
-    for src in bam_cache.values():
-        if src is not None:
-            src.close()
+
+    records = result.records
+    primer3_records = result.primer3
+    summary_rows = result.rows
+    skip_reasons = result.skip_messages
+    skipped = result.n_skipped
+    n_masked_total = result.n_masked
+    n_consensus = result.n_consensus
+
     fasta_io.write_fasta(output, records)
     if emit_primer3 is not None:
         primer3_io.write_primer3(emit_primer3, primer3_records)

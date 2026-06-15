@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import time
-from collections import Counter
 from pathlib import Path
 
 import typer
@@ -17,20 +16,17 @@ from rich.progress import (
 )
 from rich.table import Table
 
-from .. import __version__
+from .. import __version__, pipeline
 from ..core.chrom import detect_series_chr_style, normalise_chrom
-from ..core.consensus import BamConsensusSource, ConsensusFlankSource
-from ..core.flanks import ReferenceFlankSource
 from ..core.popfreq import build_chrom_vcf_map, kinds_for
 from ..core.popfreq_api import dataset_for_build
-from ..core.skips import categorize_skip
-from ..errors import ConsensusError, VflankError
+from ..errors import VflankError
 from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io import maf as maf_io
 from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
-from ..logging import console, get_logger
+from ..logging import console
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
 from ._reference import make_reference_source, validate_ref_source
@@ -45,7 +41,6 @@ from ._ui import (
 )
 
 app = typer.Typer(no_args_is_help=True)
-log = get_logger()
 
 
 def _load_sample_filter(
@@ -307,20 +302,11 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
         )
     console.print(f"[bold]Flank:[/bold] ±{flank} bp")
 
-    ref_flank_source = ReferenceFlankSource(
-        reference, gnomad, flank=flank, af_threshold=af_threshold
-    )
-
-    # --- BAM consensus mode (per-sample patient sequence) ---
+    # --- BAM consensus mode status (per-sample patient sequence) ---
     # Default low-coverage behaviour is REF + gnomAD masking: where the BAM is
     # shallow (< min_depth) we fall back to the reference base, with gnomAD
     # N-masking common SNPs if a population source is given. So an uncovered
     # variant just behaves like a normal no-BAM run (not all-N).
-    consensus_cache: dict[str, object] = {}   # sample -> ConsensusFlankSource (or ref fallback)
-    bam_warned: set[str] = set()
-    n_consensus = 0
-    n_flagged = 0
-    n_inserted_total = 0
     if bam_mode:
         scope = "single BAM (all samples)" if n_bam == -1 else f"{n_bam} sample(s) mapped"
         console.print(
@@ -329,46 +315,10 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
         )
     console.print()
 
-    def _source_for(variant):
-        """Pick the flank source for a variant (consensus per-sample, or reference)."""
-        if not bam_mode:
-            return ref_flank_source, False
-        sample = variant.sample
-        if sample in consensus_cache:
-            cached = consensus_cache[sample]
-            return cached, not isinstance(cached, ReferenceFlankSource)
-        bam_path = bam_resolver(sample)
-        if bam_path is None:
-            if sample not in bam_warned:
-                log.warning("No BAM for sample %s — using reference + gnomAD masking", sample)
-                bam_warned.add(sample)
-            consensus_cache[sample] = ref_flank_source
-            return ref_flank_source, False
-        try:
-            src = ConsensusFlankSource(
-                reference, BamConsensusSource(bam_path, policy), gnomad,
-                flank=flank, af_threshold=af_threshold,
-            )
-        except ConsensusError as exc:
-            if sample not in bam_warned:
-                log.warning("BAM unusable for %s (%s) — reference + gnomAD", sample, exc)
-                bam_warned.add(sample)
-            consensus_cache[sample] = ref_flank_source
-            return ref_flank_source, False
-        consensus_cache[sample] = src
-        return src, True
-
     # --- Process variants ---
-    records: list[str] = []
-    primer3_records: list[primer3_io.Primer3Record] = []
-    skipped = 0
-    n_duplicate = 0
-    n_masked_total = 0
-    seen_variants: set[tuple] = set()
-    summary_rows: list[dict] = []
-    skip_reasons: list[str] = []
-    flank_warnings: list[str] = []
-
+    # Orchestration lives in pipeline.iter_small (presentation-free, owns the
+    # per-sample consensus cache + its cleanup); the progress bar is the only
+    # thing the CLI layers on, by advancing once per yielded outcome.
     with Progress(
         SpinnerColumn(), TextColumn("[progress.description]{task.description}"),
         BarColumn(), TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
@@ -376,102 +326,40 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
         console=console, transient=True,
     ) as progress:
         task = progress.add_task("Processing variants…", total=len(df))
-        for row_idx, row in df.iterrows():
-            progress.advance(task)
 
-            variant, reason = maf_io.parse_variant_row(row, cols)
-            if reason is not None:
-                skip_reasons.append(f"row {row_idx} {reason}")
-                skipped += 1
-                continue
+        def _advance(outcomes):
+            for outcome in outcomes:
+                progress.advance(task)
+                yield outcome
 
-            # Dedup: by CHR_POS_REF_ALT (sample-independent reference/gnomAD
-            # masking). With a BAM the consensus is patient-specific, so the key
-            # also includes the sample -> one record per (variant, sample).
-            if dedup:
-                key = (variant.chrom, variant.start, variant.end,
-                       variant.ref.upper(), variant.alt.upper())
-                if bam_mode:
-                    key = (*key, variant.sample)
-                if key in seen_variants:
-                    n_duplicate += 1
-                    continue
-                seen_variants.add(key)
+        result = pipeline.collect(_advance(pipeline.iter_small(
+            df, cols=cols, reference=reference, gnomad=gnomad, flank=flank,
+            af_threshold=af_threshold, dedup=dedup, uppercase=uppercase,
+            bam_resolver=bam_resolver, policy=policy,
+            emit_primer3=emit_primer3 is not None, require_coverage=require_coverage,
+        )))
 
-            source, used_consensus = _source_for(variant)
-            try:
-                fr = source.fetch(variant)
-            except Exception as exc:  # noqa: BLE001
-                skip_reasons.append(
-                    f"row {row_idx} {variant.gene} {variant.raw_chrom}:{variant.start} "
-                    f"— fetch error: {exc}"
-                )
-                skipped += 1
-                continue
-
-            # Flag silently-truncated flanks. pysam returns a short string when a
-            # window runs off a contig end rather than raising. A short left flank
-            # near position 1 is expected; anything shorter than requested on the
-            # right (or shorter than the position allows on the left) is a contig
-            # boundary the user should know about — the record is still emitted.
-            exp_left = min(flank, variant.start - 1)
-            truncated = len(fr.left) < exp_left or len(fr.right) < flank
-            if truncated:
-                flank_warnings.append(
-                    f"row {row_idx} {variant.gene} {variant.raw_chrom}:{variant.start} — "
-                    f"flank truncated near contig boundary "
-                    f"(left {len(fr.left)}/{exp_left}, right {len(fr.right)}/{flank})"
-                )
-
-            ref, alt = variant.ref, variant.alt
-            if uppercase:
-                fr = fr.upper()
-                ref, alt = ref.upper(), alt.upper()
-
-            if used_consensus:
-                n_consensus += 1
-            n_masked_total += fr.n_masked
-            sample_tag = variant.sample if bam_mode else None
-            records.extend(fasta_io.format_records(variant, fr, ref, alt, sample=sample_tag))
-            if emit_primer3 is not None:
-                primer3_records.append(primer3_io.small_variant_record(
-                    fasta_io.record_id(variant, ref, alt, sample_tag),
-                    fr.left, fr.right, fr.masked_left, fr.masked_right, ref,
-                ))
-
-            row_detail = {
-                "Sample": variant.sample[:32], "Gene": variant.gene,
-                "Chrom": variant.raw_chrom, "Start": variant.start, "End": variant.end,
-                "Ref": ref[:8], "Alt": alt[:8],
-                "LeftLen": len(fr.left), "RightLen": len(fr.right),
-                "NMasked": fr.n_masked, "NCorrected": fr.n_corrected, "Truncated": truncated,
-            }
-            if bam_mode:
-                source_label = "consensus" if used_consensus else "reference"
-                covered_frac = (fr.covered / fr.total) if (used_consensus and fr.total) else None
-                flagged = (
-                    require_coverage > 0 and covered_frac is not None
-                    and covered_frac < require_coverage
-                )
-                if flagged:
-                    n_flagged += 1
-                row_detail["Source"] = source_label
-                row_detail["CoveredFrac"] = (
-                    round(covered_frac, 3) if covered_frac is not None else ""
-                )
-                row_detail["NInserted"] = fr.inserted or 0
-                row_detail["Flagged"] = flagged
-                n_inserted_total += fr.inserted or 0
-            summary_rows.append(row_detail)
-
+    # The caller owns reference + gnomAD (built above) and closes them; the
+    # consensus sources are owned and already closed by iter_small.
     ref_api_requests = getattr(reference, "request_count", None) if ref_source == "api" else None
     reference.close()
     api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
     if gnomad is not None:
         gnomad.close()
-    for src in consensus_cache.values():
-        if hasattr(src, "bam"):
-            src.bam.close()
+
+    # Unpack the run result for the summary + report below.
+    records = result.records
+    primer3_records = result.primer3
+    summary_rows = result.rows
+    skip_reasons = result.skip_messages
+    skip_breakdown = result.skip_breakdown
+    flank_warnings = result.truncations
+    skipped = result.n_skipped
+    n_duplicate = result.n_duplicate
+    n_masked_total = result.n_masked
+    n_consensus = result.n_consensus
+    n_flagged = result.n_flagged
+    n_inserted_total = result.n_inserted
 
     fasta_io.write_fasta(output, records)
     if emit_primer3 is not None:
@@ -494,9 +382,6 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
         if len(summary_rows) > 50:
             console.print(f"  [dim]… and {len(summary_rows) - 50} more[/dim]")
 
-    # Categorise skips so a large, uniform skip set (e.g. 91 missing chromosomes)
-    # reads as one line per category instead of a wall of identical messages.
-    skip_breakdown = Counter(categorize_skip(r) for r in skip_reasons)
     if skip_reasons:
         console.print(f"\n[bold yellow]Skipped {skipped} — by reason:[/bold yellow]")
         for category, count in skip_breakdown.most_common():
