@@ -23,10 +23,10 @@ from ..io import breakpoints as bp_io
 from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io.breakpoints import SvColumns
-from ..io.reference import ReferenceFasta
 from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
+from ._reference import make_reference_source, validate_ref_source
 from ._ui import echo_parameters
 
 app = typer.Typer(no_args_is_help=True)
@@ -38,8 +38,13 @@ def run(
     sv_file: Path = typer.Argument(
         ..., exists=True, help="Breakpoint TSV (chr1 pos1 str1 chr2 pos2 str2)."
     ),
-    ref_genome: Path = typer.Option(
-        ..., "--ref-genome", "-r", help="Indexed reference FASTA (.fai required)."
+    ref_genome: Path | None = typer.Option(
+        None, "--ref-genome", "-r",
+        help="Indexed reference FASTA (.fai required). Required unless --ref-source api.",
+    ),
+    ref_source: str = typer.Option(
+        "file", "--ref-source",
+        help="Reference backend: file (local FASTA, default) or api (UCSC, no download).",
     ),
     genome_build: str = typer.Option("hg19", "--genome-build", "-g", help="hg19 or hg38."),
     flank: int = typer.Option(
@@ -98,20 +103,22 @@ def run(
             bam_min_depth, bam_call_fract, bam_het_char, bam_lowcov, bam_min_baseq, bam_min_mapq
         )
         bam_resolver, _n_bam = load_bam_resolver(bam, bam_map)
-        _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
+        _run(sv_file, ref_genome, ref_source, genome_build, flank, pop_vcf_dir, pop_data,
              pop_source, af_threshold, output, emit_primer3, cols, bam_resolver, policy)
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
         raise typer.Exit(1) from exc
 
 
-def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
+def _run(sv_file, ref_genome, ref_source, genome_build, flank, pop_vcf_dir, pop_data,
          pop_source, af_threshold, output, emit_primer3, cols: SvColumns, bam_resolver, policy):
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
     echo_parameters({
         "vflank version": __version__,
-        "Breakpoints": sv_file, "Reference": ref_genome, "Genome build": genome_build,
+        "Breakpoints": sv_file,
+        "Reference": (ref_genome if ref_source == "file" else "UCSC API"),
+        "Genome build": genome_build,
         "Flank": f"{flank} bp/partner", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
                     else "none"),
@@ -123,6 +130,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
     })
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
+    validate_ref_source(ref_source)
     validate_pop_options(pop_source, pop_data)
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
@@ -131,8 +139,9 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
     df = bp_io.load_sv_table(sv_file, cols)
     console.print(f"  {len(df):,} fusion(s)")
 
-    reference = ReferenceFasta(ref_genome)
-    console.print(f"[bold]Reference:[/bold] {ref_genome}  [dim]({genome_build})[/dim]")
+    reference = make_reference_source(ref_source, ref_genome, genome_build)
+    ref_label = "UCSC API" if ref_source == "api" else ref_genome
+    console.print(f"[bold]Reference:[/bold] {ref_label}  [dim]({genome_build})[/dim]")
     build_warn = reference.check_build(genome_build)
     if build_warn:
         console.print(f"  [bold yellow]⚠ {build_warn}[/bold yellow]")
@@ -230,6 +239,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
             "N": jr.n_masked, "Trunc": truncated,
         })
 
+    ref_api_requests = getattr(reference, "request_count", None) if ref_source == "api" else None
     reference.close()
     if gnomad is not None:
         gnomad.close()
@@ -260,12 +270,16 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
 
     mask_line = f"[bold]Bases masked:[/bold] {n_masked_total:>6,}\n" if n_masked_total else ""
     consensus_line = f"[bold]BAM consensus:[/bold] {n_consensus:>6,}\n" if bam_mode else ""
+    ref_api_line = (
+        f"[bold]Reference API req:[/bold] {ref_api_requests:>5,}\n"
+        if ref_api_requests is not None else ""
+    )
     console.print(
         f"\n[bold]Fusions:[/bold]   {len(df):>6,}\n"
         + consensus_line +
         f"[bold]Records:[/bold]   {len(records):>6,} [dim](raw + masked per fusion)[/dim]\n"
         f"[bold]Skipped:[/bold]   {skipped:>6,}\n"
-        + mask_line +
+        + mask_line + ref_api_line +
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  "
         f"[dim]({time.time() - t0:.1f}s)[/dim]"
     )

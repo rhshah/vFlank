@@ -30,10 +30,10 @@ from ..io import fasta as fasta_io
 from ..io import maf as maf_io
 from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
-from ..io.reference import ReferenceFasta
 from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
+from ._reference import make_reference_source, validate_ref_source
 from ._ui import echo_parameters
 
 app = typer.Typer(no_args_is_help=True)
@@ -63,8 +63,13 @@ def run(
     maf_file: Path = typer.Argument(
         ..., help="Input MAF (tab-separated, TCGA/MSK).", exists=True
     ),
-    ref_genome: Path = typer.Option(
-        ..., "--ref-genome", "-r", help="Indexed reference FASTA (.fai required)."
+    ref_genome: Path | None = typer.Option(
+        None, "--ref-genome", "-r",
+        help="Indexed reference FASTA (.fai required). Required unless --ref-source api.",
+    ),
+    ref_source: str = typer.Option(
+        "file", "--ref-source",
+        help="Reference backend: file (local FASTA, default) or api (UCSC, no download).",
     ),
     pop_vcf_dir: Path | None = typer.Option(
         None, "--pop-vcf-dir", "-d",
@@ -158,7 +163,7 @@ def run(
         )
         bam_resolver, n_bam = load_bam_resolver(bam, bam_map)
         _run(
-            maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
+            maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_threshold,
             pop_data, pop_source, output, report, emit_primer3, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
@@ -169,7 +174,7 @@ def run(
         raise typer.Exit(1) from exc
 
 
-def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
+def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_threshold,
          pop_data, pop_source, output, report, emit_primer3, samples, samples_file,
          cols: MafColumns, uppercase: bool, dedup: bool,
          bam_resolver, n_bam, policy, require_coverage):
@@ -179,7 +184,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     bam_mode = bam_resolver is not None
     echo_parameters({
         "vflank version": __version__,
-        "MAF": maf_file, "Reference": ref_genome, "Genome build": genome_build,
+        "MAF": maf_file,
+        "Reference": (ref_genome if ref_source == "file" else "UCSC API"),
+        "Genome build": genome_build,
         "Flank": f"±{flank} bp", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
                     else "none"),
@@ -197,6 +204,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
+    validate_ref_source(ref_source)
     validate_pop_options(pop_source, pop_data)
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
@@ -226,9 +234,10 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         if df.empty:
             raise VflankError("No variants remain after sample filtering.")
 
-    # --- Reference FASTA + build guard ---
-    reference = ReferenceFasta(ref_genome)
-    console.print(f"[bold]Reference:[/bold] {ref_genome}  [dim]({genome_build})[/dim]")
+    # --- Reference source (local FASTA or UCSC API) + build guard ---
+    reference = make_reference_source(ref_source, ref_genome, genome_build)
+    ref_label = "UCSC API" if ref_source == "api" else ref_genome
+    console.print(f"[bold]Reference:[/bold] {ref_label}  [dim]({genome_build})[/dim]")
     build_warn = reference.check_build(genome_build)
     if build_warn:
         console.print(f"  [bold yellow]⚠ {build_warn}[/bold yellow]")
@@ -268,7 +277,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         )
     console.print(f"[bold]Flank:[/bold] ±{flank} bp")
 
-    ref_source = ReferenceFlankSource(reference, gnomad, flank=flank, af_threshold=af_threshold)
+    ref_flank_source = ReferenceFlankSource(
+        reference, gnomad, flank=flank, af_threshold=af_threshold
+    )
 
     # --- BAM consensus mode (per-sample patient sequence) ---
     # Default low-coverage behaviour is REF + gnomAD masking: where the BAM is
@@ -291,7 +302,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     def _source_for(variant):
         """Pick the flank source for a variant (consensus per-sample, or reference)."""
         if not bam_mode:
-            return ref_source, False
+            return ref_flank_source, False
         sample = variant.sample
         if sample in consensus_cache:
             cached = consensus_cache[sample]
@@ -301,8 +312,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             if sample not in bam_warned:
                 log.warning("No BAM for sample %s — using reference + gnomAD masking", sample)
                 bam_warned.add(sample)
-            consensus_cache[sample] = ref_source
-            return ref_source, False
+            consensus_cache[sample] = ref_flank_source
+            return ref_flank_source, False
         try:
             src = ConsensusFlankSource(
                 reference, BamConsensusSource(bam_path, policy), gnomad,
@@ -312,8 +323,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             if sample not in bam_warned:
                 log.warning("BAM unusable for %s (%s) — reference + gnomAD", sample, exc)
                 bam_warned.add(sample)
-            consensus_cache[sample] = ref_source
-            return ref_source, False
+            consensus_cache[sample] = ref_flank_source
+            return ref_flank_source, False
         consensus_cache[sample] = src
         return src, True
 
@@ -423,6 +434,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 n_inserted_total += fr.inserted or 0
             summary_rows.append(row_detail)
 
+    ref_api_requests = getattr(reference, "request_count", None) if ref_source == "api" else None
     reference.close()
     api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
     if gnomad is not None:
@@ -480,7 +492,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]Truncated flanks:[/bold] {n_truncated:>6,}\n" if n_truncated else ""
     )
     api_line = (
-        f"[bold]API requests:[/bold]     {api_requests:>6,}\n" if api_requests is not None else ""
+        f"[bold]gnomAD API req:[/bold]   {api_requests:>6,}\n" if api_requests is not None else ""
+    )
+    ref_api_line = (
+        f"[bold]Reference API req:[/bold] {ref_api_requests:>5,}\n"
+        if ref_api_requests is not None else ""
     )
     dup_line = (
         f"[bold]Dup. collapsed:[/bold]   {n_duplicate:>6,} [dim](other samples)[/dim]\n"
@@ -505,7 +521,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
         + dup_line + truncated_line + consensus_line + inserted_line + flagged_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
-        + api_line +
+        + api_line + ref_api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  [dim]({elapsed:.1f}s)[/dim]"
     )
@@ -516,7 +532,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             # provenance
             "vflank_version": __version__,
             # run parameters (what was set)
-            "maf": maf_file, "reference": ref_genome, "genome_build": genome_build,
+            "maf": maf_file,
+            "reference": (str(ref_genome) if ref_source == "file" else "UCSC API"),
+            "ref_source": ref_source, "genome_build": genome_build,
             "flank": flank, "af_threshold": af_threshold,
             "pop_source": pop_source, "pop_data": pop_data, "dedup": dedup,
             # outcomes (what happened)
@@ -532,6 +550,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             stats["primer3_records"] = len(primer3_records)
         if api_requests is not None:
             stats["api_requests"] = api_requests
+        if ref_api_requests is not None:
+            stats["reference_api_requests"] = ref_api_requests
         if bam_mode:
             stats["bam_consensus_records"] = n_consensus
             stats["bam_min_depth"] = policy.min_depth

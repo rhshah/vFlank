@@ -71,6 +71,12 @@ selected by `--pop-source`: `GnomadStore` (local VCFs) and `GnomadApiSource`
 `--pop-data {genome,exome,both}` (union for `both`). See
 [research/gnomad-api.md](research/gnomad-api.md).
 
+The **reference source** is likewise pluggable, selected by `--ref-source`:
+`ReferenceFasta` (local indexed FASTA, default) and `ReferenceApiSource` (UCSC
+getData/sequence API, no download — for hosted/small runs where shipping a FASTA
+is impractical). Both expose the `fetch(bare, s0, e0)` window contract
+`ReferenceFlankSource` depends on. See [research/genome-api.md](research/genome-api.md).
+
 ## Module map
 
 ```
@@ -81,6 +87,7 @@ src/vflank/
 │   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
 │   ├── popfreq.py     gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
 │   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource) + pure parser
+│   ├── reference_api.py reference sequence via UCSC API (ReferenceApiSource) + pure parser
 │   ├── consensus.py   BAM patient consensus (modes C/D): samtools engine, pure
 │   │                  low-cov overlay, insertion-site flagging
 │   ├── fusion.py      Breakpoint/Fusion model, reverse-complement junction builder

@@ -250,7 +250,51 @@ def test_pop_source_api_masks_via_monkeypatched_transport(tmp_path, monkeypatch)
     masked_left = lines[3].split("[", 1)[0]   # masked record, left flank
     # left window starts at 0-based 24; pos 27 -> index (27 - 24 - 1) = 2 -> 'N'.
     assert masked_left[2] == "N"
-    assert "API requests" in result.output
+    assert "gnomAD API" in result.output
+
+
+def test_ref_source_api_fetches_flanks_via_monkeypatched_transport(tmp_path, monkeypatch):
+    # Drive `--ref-source api` end to end with a fake UCSC transport (no network,
+    # no local FASTA): each window returns fixed bases. Assert the FASTA records
+    # and the reference-API monitoring line.
+    from urllib.parse import parse_qs, urlparse
+
+    import vflank.core.reference_api as refapi
+
+    header = "\t".join([
+        "Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
+        "Reference_Allele", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode",
+    ])
+    maf = tmp_path / "v.maf"
+    maf.write_text(header + "\n" + "\t".join(["G", "1", "30", "30", "A", "T", "S1"]) + "\n")
+    out = tmp_path / "out.fasta"
+
+    def fake_transport(url, timeout):
+        q = parse_qs(urlparse(url).query)
+        assert q["chrom"] == ["chr1"]  # bare '1' -> UCSC chr-prefixed
+        n = int(q["end"][0]) - int(q["start"][0])
+        return {"dna": "G" * n}
+
+    monkeypatch.setattr(refapi, "_http_transport", fake_transport)
+    monkeypatch.setattr(refapi, "sleep", lambda _s: None)  # skip the throttle
+
+    result = runner.invoke(app, [
+        "small", "run", str(maf), "--ref-source", "api", "--genome-build", "hg38",
+        "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+    lines = out.read_text().splitlines()
+    # variant at pos 30, flank 5 -> 5 bp each side; no masking (no pop source).
+    assert lines[1] == "GGGGG[A/T]GGGGG"
+    assert "Reference API req" in result.output
+
+
+def test_ref_source_file_without_ref_genome_errors(tmp_path):
+    # --ref-source file (default) requires --ref-genome; fail fast, no silent fallback.
+    maf = _write_maf(tmp_path)
+    result = runner.invoke(app, ["small", "run", str(maf)])
+    assert result.exit_code == 1
+    assert "--ref-genome is required" in result.output
 
 
 def test_pop_data_exome_without_files_errors(tmp_path):
