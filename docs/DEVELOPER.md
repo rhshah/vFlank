@@ -106,7 +106,7 @@ see [CLAUDE.md](https://github.com/rhshah/vFlank/blob/main/CLAUDE.md)):
 
 ```bash
 python -m ruff check src tests          # lint + import order + pyupgrade
-python -m mypy src/vflank/core src/vflank/io
+python -m mypy src/vflank/core src/vflank/io src/vflank/pipeline.py
 python -m pytest                        # unit + integration
 ```
 

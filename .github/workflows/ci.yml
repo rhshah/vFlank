@@ -30,7 +30,7 @@ jobs:
       - name: Ruff
         run: ruff check src tests
       - name: Mypy
-        run: mypy src/vflank/core src/vflank/io
+        run: mypy src/vflank/core src/vflank/io src/vflank/pipeline.py
 
   test:
     name: Test (${{ matrix.os }}, py${{ matrix.python-version }})
