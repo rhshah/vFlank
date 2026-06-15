@@ -30,7 +30,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
 <body data-md-color-accent="custom" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
@@ -893,20 +893,22 @@ is impractical). Both expose the <code>fetch(bare, s0, e0)</code> window contrac
 <a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>│   ├── fusion.py      Breakpoint/Fusion model, reverse-complement junction builder
 <a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>│   └── skips.py       categorised skip/he reporting helpers (pure)
 <a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>├── io/
-<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>│   ├── maf.py         load/remap/validate, row → Variant
+<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>│   ├── maf.py         load/remap/validate (path or buffer), row → Variant
 <a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>│   ├── reference.py   ReferenceFasta + genome-build guard
 <a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>│   ├── fasta.py       header sanitise + record format/write
-<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
-<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>│   └── report.py      TSV run-report writer (flexible columns)
-<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>├── cli/
-<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>│   ├── app.py         root Typer, global -v/-q/--debug, version
-<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>│   ├── small.py       run · inspect · list-vcf (+ masking, BAM, coverage flags)
-<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>│   ├── fusion.py      run (+ masking, BAM flags)
-<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
-<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a>│   ├── _masking.py    shared gnomAD source wiring
-<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a>│   └── _ui.py         parameter-echo panel
-<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a>├── logging.py         Rich console + logger
-<a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a>└── errors.py          VflankError hierarchy
+<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (path or buffer)
+<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>│   ├── emit_primer3.py Primer3 Boulder-IO writer (EmitRecord -&gt; SEQUENCE_* tags)
+<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>│   └── report.py      TSV run-report writer (flexible columns)
+<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>├── sources.py        reference/gnomAD source factories from config (validate + build)
+<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>├── pipeline.py       use case: iter_small/iter_fusion + collect + run_small/run_fusion
+<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>├── cli/
+<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>│   ├── app.py         root Typer, global -v/-q/--debug, version
+<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a>│   ├── small.py       run · inspect · list-vcf (+ masking, BAM, coverage flags)
+<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a>│   ├── fusion.py      run (+ masking, BAM flags)
+<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
+<a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a>│   └── _ui.py         parameter-echo panel
+<a href="#__codelineno-0-28" id="__codelineno-0-28" name="__codelineno-0-28"></a>├── logging.py         Rich console + logger
+<a href="#__codelineno-0-29" id="__codelineno-0-29" name="__codelineno-0-29"></a>└── errors.py          VflankError hierarchy
 </code></pre></div>
 <p>The hot kernels (<code>parse_common_snp_positions</code>, <code>mask_sequence</code>, the consensus
 overlay) are pure
@@ -1048,7 +1050,7 @@ model, iCallSV strand mapping) are captured in
 <span class="md-icon" title="Last update">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 01:42:09 UTC"><span class="timeago" datetime="2026-06-15T01:42:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 01:42:09 UTC">2026-06-15</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:24:38 UTC"><span class="timeago" datetime="2026-06-15T14:24:38+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:24:38 UTC">2026-06-15</span>
 </span>
 <span class="md-source-file__fact">
 <span class="md-icon" title="Created">

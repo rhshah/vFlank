@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -6544,31 +6544,31 @@ testable.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/vflank/io/maf.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-31">31</a></span>
 <span class="normal"><a href="#__codelineno-0-32">32</a></span>
 <span class="normal"><a href="#__codelineno-0-33">33</a></span>
 <span class="normal"><a href="#__codelineno-0-34">34</a></span>
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="k">class</span><span class="w"> </span><span class="nc">MafColumns</span><span class="p">:</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">    </span><span class="sd">"""User-overridable mapping from MAF column names to canonical names."""</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_CHR</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_START</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_END</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_REF</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_ALT</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_GENE</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="n">protein</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_PROT</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="n">cdna</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_CDNA</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_SAMPLE</span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="nd">@dataclass</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="k">class</span><span class="w"> </span><span class="nc">MafColumns</span><span class="p">:</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="w">    </span><span class="sd">"""User-overridable mapping from MAF column names to canonical names."""</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_CHR</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_START</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="n">end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_END</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_REF</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_ALT</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_GENE</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">protein</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_PROT</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">cdna</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_CDNA</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAF_SAMPLE</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
@@ -6608,25 +6608,32 @@ testable.</p>
     <div class="doc doc-contents ">
 
         <p>Read a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> into a DataFrame (tab-separated, '#'-comment aware).</p>
+<p><code>path</code> is a filesystem path or an open text/binary buffer.</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/maf.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-46">46</a></span>
 <span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="k">def</span><span class="w"> </span><span class="nf">read_maf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="w">    </span><span class="sd">"""Read a MAF into a DataFrame (tab-separated, '#'-comment aware)."""</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">"#"</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="k">raise</span> <span class="n">MafError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not read MAF: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="k">def</span><span class="w"> </span><span class="nf">read_maf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">MafInput</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="w">    </span><span class="sd">"""Read a MAF into a DataFrame (tab-separated, '#'-comment aware).</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    ``path`` is a filesystem path or an open text/binary buffer.</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">    """</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">"#"</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="k">raise</span> <span class="n">MafError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not read MAF: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6653,15 +6660,7 @@ present, and optional metadata columns filled with defaults if absent.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/maf.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span>
-<span class="normal"><a href="#__codelineno-0-58">58</a></span>
-<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-59">59</a></span>
 <span class="normal"><a href="#__codelineno-0-60">60</a></span>
 <span class="normal"><a href="#__codelineno-0-61">61</a></span>
 <span class="normal"><a href="#__codelineno-0-62">62</a></span>
@@ -6687,41 +6686,49 @@ present, and optional metadata columns filled with defaults if absent.</p>
 <span class="normal"><a href="#__codelineno-0-82">82</a></span>
 <span class="normal"><a href="#__codelineno-0-83">83</a></span>
 <span class="normal"><a href="#__codelineno-0-84">84</a></span>
-<span class="normal"><a href="#__codelineno-0-85">85</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_maf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">MafColumns</span><span class="p">):</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="w">    </span><span class="sd">"""Read a MAF, remap required columns to canonical names, and validate.</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    Returns the DataFrame with canonical required-column names guaranteed</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    present, and optional metadata columns filled with defaults if absent.</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    """</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">read_maf</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="k">raise</span> <span class="n">MafError</span><span class="p">(</span><span class="s2">"MAF file is empty."</span><span class="p">)</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="n">remap</span> <span class="o">=</span> <span class="p">{}</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="k">for</span> <span class="n">user_col</span><span class="p">,</span> <span class="n">canonical</span> <span class="ow">in</span> <span class="p">[</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">MAF_CHR</span><span class="p">),</span> <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">MAF_START</span><span class="p">),</span> <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">MAF_END</span><span class="p">),</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">MAF_REF</span><span class="p">),</span> <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">alt</span><span class="p">,</span> <span class="n">MAF_ALT</span><span class="p">),</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="p">]:</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="k">if</span> <span class="n">user_col</span> <span class="o">!=</span> <span class="n">canonical</span> <span class="ow">and</span> <span class="n">user_col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>            <span class="n">remap</span><span class="p">[</span><span class="n">user_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="k">if</span> <span class="n">remap</span><span class="p">:</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">remap</span><span class="p">)</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">REQUIRED_MAF_COLS</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="k">raise</span> <span class="n">MafError</span><span class="p">(</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>            <span class="sa">f</span><span class="s2">"Missing required columns: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>            <span class="s2">"Run `vflank small inspect` to see column names, then use "</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>            <span class="s2">"--chrom-col / --start-col etc. to remap."</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-85">85</a></span>
+<span class="normal"><a href="#__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#__codelineno-0-87">87</a></span>
+<span class="normal"><a href="#__codelineno-0-88">88</a></span>
+<span class="normal"><a href="#__codelineno-0-89">89</a></span>
+<span class="normal"><a href="#__codelineno-0-90">90</a></span>
+<span class="normal"><a href="#__codelineno-0-91">91</a></span>
+<span class="normal"><a href="#__codelineno-0-92">92</a></span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_maf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">MafInput</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">MafColumns</span><span class="p">):</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="w">    </span><span class="sd">"""Read a MAF, remap required columns to canonical names, and validate.</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    Returns the DataFrame with canonical required-column names guaranteed</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    present, and optional metadata columns filled with defaults if absent.</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    """</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">read_maf</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="k">raise</span> <span class="n">MafError</span><span class="p">(</span><span class="s2">"MAF file is empty."</span><span class="p">)</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="n">remap</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="k">for</span> <span class="n">user_col</span><span class="p">,</span> <span class="n">canonical</span> <span class="ow">in</span> <span class="p">[</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span> <span class="n">MAF_CHR</span><span class="p">),</span> <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">MAF_START</span><span class="p">),</span> <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">MAF_END</span><span class="p">),</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">MAF_REF</span><span class="p">),</span> <span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">alt</span><span class="p">,</span> <span class="n">MAF_ALT</span><span class="p">),</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="p">]:</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="k">if</span> <span class="n">user_col</span> <span class="o">!=</span> <span class="n">canonical</span> <span class="ow">and</span> <span class="n">user_col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>            <span class="n">remap</span><span class="p">[</span><span class="n">user_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">if</span> <span class="n">remap</span><span class="p">:</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">remap</span><span class="p">)</span>
 <a id="__codelineno-0-78" name="__codelineno-0-78"></a>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="p">{</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="n">cols</span><span class="o">.</span><span class="n">gene</span><span class="p">:</span> <span class="s2">"UNKNOWN"</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">protein</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">cdna</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">sample</span><span class="p">:</span> <span class="s2">"SAMPLE"</span><span class="p">,</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">return</span> <span class="n">df</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">REQUIRED_MAF_COLS</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="k">raise</span> <span class="n">MafError</span><span class="p">(</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>            <span class="sa">f</span><span class="s2">"Missing required columns: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>            <span class="s2">"Run `vflank small inspect` to see column names, then use "</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>            <span class="s2">"--chrom-col / --start-col etc. to remap."</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="p">)</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="p">{</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">cols</span><span class="o">.</span><span class="n">gene</span><span class="p">:</span> <span class="s2">"UNKNOWN"</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">protein</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">cdna</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">sample</span><span class="p">:</span> <span class="s2">"SAMPLE"</span><span class="p">,</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">return</span> <span class="n">df</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6747,15 +6754,7 @@ present, and optional metadata columns filled with defaults if absent.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/maf.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
-<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
-<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
-<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
-<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
-<span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
-<span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
-<span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
-<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
 <span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
 <span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
 <span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
@@ -6792,52 +6791,60 @@ present, and optional metadata columns filled with defaults if absent.</p>
 <span class="normal"><a href="#__codelineno-0-130">130</a></span>
 <span class="normal"><a href="#__codelineno-0-131">131</a></span>
 <span class="normal"><a href="#__codelineno-0-132">132</a></span>
-<span class="normal"><a href="#__codelineno-0-133">133</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="k">def</span><span class="w"> </span><span class="nf">parse_variant_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">MafColumns</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Variant</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="w">    </span><span class="sd">"""Convert a MAF row to a :class:`Variant`, or return a skip reason.</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">    Returns ``(variant, None)`` on success or ``(None, reason)`` on a bad row.</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">    """</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="n">ref</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_REF</span><span class="p">])</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_REF</span><span class="p">])</span> <span class="k">else</span> <span class="s2">"-"</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="n">alt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_ALT</span><span class="p">])</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_ALT</span><span class="p">])</span> <span class="k">else</span> <span class="s2">"-"</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="n">gene</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">gene</span><span class="p">,</span> <span class="s2">"UNKNOWN"</span><span class="p">))</span>
+<span class="normal"><a href="#__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#__codelineno-0-141">141</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="k">def</span><span class="w"> </span><span class="nf">parse_variant_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">MafColumns</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Variant</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="w">    </span><span class="sd">"""Convert a MAF row to a :class:`Variant`, or return a skip reason.</span>
 <a id="__codelineno-0-98" name="__codelineno-0-98"></a>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="n">bare</span><span class="p">,</span> <span class="n">chrom_err</span> <span class="o">=</span> <span class="n">normalise_chrom</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_CHR</span><span class="p">])</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="k">if</span> <span class="n">bare</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="c1"># By contract, normalise_chrom sets chrom_err whenever bare is None.</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">chrom_err</span><span class="si">}</span><span class="s2">"</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_CHR</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="n">raw_display</span> <span class="o">=</span> <span class="n">raw</span> <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"CHR"</span><span class="p">)</span> <span class="k">else</span> <span class="n">bare</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">    Returns ``(variant, None)`` on success or ``(None, reason)`` on a bad row.</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">    """</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="n">ref</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_REF</span><span class="p">])</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_REF</span><span class="p">])</span> <span class="k">else</span> <span class="s2">"-"</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">alt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_ALT</span><span class="p">])</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_ALT</span><span class="p">])</span> <span class="k">else</span> <span class="s2">"-"</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="n">gene</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">gene</span><span class="p">,</span> <span class="s2">"UNKNOWN"</span><span class="p">))</span>
 <a id="__codelineno-0-106" name="__codelineno-0-106"></a>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_START</span><span class="p">]))</span>
-<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_END</span><span class="p">]))</span>
-<a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-<a id="__codelineno-0-111" name="__codelineno-0-111"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-<a id="__codelineno-0-112" name="__codelineno-0-112"></a>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2">: non-numeric position "</span>
-<a id="__codelineno-0-113" name="__codelineno-0-113"></a>            <span class="sa">f</span><span class="s2">"(start=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_START</span><span class="p">]</span><span class="si">!r}</span><span class="s2">, end=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_END</span><span class="p">]</span><span class="si">!r}</span><span class="s2">)"</span>
-<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="p">)</span>
-<a id="__codelineno-0-115" name="__codelineno-0-115"></a>
-<a id="__codelineno-0-116" name="__codelineno-0-116"></a>    <span class="n">coord_err</span> <span class="o">=</span> <span class="n">validate_coordinates</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
-<a id="__codelineno-0-117" name="__codelineno-0-117"></a>    <span class="k">if</span> <span class="n">coord_err</span><span class="p">:</span>
-<a id="__codelineno-0-118" name="__codelineno-0-118"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">raw_display</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">coord_err</span><span class="si">}</span><span class="s2">"</span>
-<a id="__codelineno-0-119" name="__codelineno-0-119"></a>
-<a id="__codelineno-0-120" name="__codelineno-0-120"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">validate_allele</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">validate_allele</span><span class="p">(</span><span class="n">alt</span><span class="p">):</span>
-<a id="__codelineno-0-121" name="__codelineno-0-121"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">raw_display</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> — invalid allele (ref=</span><span class="si">{</span><span class="n">ref</span><span class="si">!r}</span><span class="s2">, alt=</span><span class="si">{</span><span class="n">alt</span><span class="si">!r}</span><span class="s2">)"</span>
-<a id="__codelineno-0-122" name="__codelineno-0-122"></a>
-<a id="__codelineno-0-123" name="__codelineno-0-123"></a>    <span class="k">return</span> <span class="p">(</span>
-<a id="__codelineno-0-124" name="__codelineno-0-124"></a>        <span class="n">Variant</span><span class="p">(</span>
-<a id="__codelineno-0-125" name="__codelineno-0-125"></a>            <span class="n">chrom</span><span class="o">=</span><span class="n">bare</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="n">alt</span><span class="p">,</span>
-<a id="__codelineno-0-126" name="__codelineno-0-126"></a>            <span class="n">gene</span><span class="o">=</span><span class="n">gene</span><span class="p">,</span>
-<a id="__codelineno-0-127" name="__codelineno-0-127"></a>            <span class="n">protein</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">protein</span><span class="p">,</span> <span class="s2">""</span><span class="p">)),</span>
-<a id="__codelineno-0-128" name="__codelineno-0-128"></a>            <span class="n">cdna</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">cdna</span><span class="p">,</span> <span class="s2">""</span><span class="p">)),</span>
-<a id="__codelineno-0-129" name="__codelineno-0-129"></a>            <span class="n">sample</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="s2">"SAMPLE"</span><span class="p">)),</span>
-<a id="__codelineno-0-130" name="__codelineno-0-130"></a>            <span class="n">raw_chrom</span><span class="o">=</span><span class="n">raw_display</span><span class="p">,</span>
-<a id="__codelineno-0-131" name="__codelineno-0-131"></a>        <span class="p">),</span>
-<a id="__codelineno-0-132" name="__codelineno-0-132"></a>        <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-133" name="__codelineno-0-133"></a>    <span class="p">)</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="n">bare</span><span class="p">,</span> <span class="n">chrom_err</span> <span class="o">=</span> <span class="n">normalise_chrom</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_CHR</span><span class="p">])</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="k">if</span> <span class="n">bare</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="c1"># By contract, normalise_chrom sets chrom_err whenever bare is None.</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">chrom_err</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_CHR</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="n">raw_display</span> <span class="o">=</span> <span class="n">raw</span> <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"CHR"</span><span class="p">)</span> <span class="k">else</span> <span class="n">bare</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a>        <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_START</span><span class="p">]))</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a>        <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_END</span><span class="p">]))</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+<a id="__codelineno-0-119" name="__codelineno-0-119"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+<a id="__codelineno-0-120" name="__codelineno-0-120"></a>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2">: non-numeric position "</span>
+<a id="__codelineno-0-121" name="__codelineno-0-121"></a>            <span class="sa">f</span><span class="s2">"(start=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_START</span><span class="p">]</span><span class="si">!r}</span><span class="s2">, end=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">MAF_END</span><span class="p">]</span><span class="si">!r}</span><span class="s2">)"</span>
+<a id="__codelineno-0-122" name="__codelineno-0-122"></a>        <span class="p">)</span>
+<a id="__codelineno-0-123" name="__codelineno-0-123"></a>
+<a id="__codelineno-0-124" name="__codelineno-0-124"></a>    <span class="n">coord_err</span> <span class="o">=</span> <span class="n">validate_coordinates</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+<a id="__codelineno-0-125" name="__codelineno-0-125"></a>    <span class="k">if</span> <span class="n">coord_err</span><span class="p">:</span>
+<a id="__codelineno-0-126" name="__codelineno-0-126"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">raw_display</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">coord_err</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-127" name="__codelineno-0-127"></a>
+<a id="__codelineno-0-128" name="__codelineno-0-128"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">validate_allele</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">validate_allele</span><span class="p">(</span><span class="n">alt</span><span class="p">):</span>
+<a id="__codelineno-0-129" name="__codelineno-0-129"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">raw_display</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> — invalid allele (ref=</span><span class="si">{</span><span class="n">ref</span><span class="si">!r}</span><span class="s2">, alt=</span><span class="si">{</span><span class="n">alt</span><span class="si">!r}</span><span class="s2">)"</span>
+<a id="__codelineno-0-130" name="__codelineno-0-130"></a>
+<a id="__codelineno-0-131" name="__codelineno-0-131"></a>    <span class="k">return</span> <span class="p">(</span>
+<a id="__codelineno-0-132" name="__codelineno-0-132"></a>        <span class="n">Variant</span><span class="p">(</span>
+<a id="__codelineno-0-133" name="__codelineno-0-133"></a>            <span class="n">chrom</span><span class="o">=</span><span class="n">bare</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="n">alt</span><span class="p">,</span>
+<a id="__codelineno-0-134" name="__codelineno-0-134"></a>            <span class="n">gene</span><span class="o">=</span><span class="n">gene</span><span class="p">,</span>
+<a id="__codelineno-0-135" name="__codelineno-0-135"></a>            <span class="n">protein</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">protein</span><span class="p">,</span> <span class="s2">""</span><span class="p">)),</span>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a>            <span class="n">cdna</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">cdna</span><span class="p">,</span> <span class="s2">""</span><span class="p">)),</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a>            <span class="n">sample</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span> <span class="s2">"SAMPLE"</span><span class="p">)),</span>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a>            <span class="n">raw_chrom</span><span class="o">=</span><span class="n">raw_display</span><span class="p">,</span>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a>        <span class="p">),</span>
+<a id="__codelineno-0-140" name="__codelineno-0-140"></a>        <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-141" name="__codelineno-0-141"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -7453,29 +7460,29 @@ are present. Mirrors <code>io/maf.MafColumns</code>.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/vflank/io/breakpoints.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-22">22</a></span>
 <span class="normal"><a href="#__codelineno-0-23">23</a></span>
 <span class="normal"><a href="#__codelineno-0-24">24</a></span>
 <span class="normal"><a href="#__codelineno-0-25">25</a></span>
 <span class="normal"><a href="#__codelineno-0-26">26</a></span>
 <span class="normal"><a href="#__codelineno-0-27">27</a></span>
 <span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="k">class</span><span class="w"> </span><span class="nc">SvColumns</span><span class="p">:</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">    </span><span class="sd">"""Logical field -&gt; header column name (all overridable)."""</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">chr1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chr1"</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="n">pos1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pos1"</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="n">str1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"str1"</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="n">chr2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chr2"</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">pos2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pos2"</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">str2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"str2"</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"name"</span>      <span class="c1"># optional</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sample"</span>  <span class="c1"># optional</span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="nd">@dataclass</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="k">class</span><span class="w"> </span><span class="nc">SvColumns</span><span class="p">:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">    </span><span class="sd">"""Logical field -&gt; header column name (all overridable)."""</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">chr1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chr1"</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">pos1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pos1"</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">str1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"str1"</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="n">chr2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"chr2"</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">pos2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pos2"</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="n">str2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"str2"</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"name"</span>      <span class="c1"># optional</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">sample</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sample"</span>  <span class="c1"># optional</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
@@ -7515,25 +7522,32 @@ are present. Mirrors <code>io/maf.MafColumns</code>.</p>
     <div class="doc doc-contents ">
 
         <p>Read the TSV into a DataFrame (tab-separated, '#'-comment aware).</p>
+<p><code>path</code> is a filesystem path or an open text/binary buffer.</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/breakpoints.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-40">40</a></span>
 <span class="normal"><a href="#__codelineno-0-41">41</a></span>
 <span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="k">def</span><span class="w"> </span><span class="nf">read_sv_table</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">    </span><span class="sd">"""Read the TSV into a DataFrame (tab-separated, '#'-comment aware)."""</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">"#"</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="k">raise</span> <span class="n">SvError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not read SV table: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="k">def</span><span class="w"> </span><span class="nf">read_sv_table</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">SvInput</span><span class="p">):</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="w">    </span><span class="sd">"""Read the TSV into a DataFrame (tab-separated, '#'-comment aware).</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    ``path`` is a filesystem path or an open text/binary buffer.</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    """</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">"#"</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="k">raise</span> <span class="n">SvError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not read SV table: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -7558,33 +7572,33 @@ are present. Mirrors <code>io/maf.MafColumns</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/breakpoints.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-53">53</a></span>
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
 <span class="normal"><a href="#__codelineno-0-56">56</a></span>
 <span class="normal"><a href="#__codelineno-0-57">57</a></span>
 <span class="normal"><a href="#__codelineno-0-58">58</a></span>
-<span class="normal"><a href="#__codelineno-0-59">59</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_sv_table</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">SvColumns</span><span class="p">):</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="w">    </span><span class="sd">"""Read and validate that the required columns exist (by name)."""</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">read_sv_table</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="k">raise</span> <span class="n">SvError</span><span class="p">(</span><span class="s2">"SV table is empty."</span><span class="p">)</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_REQUIRED_FIELDS</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="k">raise</span> <span class="n">SvError</span><span class="p">(</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>            <span class="sa">f</span><span class="s2">"Missing required column(s): </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="sa">f</span><span class="s2">"Header has: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span><span class="si">}</span><span class="s2">. "</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>            <span class="s2">"Use the column overrides to map differently-named columns."</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="p">)</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">return</span> <span class="n">df</span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_sv_table</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">SvInput</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">SvColumns</span><span class="p">):</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="w">    </span><span class="sd">"""Read and validate that the required columns exist (by name)."""</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">read_sv_table</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="k">raise</span> <span class="n">SvError</span><span class="p">(</span><span class="s2">"SV table is empty."</span><span class="p">)</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_REQUIRED_FIELDS</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="k">raise</span> <span class="n">SvError</span><span class="p">(</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>            <span class="sa">f</span><span class="s2">"Missing required column(s): </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>            <span class="sa">f</span><span class="s2">"Header has: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span><span class="si">}</span><span class="s2">. "</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>            <span class="s2">"Use the column overrides to map differently-named columns."</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="p">)</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="k">return</span> <span class="n">df</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -7609,14 +7623,7 @@ are present. Mirrors <code>io/maf.MafColumns</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/vflank/io/breakpoints.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
-<span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
-<span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
-<span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
-<span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
-<span class="normal"><a href="#__codelineno-0-82"> 82</a></span>
-<span class="normal"><a href="#__codelineno-0-83"> 83</a></span>
-<span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
 <span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
 <span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
 <span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
@@ -7639,37 +7646,44 @@ are present. Mirrors <code>io/maf.MafColumns</code>.</p>
 <span class="normal"><a href="#__codelineno-0-104">104</a></span>
 <span class="normal"><a href="#__codelineno-0-105">105</a></span>
 <span class="normal"><a href="#__codelineno-0-106">106</a></span>
-<span class="normal"><a href="#__codelineno-0-107">107</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="k">def</span><span class="w"> </span><span class="nf">parse_fusion_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">SvColumns</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Fusion</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="w">    </span><span class="sd">"""Convert one row to a :class:`Fusion`, or return a skip reason."""</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="n">c1</span><span class="p">,</span> <span class="n">err1</span> <span class="o">=</span> <span class="n">normalise_chrom</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">chr1</span><span class="p">])</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="k">if</span> <span class="n">c1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"breakpoint 1 — </span><span class="si">{</span><span class="n">err1</span><span class="si">}</span><span class="s2">"</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="n">c2</span><span class="p">,</span> <span class="n">err2</span> <span class="o">=</span> <span class="n">normalise_chrom</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">chr2</span><span class="p">])</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">if</span> <span class="n">c2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"breakpoint 2 — </span><span class="si">{</span><span class="n">err2</span><span class="si">}</span><span class="s2">"</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="n">p1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos1</span><span class="p">]))</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">p2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos2</span><span class="p">]))</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"non-numeric position (pos1=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos1</span><span class="p">]</span><span class="si">!r}</span><span class="s2">, pos2=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos2</span><span class="p">]</span><span class="si">!r}</span><span class="s2">)"</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="k">if</span> <span class="n">p1</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">p2</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"position &lt; 1 (pos1=</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s2">, pos2=</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s2">)"</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="n">s1</span> <span class="o">=</span> <span class="n">_parse_strand</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str1</span><span class="p">])</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="n">s2</span> <span class="o">=</span> <span class="n">_parse_strand</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str2</span><span class="p">])</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="k">if</span> <span class="n">s1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">s2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"strand must be 0 or 1 (str1=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str1</span><span class="p">]</span><span class="si">!r}</span><span class="s2">, str2=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str2</span><span class="p">]</span><span class="si">!r}</span><span class="s2">)"</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="k">return</span> <span class="p">(</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="n">Fusion</span><span class="p">(</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>            <span class="n">Breakpoint</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">s1</span><span class="p">),</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>            <span class="n">Breakpoint</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">s2</span><span class="p">),</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>            <span class="n">name</span><span class="o">=</span><span class="n">_optional</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>            <span class="n">sample</span><span class="o">=</span><span class="n">_optional</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">sample</span><span class="p">),</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="p">),</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="k">def</span><span class="w"> </span><span class="nf">parse_fusion_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">SvColumns</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Fusion</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="w">    </span><span class="sd">"""Convert one row to a :class:`Fusion`, or return a skip reason."""</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="n">c1</span><span class="p">,</span> <span class="n">err1</span> <span class="o">=</span> <span class="n">normalise_chrom</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">chr1</span><span class="p">])</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="k">if</span> <span class="n">c1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"breakpoint 1 — </span><span class="si">{</span><span class="n">err1</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="n">c2</span><span class="p">,</span> <span class="n">err2</span> <span class="o">=</span> <span class="n">normalise_chrom</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">chr2</span><span class="p">])</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="k">if</span> <span class="n">c2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"breakpoint 2 — </span><span class="si">{</span><span class="n">err2</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="n">p1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos1</span><span class="p">]))</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="n">p2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos2</span><span class="p">]))</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"non-numeric position (pos1=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos1</span><span class="p">]</span><span class="si">!r}</span><span class="s2">, pos2=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">pos2</span><span class="p">]</span><span class="si">!r}</span><span class="s2">)"</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="k">if</span> <span class="n">p1</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">p2</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"position &lt; 1 (pos1=</span><span class="si">{</span><span class="n">p1</span><span class="si">}</span><span class="s2">, pos2=</span><span class="si">{</span><span class="n">p2</span><span class="si">}</span><span class="s2">)"</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="n">s1</span> <span class="o">=</span> <span class="n">_parse_strand</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str1</span><span class="p">])</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>    <span class="n">s2</span> <span class="o">=</span> <span class="n">_parse_strand</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str2</span><span class="p">])</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="k">if</span> <span class="n">s1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">s2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"strand must be 0 or 1 (str1=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str1</span><span class="p">]</span><span class="si">!r}</span><span class="s2">, str2=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="n">cols</span><span class="o">.</span><span class="n">str2</span><span class="p">]</span><span class="si">!r}</span><span class="s2">)"</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="k">return</span> <span class="p">(</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="n">Fusion</span><span class="p">(</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>            <span class="n">Breakpoint</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">s1</span><span class="p">),</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>            <span class="n">Breakpoint</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">s2</span><span class="p">),</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>            <span class="n">name</span><span class="o">=</span><span class="n">_optional</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>            <span class="n">sample</span><span class="o">=</span><span class="n">_optional</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="o">.</span><span class="n">sample</span><span class="p">),</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>        <span class="p">),</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>        <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

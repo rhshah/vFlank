@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -1852,24 +1852,23 @@ is a move, not a rewrite.</p>
 <li>✅ <strong>PR3 — fusion.</strong> <code>iter_fusion</code>, same treatment; <code>Processed</code> generalised
    (the unused <code>variant</code> field dropped) so <code>collect</code> is shared. <strong>Done.</strong></li>
 </ol>
-<p><strong>Deferred until the web service exists (no speculative code — CLAUDE.md):</strong> the
-following have <strong>no caller</strong> until <code>vFlank-webapp</code> is scaffolded, so building them
-now would be unused code. They land <em>with</em> that work, or when the <abbr title="Command-Line Interface">CLI</abbr> is routed
-through <code>run_small</code> to give it a real caller:</p>
+<p>Once the <code>vFlank-webapp</code> repo existed (a real consumer), the rest landed:</p>
 <ol>
-<li><strong>PR2 — <code>config.py</code> + <code>sources.py</code> + <code>run_small</code>.</strong> Move validators and the
-   source factories out of <code>cli/</code>; add <code>SmallConfig</code>/<code>FusionConfig</code> +
-   <code>run_small</code>/<code>run_fusion(config) -&gt; RunResult</code> (build sources → iterate →
-   collect → close → assemble stats + request counts). This is non-speculative
-   the moment the <abbr title="Command-Line Interface">CLI</abbr> <code>_run</code> routes through it (eliminating the source-build +
-   close duplication between <abbr title="Command-Line Interface">CLI</abbr> and web).</li>
-<li><strong>PR4 — buffer input.</strong> <code>load_maf</code> / <code>load_sv_table</code> accept a path <em>or</em> a
-   file-like buffer so a service needn't touch a temp file.</li>
-<li><strong>PR5 — public <abbr title="Application Programming Interface">API</abbr> + docs.</strong> <code>__all__</code>, a "Using vflank as a library" section
-   for <code>run_small</code>/<code>run_fusion</code> + <code>RunResult</code>. Ship as <strong>0.5.0</strong>.</li>
+<li>✅ <strong>PR2 — <code>sources.py</code> + <code>run_small</code>/<code>run_fusion</code>.</strong> Moved the source
+   factories out of <code>cli/</code> into <code>vflank/sources.py</code> (+ a shared
+   <code>validate_run_options</code> the <abbr title="Command-Line Interface">CLI</abbr> and <code>run_*</code> both call — no duplicate
+   validation); added <code>run_small</code>/<code>run_fusion(input, *, ...) -&gt; RunResult</code> that
+   build sources → load → orchestrate → close, surfacing the <abbr title="Application Programming Interface">API</abbr> request counts
+   on <code>RunResult</code>. <strong>Done.</strong></li>
+<li>✅ <strong>PR4 — buffer input.</strong> <code>load_maf</code> / <code>load_sv_table</code> accept a path <em>or</em> an
+   open buffer (<code>MafInput</code> / <code>SvInput</code>); <code>pandas.read_csv</code> already supports both.
+   <strong>Done.</strong></li>
+<li>✅ <strong>PR5 — public <abbr title="Application Programming Interface">API</abbr> + docs.</strong> <code>pipeline.__all__</code>, a "Using vflank as a
+   library" section for <code>run_small</code>/<code>run_fusion</code> + <code>RunResult</code>, and the module
+   maps updated. Ship as <strong>0.5.0</strong>. <strong>Done.</strong></li>
 </ol>
-<p>The keystone (PR1+PR3) is done and <code>develop</code> is shippable; the rest is pulled by
-the consumer, not pushed ahead of it.</p>
+<p>The keystone (PR1+PR3) decoupled the orchestration; PR2/4/5 turned it into a
+clean library <abbr title="Application Programming Interface">API</abbr> the web service consumes.</p>
 <h2 id="testing-strategy">Testing strategy<a class="headerlink" href="#testing-strategy" title="Permanent link">¶</a></h2>
 <ul>
 <li><strong>Before:</strong> the existing <code>tests/integration/*</code> (<code>CliRunner</code>, exact <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> +
@@ -1922,7 +1921,7 @@ single unlock for the web service, a Nextflow wrapper, and notebook use.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:00:53 UTC"><span class="timeago" datetime="2026-06-15T14:00:53+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:00:53 UTC">2026-06-15</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:24:38 UTC"><span class="timeago" datetime="2026-06-15T14:24:38+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:24:38 UTC">2026-06-15</span>
   </span>
 
     

@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -1335,6 +1335,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. Use vflank as a library">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-high-level-entrypoints-what-a-web-service-notebook-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The high-level entrypoints (what a web service / notebook calls)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composing-the-lower-level-pieces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composing the lower-level pieces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1554,6 +1582,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. Use vflank as a library">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-high-level-entrypoints-what-a-web-service-notebook-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The high-level entrypoints (what a web service / notebook calls)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composing-the-lower-level-pieces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composing the lower-level pieces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1750,24 +1806,27 @@ bundled): an indexed reference <abbr title="text format for nucleotide sequences
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>│   ├── fusion.py      Breakpoint/Fusion model + reverse-complement junction builder
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>│   └── skips.py       categorised skip-reason helpers
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>├── io/       file access
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>│   ├── maf.py         load/validate MAF, row -&gt; Variant
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>│   ├── maf.py         load/validate MAF (path or buffer), row -&gt; Variant
 <a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>│   ├── reference.py   ReferenceFasta + genome-build guard
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>│   ├── fasta.py       header sanitising + record formatting/writing
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>│   └── report.py      TSV run-report writer
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>├── cli/      Typer commands (presentation only)
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>│   ├── app.py         root app, global -v/-q/--debug, version
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>│   ├── small.py       small-variant commands: run / inspect / list-vcf
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>│   ├── fusion.py      fusion command: run
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>│   ├── _masking.py    shared gnomAD source wiring
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>│   └── _ui.py         parameter-echo panel
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>├── logging.py  shared Rich console + logger
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>└── errors.py   VflankError hierarchy
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (path or buffer)
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>│   ├── emit_primer3.py Primer3 Boulder-IO writer
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>│   └── report.py      TSV run-report writer
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>├── sources.py  reference/gnomAD source factories from config (validate + build)
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>├── pipeline.py the use case: iter_small/iter_fusion + collect + run_small/run_fusion
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>├── cli/      Typer commands (presentation only)
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>│   ├── app.py         root app, global -v/-q/--debug, version
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>│   ├── small.py       small-variant commands: run / inspect / list-vcf
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>│   ├── fusion.py      fusion command: run
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>│   └── _ui.py         parameter-echo panel
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>├── logging.py  shared Rich console + logger
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>└── errors.py   VflankError hierarchy
 </code></pre></div>
-<p><strong>Import direction is one-way:</strong> <code>cli → io → core</code>. <code>core</code> imports nothing from
-<code>io</code>/<code>cli</code>; <code>io</code> imports from <code>core</code> but not <code>cli</code>. Keep it that way — it is what
-makes <code>core</code> unit-testable without pysam, pandas, or Typer.</p>
+<p><strong>Import direction is one-way:</strong> <code>cli → pipeline → {sources, io} → core</code>. <code>core</code>
+imports nothing from the layers above it; <code>pipeline</code> coordinates <code>sources</code>/<code>io</code>/
+<code>core</code> but imports no <code>cli</code>/Rich/Typer. Keep it that way — it is what makes
+<code>core</code> and <code>pipeline</code> unit-testable without pysam, pandas, or Typer.</p>
 <hr>
 <h2 id="3-run-the-cli">3. Run the <abbr title="Command-Line Interface">CLI</abbr><a class="headerlink" href="#3-run-the-cli" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Main pipeline: extract + mask flanks for every variant in a MAF</span>
@@ -1811,52 +1870,76 @@ Typer's <code>CliRunner</code>). Integration tests <code>pytest.importorskip("py
 unit suite still runs in a minimal environment.</p>
 <hr>
 <h2 id="5-use-vflank-as-a-library">5. Use vflank as a library<a class="headerlink" href="#5-use-vflank-as-a-library" title="Permanent link">¶</a></h2>
-<p>The pieces are designed to be composed directly. Minimal end-to-end example
+<h3 id="the-high-level-entrypoints-what-a-web-service-notebook-calls">The high-level entrypoints (what a web service / notebook calls)<a class="headerlink" href="#the-high-level-entrypoints-what-a-web-service-notebook-calls" title="Permanent link">¶</a></h3>
+<p><code>vflank.pipeline.run_small</code> / <code>run_fusion</code> run the whole pipeline — build the
+reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> sources from options, load the input (a path <strong>or</strong> an open
+buffer), orchestrate, close — and return a <code>RunResult</code> (records, per-variant
+rows, categorised skips, counts, <abbr title="Application Programming Interface">API</abbr>-request tallies). No printing, no files
+written; the caller decides what to render or persist.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_small</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">maf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">"variants.maf"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>     <span class="c1"># a path works too</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">result</span> <span class="o">=</span> <span class="n">run_small</span><span class="p">(</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">maf</span><span class="p">,</span> <span class="n">genome_build</span><span class="o">=</span><span class="s2">"hg19"</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">ref_source</span><span class="o">=</span><span class="s2">"api"</span><span class="p">,</span>                               <span class="c1"># UCSC — no local FASTA</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">pop_source</span><span class="o">=</span><span class="s2">"api"</span><span class="p">,</span>                               <span class="c1"># gnomAD — no download</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">emit_primer3</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">)</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">n_processed</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">n_skipped</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">records</span><span class="p">))</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="nb">open</span><span class="p">(</span><span class="s2">"out.fasta"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+</code></pre></div>
+<p>For incremental progress or custom accumulation, drop to the streaming
+primitives <code>iter_small(df, ...)</code> / <code>iter_fusion(df, ...)</code> (generators of
+<code>Processed | Skipped | Duplicate</code>) plus <code>collect(...)</code> — this is exactly how the
+<abbr title="Command-Line Interface">CLI</abbr> drives its progress bar. See <code>docs/research/orchestration-extraction.md</code>.</p>
+<h3 id="composing-the-lower-level-pieces">Composing the lower-level pieces<a class="headerlink" href="#composing-the-lower-level-pieces" title="Permanent link">¶</a></h3>
+<p>The building blocks are also usable directly. Minimal end-to-end example
 against an indexed <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> (no <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>; masked == raw):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.variant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variant</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.flanks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceFlankSource</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.io.reference</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceFasta</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fasta</span> <span class="k">as</span> <span class="n">fasta_io</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">reference</span> <span class="o">=</span> <span class="n">ReferenceFasta</span><span class="p">(</span><span class="s2">"/path/GRCh38.fasta"</span><span class="p">)</span>          <span class="c1"># requires .fai alongside</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">reference</span><span class="o">.</span><span class="n">check_build</span><span class="p">(</span><span class="s2">"hg38"</span><span class="p">)</span>                              <span class="c1"># returns a warning string on mismatch, else None</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ReferenceFlankSource</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="n">variant</span> <span class="o">=</span> <span class="n">Variant</span><span class="p">(</span><span class="n">chrom</span><span class="o">=</span><span class="s2">"7"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">140753336</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">140753336</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">"A"</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="s2">"T"</span><span class="p">,</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>                  <span class="n">gene</span><span class="o">=</span><span class="s2">"BRAF"</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="s2">"P-001"</span><span class="p">)</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="n">result</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>                             <span class="c1"># -&gt; FlankResult</span>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">left</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">right</span><span class="p">),</span> <span class="n">result</span><span class="o">.</span><span class="n">n_masked</span><span class="p">)</span>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="n">records</span> <span class="o">=</span> <span class="n">fasta_io</span><span class="o">.</span><span class="n">format_records</span><span class="p">(</span><span class="n">variant</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">variant</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">alt</span><span class="p">)</span>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="n">fasta_io</span><span class="o">.</span><span class="n">write_fasta</span><span class="p">(</span><span class="s2">"out.fasta"</span><span class="p">,</span> <span class="n">records</span><span class="p">)</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="n">reference</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.variant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variant</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.flanks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceFlankSource</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.io.reference</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReferenceFasta</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fasta</span> <span class="k">as</span> <span class="n">fasta_io</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">reference</span> <span class="o">=</span> <span class="n">ReferenceFasta</span><span class="p">(</span><span class="s2">"/path/GRCh38.fasta"</span><span class="p">)</span>          <span class="c1"># requires .fai alongside</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">reference</span><span class="o">.</span><span class="n">check_build</span><span class="p">(</span><span class="s2">"hg38"</span><span class="p">)</span>                              <span class="c1"># returns a warning string on mismatch, else None</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ReferenceFlankSource</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">variant</span> <span class="o">=</span> <span class="n">Variant</span><span class="p">(</span><span class="n">chrom</span><span class="o">=</span><span class="s2">"7"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">140753336</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">140753336</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">"A"</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="s2">"T"</span><span class="p">,</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>                  <span class="n">gene</span><span class="o">=</span><span class="s2">"BRAF"</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="s2">"P-001"</span><span class="p">)</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">result</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>                             <span class="c1"># -&gt; FlankResult</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">left</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">right</span><span class="p">),</span> <span class="n">result</span><span class="o">.</span><span class="n">n_masked</span><span class="p">)</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="n">records</span> <span class="o">=</span> <span class="n">fasta_io</span><span class="o">.</span><span class="n">format_records</span><span class="p">(</span><span class="n">variant</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">variant</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">alt</span><span class="p">)</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="n">fasta_io</span><span class="o">.</span><span class="n">write_fasta</span><span class="p">(</span><span class="s2">"out.fasta"</span><span class="p">,</span> <span class="n">records</span><span class="p">)</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="n">reference</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div>
 <p>Add <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> masking by passing a store:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.popfreq</span><span class="w"> </span><span class="kn">import</span> <span class="n">GnomadStore</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">gnomad</span> <span class="o">=</span> <span class="n">GnomadStore</span><span class="p">(</span><span class="s2">"/path/gnomad_v4/"</span><span class="p">,</span> <span class="s2">"hg38"</span><span class="p">)</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ReferenceFlankSource</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="n">gnomad</span><span class="p">,</span> <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># ... fetch variants ...</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">gnomad</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.popfreq</span><span class="w"> </span><span class="kn">import</span> <span class="n">GnomadStore</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">gnomad</span> <span class="o">=</span> <span class="n">GnomadStore</span><span class="p">(</span><span class="s2">"/path/gnomad_v4/"</span><span class="p">,</span> <span class="s2">"hg38"</span><span class="p">)</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">source</span> <span class="o">=</span> <span class="n">ReferenceFlankSource</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">gnomad</span><span class="o">=</span><span class="n">gnomad</span><span class="p">,</span> <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">af_threshold</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># ... fetch variants ...</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">gnomad</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div>
 <p>Drive from a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> instead of constructing <code>Variant</code>s by hand:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.io.maf</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_maf</span><span class="p">,</span> <span class="n">parse_variant_row</span><span class="p">,</span> <span class="n">MafColumns</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">cols</span> <span class="o">=</span> <span class="n">MafColumns</span><span class="p">()</span>                                        <span class="c1"># defaults to TCGA/MSK names</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">load_maf</span><span class="p">(</span><span class="s2">"variants.maf"</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>                        <span class="c1"># validates required columns</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">variant</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">parse_variant_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>         <span class="c1"># reason is a skip message or None</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="k">if</span> <span class="n">variant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>        <span class="k">continue</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.io.maf</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_maf</span><span class="p">,</span> <span class="n">parse_variant_row</span><span class="p">,</span> <span class="n">MafColumns</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">cols</span> <span class="o">=</span> <span class="n">MafColumns</span><span class="p">()</span>                                        <span class="c1"># defaults to TCGA/MSK names</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">load_maf</span><span class="p">(</span><span class="s2">"variants.maf"</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>                        <span class="c1"># validates required columns</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">variant</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">parse_variant_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>         <span class="c1"># reason is a skip message or None</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="k">if</span> <span class="n">variant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="k">continue</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>
 </code></pre></div>
 <p>The <strong>pure kernels</strong> need no files and are the easiest entry points to test or reuse:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.chrom</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalise_chrom</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.popfreq</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_common_snp_positions</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.flanks</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask_sequence</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">normalise_chrom</span><span class="p">(</span><span class="s2">"chr23"</span><span class="p">)</span>                                   <span class="c1"># -&gt; ("X", None)</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">parse_common_snp_positions</span><span class="p">([</span><span class="s2">"chr1</span><span class="se">\t</span><span class="s2">100</span><span class="se">\t</span><span class="s2">.</span><span class="se">\t</span><span class="s2">A</span><span class="se">\t</span><span class="s2">G</span><span class="se">\t</span><span class="s2">.</span><span class="se">\t</span><span class="s2">PASS</span><span class="se">\t</span><span class="s2">AF=0.2"</span><span class="p">],</span> <span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># -&gt; [100]</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">mask_sequence</span><span class="p">(</span><span class="s2">"ACGTACGT"</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>                    <span class="c1"># region starts at 0-based 10 -&gt; "NCGTNCGT"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.chrom</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalise_chrom</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.popfreq</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_common_snp_positions</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.flanks</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask_sequence</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">normalise_chrom</span><span class="p">(</span><span class="s2">"chr23"</span><span class="p">)</span>                                   <span class="c1"># -&gt; ("X", None)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">parse_common_snp_positions</span><span class="p">([</span><span class="s2">"chr1</span><span class="se">\t</span><span class="s2">100</span><span class="se">\t</span><span class="s2">.</span><span class="se">\t</span><span class="s2">A</span><span class="se">\t</span><span class="s2">G</span><span class="se">\t</span><span class="s2">.</span><span class="se">\t</span><span class="s2">PASS</span><span class="se">\t</span><span class="s2">AF=0.2"</span><span class="p">],</span> <span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># -&gt; [100]</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">mask_sequence</span><span class="p">(</span><span class="s2">"ACGTACGT"</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>                    <span class="c1"># region starts at 0-based 10 -&gt; "NCGTNCGT"</span>
 </code></pre></div>
 <hr>
 <h2 id="6-extending-the-codebase">6. Extending the codebase<a class="headerlink" href="#6-extending-the-codebase" title="Permanent link">¶</a></h2>
@@ -1864,18 +1947,18 @@ against an indexed <abbr title="text format for nucleotide sequences (`&gt;heade
 <p>Implement the <code>FlankSource</code> protocol — anything with
 <code>fetch(self, variant: Variant) -&gt; FlankResult</code> works wherever
 <code>ReferenceFlankSource</code> does:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># src/vflank/core/consensus.py</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.flanks</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlankResult</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.variant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variant</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">class</span><span class="w"> </span><span class="nc">ConsensusFlankSource</span><span class="p">:</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="sd">"""Flanks from a sample BAM's consensus, masking het / low-coverage sites."""</span>
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">bam</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">min_depth</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">het_frac</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>        <span class="o">...</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        <span class="c1"># build per-base consensus over the flank windows; fall back to</span>
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>        <span class="c1"># reference below min_depth; mask het/low-confidence positions to N.</span>
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>        <span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># src/vflank/core/consensus.py</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.flanks</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlankResult</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">vflank.core.variant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variant</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="k">class</span><span class="w"> </span><span class="nc">ConsensusFlankSource</span><span class="p">:</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="sd">"""Flanks from a sample BAM's consensus, masking het / low-coverage sites."""</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">bam</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">flank</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">min_depth</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">het_frac</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>        <span class="o">...</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">Variant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlankResult</span><span class="p">:</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>        <span class="c1"># build per-base consensus over the flank windows; fall back to</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>        <span class="c1"># reference below min_depth; mask het/low-confidence positions to N.</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>        <span class="o">...</span>
 </code></pre></div>
 <p>Keep the coordinate math identical to <code>ReferenceFlankSource</code> (1-based <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> →
 0-based half-open windows; variant interval excluded). Validate the consensus
@@ -2034,7 +2117,7 @@ needs it:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 13:54:02 UTC"><span class="timeago" datetime="2026-06-15T13:54:02+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 13:54:02 UTC">2026-06-15</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 14:24:38 UTC"><span class="timeago" datetime="2026-06-15T14:24:38+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 14:24:38 UTC">2026-06-15</span>
   </span>
 
     
