@@ -26,6 +26,8 @@ downstream to established tools.
   sequences from an iCallSV / iAnnotateSV breakpoint table (columns by name).
 - **SNP masking, two backends** — local gnomAD VCFs *or* the gnomAD GraphQL API
   (no download), each with `--pop-data {genome,exome,both}`.
+- **Reference, two backends** — a local indexed FASTA *or* the UCSC API
+  (`--ref-source api`, no download) for runs with no reference on disk.
 - **Patient consensus from a BAM** (`--bam`/`--bam-map`) — build the flank/junction
   from the patient's own reads (hom-ALT corrected, het/low-cov handled) so primers
   match the real template; for both small variants and fusions.
@@ -89,6 +91,21 @@ Either source honours `--pop-data {genome,exome,both}` (default `genome`).
 cohort. Flanks often fall in non-coding regions where only genomes have data,
 so `genome` is the default.
 
+### Reference sources
+
+The reference can likewise come from a local file or an API:
+
+- `--ref-source file` (default) — a local indexed FASTA via `--ref-genome`.
+  Reproducible, offline, unlimited scale; build sanity-checked by chr1 length.
+- `--ref-source api` — the [UCSC API](https://api.genome.ucsc.edu/), **no
+  download** (`--ref-genome` not needed). Best for one-off / hosted runs;
+  throttled to ~1 request/second, so not for bulk.
+
+```bash
+# Fully no-download (reference + masking from APIs):
+vflank small run variants.maf -g hg19 --ref-source api --pop-source api
+```
+
 Each variant yields two FASTA records (the `__{CHROM}_{POS}_{REF}_{ALT}` suffix
 is what keys deduplication; the `{SAMPLE}__` prefix appears only with `--bam`):
 
@@ -100,7 +117,9 @@ is what keys deduplication; the `{SAMPLE}__` prefix appears only with `--bam`):
 ```
 
 Chromosome notation (`chr1` vs `1`) is auto-detected from the FASTA and VCFs.
-The genome build is sanity-checked against the FASTA's chr1 length.
+With a local FASTA the genome build is sanity-checked against its chr1 length;
+with `--ref-source api` the requested `--genome-build` is trusted (a wrong build
+surfaces as a UCSC error, not silent wrong sequence).
 
 ## Project layout
 

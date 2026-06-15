@@ -35,6 +35,10 @@ vflank fusion run breakpoints.tsv \
     --output fusion_junctions.fasta
 ```
 
+Add `--ref-source api` to fetch the reference from the UCSC API instead of a
+local FASTA (then `--ref-genome` is optional) — see
+[Small Variants](small-variants.md#run) for the trade-offs.
+
 ## How the junction is built
 
 The fused product reads 5'→3' as `partner1 + partner2` (no separator). With

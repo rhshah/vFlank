@@ -26,6 +26,10 @@ generated from the source docstrings.
 
 ::: vflank.core.popfreq_api
 
+### `vflank.core.reference_api`
+
+::: vflank.core.reference_api
+
 ### `vflank.core.fusion`
 
 ::: vflank.core.fusion
