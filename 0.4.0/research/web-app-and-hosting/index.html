@@ -1,0 +1,2469 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Variant-aware flanking-sequence extraction and masking for ddPCR assay design">
+      
+      
+      
+        <link rel="canonical" href="https://rhshah.github.io/vFlank/0.4.0/research/web-app-and-hosting/">
+      
+      
+        <link rel="prev" href="../indel-aware-consensus/">
+      
+      
+        <link rel="next" href="../../DEVELOPER/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Web app &amp; hosting (plan) - vflank</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/panzoom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style><meta name="panzoom-theme" content="material">
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#single-variant-mode-web-ui-and-hosting-design-note" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden="">
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="vflank" class="md-header__button md-logo" aria-label="vflank" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vflank
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Web app &amp; hosting (plan)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/rhshah/vFlank" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    rhshah/vFlank
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="vflank" class="md-nav__button md-logo" aria-label="vflank" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"></path></svg>
+
+    </a>
+    vflank
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/rhshah/vFlank" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    rhshah/vFlank
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/recommended-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recommended Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3">
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/small-variants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Small Variants
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/fusions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fusions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNP Masking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BAM Consensus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked="">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How It Works
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked="">
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research notes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../emit-formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emit formats (Olivar/Primer3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnomad-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gnomAD API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../genome-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference (genome) API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sv-vcf-input/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SV / VCF input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bam-consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BAM consensus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../indel-aware-consensus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Indel-aware consensus (plan)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web app &amp; hosting (plan)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web app &amp; hosting (plan)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#summary-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary / recommendation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary / recommendation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v1-scope-decision-ship-without-bam-steps-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1 scope decision — ship without BAM (steps 1–3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v1-hosting-decision-render-free-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1 hosting decision — Render free tier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-v1-implementation-reuse-the-existing-pipeline-no-new-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. v1 implementation — reuse the existing pipeline (no new command)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. v1 implementation — reuse the existing pipeline (no new command)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-v1-form-3-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The v1 form (3 controls)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deferred-only-if-a-structured-variant-form-ux-is-later-preferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deferred (only if a structured-variant form UX is later preferred)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-api-backed-sources-what-makes-a-stateless-server-possible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. API-backed sources — what makes a stateless server possible
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bam-input-deferred-to-v2-the-one-input-that-cant-be-an-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. BAM input — deferred to v2 (the one input that can't be an API)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. BAM input — deferred to v2 (the one input that can't be an API)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bam-input-options-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BAM-input options (v2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1-in-detail-wasm-resolves-the-privacy-tension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 in detail — WASM resolves the privacy tension
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-hosting-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Hosting options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-log-2026-06-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification log (2026-06-14)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verification log (2026-06-14)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-gnomad-api-is-browser-cors-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIRMED — gnomAD API is browser-CORS-safe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-ensembl-rest-is-browser-cors-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIRMED — Ensembl REST is browser-CORS-safe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#likely-not-browser-cors-safe-ucsc-rest-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LIKELY NOT browser-CORS-safe — UCSC REST API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-biowasm-samtools-includes-consensus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIRMED — biowasm samtools includes consensus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correction-this-verification-forces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correction this verification forces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#still-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope-guardrail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope guardrail
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6">
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DEVELOPER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#summary-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary / recommendation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary / recommendation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v1-scope-decision-ship-without-bam-steps-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1 scope decision — ship without BAM (steps 1–3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v1-hosting-decision-render-free-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1 hosting decision — Render free tier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-v1-implementation-reuse-the-existing-pipeline-no-new-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. v1 implementation — reuse the existing pipeline (no new command)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. v1 implementation — reuse the existing pipeline (no new command)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-v1-form-3-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The v1 form (3 controls)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deferred-only-if-a-structured-variant-form-ux-is-later-preferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deferred (only if a structured-variant form UX is later preferred)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-api-backed-sources-what-makes-a-stateless-server-possible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. API-backed sources — what makes a stateless server possible
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bam-input-deferred-to-v2-the-one-input-that-cant-be-an-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. BAM input — deferred to v2 (the one input that can't be an API)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. BAM input — deferred to v2 (the one input that can't be an API)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bam-input-options-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BAM-input options (v2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1-in-detail-wasm-resolves-the-privacy-tension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 in detail — WASM resolves the privacy tension
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-hosting-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Hosting options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-log-2026-06-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification log (2026-06-14)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verification log (2026-06-14)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-gnomad-api-is-browser-cors-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIRMED — gnomAD API is browser-CORS-safe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-ensembl-rest-is-browser-cors-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIRMED — Ensembl REST is browser-CORS-safe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#likely-not-browser-cors-safe-ucsc-rest-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LIKELY NOT browser-CORS-safe — UCSC REST API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmed-biowasm-samtools-includes-consensus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIRMED — biowasm samtools includes consensus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correction-this-verification-forces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correction this verification forces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#still-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope-guardrail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope guardrail
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../ARCHITECTURE/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    How It Works
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../emit-formats/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Research notes
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="single-variant-mode-web-ui-and-hosting-design-note">Single-variant mode, web UI, and hosting — design note<a class="headerlink" href="#single-variant-mode-web-ui-and-hosting-design-note" title="Permanent link">¶</a></h1>
+<p>Exploratory design note for turning vflank into an interactive <strong>single-variant</strong>
+web tool, and where to host it. Status: <strong>proposed</strong> (nothing built yet). This
+note exists to make the trade-offs reviewable before committing, in the spirit
+of <code>gnomad-api.md</code>. Verified facts are dated; open questions are flagged.</p>
+<h2 id="summary-recommendation">Summary / recommendation<a class="headerlink" href="#summary-recommendation" title="Permanent link">¶</a></h2>
+<p>The three ideas — a single-variant mode, a UI, and WebAssembly for <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> — stack
+into one coherent product: <strong>a single-variant web tool where the reference base
+and population frequencies come from public APIs, and the only large/private
+input (the patient <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>) is computed client-side in the browser and never
+uploaded.</strong> Batch/cohort work stays where it is today: server-side <abbr title="Command-Line Interface">CLI</abbr> + local
+files, fanned out by Nextflow.</p>
+<p>Recommended path, in order (note the dependency: the service can't be fileless
+on Render without the <abbr title="Application Programming Interface">API</abbr> sources, so they come <strong>first</strong>):</p>
+<ol>
+<li><strong><abbr title="Application Programming Interface">API</abbr>-backed sources — the v1 prerequisite.</strong> Render has no local <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>/<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>
+   (<abbr title="human genome build 19 (== GRCh37)">hg19</abbr>/<abbr title="human genome build 38 (== GRCh38)">hg38</abbr> are ~3 GB each; the disk is ephemeral), so the reference and
+   population data <em>must</em> come from APIs. <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> already exists
+   (<code>--pop-source api</code>); the one new core piece v1 needs is a <strong>reference <abbr title="Application Programming Interface">API</abbr>
+   source</strong> (<code>ReferenceApiSource</code>, see <code>genome-api.md</code>). <strong>Reference choice is
+   host-dependent</strong> (verified below): <strong>UCSC</strong> behind a server (nicer coords, no
+   CORS needed — our case), <strong>Ensembl</strong> for a static/browser app (CORS-safe).</li>
+<li><strong>Thin web service over the existing pipeline</strong> — reuse <code>io/maf.load_maf</code> +
+   the existing per-row loop as a <em>library</em> (no new <abbr title="Command-Line Interface">CLI</abbr> command, no refactor),
+   run with <code>--ref-source api --pop-source api</code> so it touches no local files.
+   The service owns a small-input cap and HTTP error mapping; <strong>all existing
+   input validation is inherited</strong>. See §1.</li>
+<li><strong>UI</strong> — a thin 3-control front-end over the service (see §1, "The v1 form").</li>
+<li><strong>WASM-<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr></strong> — <code>samtools</code> via biowasm/Aioli, client-side, for the
+   patient-consensus path; keeps PHI in the browser (v2).</li>
+</ol>
+<p>A single-variant <abbr title="Command-Line Interface">CLI</abbr> mode (<code>small one</code> / <code>fusion one</code>) and the <code>make_variant</code>
+refactor are <strong>not required for v1</strong> — they become worthwhile only if a
+structured form UX is later preferred over file input (see §1, "Deferred").</p>
+<h3 id="v1-scope-decision-ship-without-bam-steps-13">v1 scope decision — ship without <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> (steps 1–3)<a class="headerlink" href="#v1-scope-decision-ship-without-bam-steps-13" title="Permanent link">¶</a></h3>
+<p><strong>v1 = steps 1–3; <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> (step 4) is deferred to v2.</strong> This is the cleanest first
+release because the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> is the <em>only</em> thing that forces the hard parts — WASM /
+Aioli / the ported overlay, client-side file handling, the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>-input spectrum,
+<strong>and the entire PHI/compliance story</strong>. Dropping it for v1 means:</p>
+<ul>
+<li>v1 = single variant (SNV or <abbr title="Structural Variant — a large rearrangement (deletion, duplication, inversion, translocation, fusion)">SV</abbr>) + reference <abbr title="Application Programming Interface">API</abbr> + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> → masked flanks,
+  i.e. exactly the existing <strong>modes A/B</strong> (the <abbr title="Command-Line Interface">CLI</abbr>'s default with no <code>--bam</code>). No
+  new science.</li>
+<li><strong>No patient data ever touches the app</strong> — only public reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> data
+  flow through it, so hosting carries no PHI liability anywhere.</li>
+<li>A fully static <strong>GitHub Pages</strong> build is genuinely viable for v1: <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> +
+  Ensembl are both CORS-safe (verified), so the only remaining lift is porting
+  the small pure kernel (<code>mask_sequence</code> + flank math) to JS — no WASM blocker.</li>
+<li><strong><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> (modes C/D) becomes a self-contained v2</strong> that adds the patient-consensus
+  path and picks from the <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>-input options (below) then, without gating v1.</li>
+</ul>
+<p><strong>Hosting recommendation:</strong> for the fastest path that reuses the existing Python
+core, host a small FastAPI service on <strong>Render</strong> (or Fly.io / Railway / Cloud
+Run). With <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> deferred (v1), there is no PHI and a fully static <strong>GitHub Pages</strong>
+build is also viable once the small pure kernel is ported to JS. When <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> lands
+(v2), the client-side WASM path keeps patient reads in the browser; a <strong>hybrid</strong>
+(Pages frontend + a small <abbr title="Application Programming Interface">API</abbr> backend) is the pragmatic middle.</p>
+<h3 id="v1-hosting-decision-render-free-tier">v1 hosting decision — Render free tier<a class="headerlink" href="#v1-hosting-decision-render-free-tier" title="Permanent link">¶</a></h3>
+<p><strong>Decided: FastAPI on Render's free tier.</strong> Chosen over the static/Pages route
+because it reuses the existing Python core with <strong>no JS port</strong> (see §"the JS
+port" reasoning), and the free tier is ample because v1 is not compute- or
+IO-heavy: one request = two outbound <abbr title="Application Programming Interface">API</abbr> calls (reference + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>) + a few
+hundred bytes of string masking. No local <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>/<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>, no pandas/pysam, no large
+in-memory data, nothing persisted — a textbook fit for 512 MB / shared CPU and
+an ephemeral filesystem.</p>
+<p>Plan around these free-tier traits (none is a blocker for an internal/demo tool):</p>
+<ul>
+<li><strong>Spin-down → cold start.</strong> The service sleeps after ~15 min idle; the first
+  request after that takes tens of seconds to wake. Acceptable for v1; if it
+  matters later, add a keep-warm ping or move to a cheap paid tier.</li>
+<li><strong>Latency is the external APIs, not Render.</strong> Users wait on the UCSC + <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>
+  round-trips. A small in-memory cache covers repeat lookups.</li>
+<li><strong>Single instance = one IP.</strong> The free tier is one process, which is the
+  natural place for the in-memory cache <em>and</em> the UCSC ~1 req/s throttle — one
+  cache, one rate limiter, no coordination across instances.</li>
+<li><strong>Stateless, no disk</strong> — matches the ephemeral filesystem; nothing to persist.</li>
+</ul>
+<h2 id="1-v1-implementation-reuse-the-existing-pipeline-no-new-command">1. v1 implementation — reuse the existing pipeline (no new command)<a class="headerlink" href="#1-v1-implementation-reuse-the-existing-pipeline-no-new-command" title="Permanent link">¶</a></h2>
+<p><strong>Decision:</strong> v1 is a thin web service that calls the existing pipeline as a
+<strong>library</strong> — no <code>small one</code> / <code>fusion one</code> <abbr title="Command-Line Interface">CLI</abbr> command, no <code>make_variant</code>
+refactor, and <strong>no new input validation</strong>. The service is the only new code.</p>
+<p>Why this is enough: the core is already per-variant, and the file path already
+validates input at both levels, so the service inherits all of it:</p>
+<ul>
+<li><code>io/maf.load_maf</code> — unreadable / empty file and <strong>missing required columns</strong> →
+  <code>MafError</code> (with a remap hint); optional label columns defaulted.</li>
+<li><code>io/maf.parse_variant_row</code> (per row) — <code>normalise_chrom</code>, numeric-position
+  coercion, <code>validate_coordinates</code>, <code>validate_allele</code> → a skip reason the loop
+  aggregates. Fusions: <code>io/breakpoints.parse_fusion_row</code> (chrom / pos / strand).</li>
+</ul>
+<p>The validators (<code>validate_coordinates</code>, <code>validate_allele</code>, <code>normalise_chrom</code>)
+are already standalone pure functions; <code>parse_*_row</code> is just pandas extraction
+around them. So <strong>no input validation is written or duplicated</strong> for v1.</p>
+<p>What the service adds — at its own layer, not in core:</p>
+<ul>
+<li><strong>Small-input cap (UI / service only).</strong> Reject inputs over ~10 records
+  <em>after</em> parse, with a clear "≤10 records in the hosted UI" message. This is a
+  hosting <em>policy</em> guard (protect the shared instance / the <abbr title="Application Programming Interface">API</abbr> rate limit),
+  deliberately <strong>not</strong> placed in <code>run</code>: a hard cap there would regress
+  legitimate local-file batch users (no rate limit on the local path; the
+  existing soft warning at &gt;50 in <code>small.py</code> is already tied to
+  <code>--pop-source api</code>, the correct condition).</li>
+<li><strong>HTTP mapping.</strong> Translate <code>MafError</code> / <code>VflankError</code> → 4xx; surface per-row
+  skip reasons in the response body.</li>
+<li><strong>Input plumbing.</strong> <code>load_maf</code> takes a path, so the service writes the
+  uploaded text to a temp file (fine on Render's ephemeral FS) — or a one-line
+  refactor lets <code>load_maf</code> accept a file-like buffer.</li>
+</ul>
+<p>Scope guardrail (per CLAUDE.md): the service emits the masked target sequence and
+the Olivar / Primer3 emit formats; it does not become a primer designer.</p>
+<h3 id="the-v1-form-3-controls">The v1 form (3 controls)<a class="headerlink" href="#the-v1-form-3-controls" title="Permanent link">¶</a></h3>
+<p>The UI is a <strong>parameter + upload</strong> form — not a structured per-variant form — so
+it maps one-to-one onto existing pipeline parameters and needs no <code>make_variant</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Form control</th>
+<th>Maps to</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Small vs Fusion</strong></td>
+<td><code>small run</code> vs <code>fusion run</code> pipeline</td>
+<td>both paths already exist</td>
+</tr>
+<tr>
+<td><strong><abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr> vs <abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr></strong></td>
+<td><code>--genome-build hg19</code> / <code>hg38</code></td>
+<td>both builds supported end-to-end</td>
+</tr>
+<tr>
+<td><strong>Upload file</strong></td>
+<td><abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> (small) or breakpoint TSV (fusion)</td>
+<td>service writes to a temp file → <code>load_maf</code> / <code>load_sv_table</code></td>
+</tr>
+</tbody>
+</table>
+<p>Everything else takes a default hidden in v1 (flank ±200, <abbr title="Allele Frequency — fraction of chromosomes carrying the allele (AC / AN)">AF</abbr> threshold 0.001,
+pop-data genome) and is exposed later if needed. Sources are fixed for the
+hosted service: <code>--ref-source api</code> (UCSC) + <code>--pop-source api</code>.</p>
+<h3 id="deferred-only-if-a-structured-variant-form-ux-is-later-preferred">Deferred (only if a structured-variant form UX is later preferred)<a class="headerlink" href="#deferred-only-if-a-structured-variant-form-ux-is-later-preferred" title="Permanent link">¶</a></h3>
+<p>A browser <strong>form</strong> (type <code>chr/pos/ref/alt</code>, or two breakpoints) is a nicer
+single-variant UX than uploading a tiny <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr>, but it needs structured input that
+doesn't flow through pandas. That — and only that — is when the following earn
+their place, and even then they <strong>reuse the same validators</strong>, not new logic:</p>
+<ul>
+<li><code>core/variant.make_variant(...)</code> / <code>core/fusion.make_fusion(...)</code> — thin, pure
+  orchestration of the existing validators minus pandas; <code>parse_*_row</code> delegates
+  to them (removing the pandas/validation coupling).</li>
+<li>Optional <code>small one</code> / <code>fusion one</code> <abbr title="Command-Line Interface">CLI</abbr> commands as terminal conveniences over
+  the same builders.</li>
+</ul>
+<p>This keeps v1 minimal while leaving a clean, non-duplicating path to the form UX
+if/when it's wanted.</p>
+<h2 id="2-api-backed-sources-what-makes-a-stateless-server-possible">2. <abbr title="Application Programming Interface">API</abbr>-backed sources — what makes a stateless server possible<a class="headerlink" href="#2-api-backed-sources-what-makes-a-stateless-server-possible" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr></strong>: already implemented (<code>core/popfreq_api.GnomadApiSource</code>,
+  <code>--pop-source api</code>). Rate limit (~10 req/60 s) rules out bulk but is a
+  non-issue for interactive single-variant use (~1 request per variant window).</li>
+<li><strong>Reference</strong>: <code>ReferenceApiSource</code> mirroring <code>ReferenceFasta.fetch()</code> — see
+  <code>genome-api.md</code>. UCSC preferred (0-based half-open coords + <code>hg19</code>/<code>hg38</code>
+  genome names match the codebase exactly; no coordinate translation). <strong>This is
+  the one new core piece v1 requires</strong> — without it the hosted service has no
+  reference, since Render carries no local <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>. Wire it behind a
+  <code>--ref-source file|api</code> flag mirroring <code>--pop-source</code>.</li>
+</ul>
+<p>With both, the hosted service needs <strong>no local <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>/<abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr></strong> — it can be a small
+stateless container. Reference sequence is immutable, so the reproducibility
+caveat that keeps the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> <em>optional</em> does not apply to the reference <abbr title="Application Programming Interface">API</abbr>.</p>
+<p><strong>Build-guard consequence.</strong> Today <code>ReferenceFasta</code> fingerprints the build by
+chr1 length to catch <abbr title="human genome build 19 (== GRCh37)">hg19</abbr>/<abbr title="human genome build 38 (== GRCh38)">hg38</abbr> mix-ups. With an <abbr title="Application Programming Interface">API</abbr> reference there is no local
+<abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> to fingerprint, so the service instead <strong>trusts the build the form
+selects</strong> (the <abbr title="Application Programming Interface">API</abbr> serves exactly that assembly). <code>ReferenceApiSource</code> should
+still pass the selected build through to the <abbr title="Application Programming Interface">API</abbr> and surface a clear error if
+the <abbr title="Application Programming Interface">API</abbr> rejects it — no silent fallback.</p>
+<h2 id="3-bam-input-deferred-to-v2-the-one-input-that-cant-be-an-api">3. <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> input — deferred to v2 (the one input that can't be an <abbr title="Application Programming Interface">API</abbr>)<a class="headerlink" href="#3-bam-input-deferred-to-v2-the-one-input-that-cant-be-an-api" title="Permanent link">¶</a></h2>
+<p><strong>Deferred to v2</strong> (see the v1 scope decision above). Captured here so the
+research isn't lost. Reference and <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> can be remote calls; <strong>patient reads
+cannot</strong> — BAMs are large and are PHI. The right axis for choosing is <em>where the
+reads live and who sees them</em>, with file size secondary. Single-variant scope
+helps every option: you only ever need one ±flank window, never the whole <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>.</p>
+<h3 id="bam-input-options-v2"><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>-input options (v2)<a class="headerlink" href="#bam-input-options-v2" title="Permanent link">¶</a></h3>
+<p><em>Reads never leave the user's machine:</em></p>
+<ol>
+<li><strong>Client-side WASM (biowasm/Aioli)</strong> — local file picker, <code>.bai</code> ranged read,
+   consensus in the tab. Strongest privacy; works even on static Pages. Cost:
+   WASM engine + the pure overlay ported to JS/Rust. (Detailed below.)</li>
+<li><strong>Client-side slice → upload only the window (hybrid)</strong> — browser extracts the
+   ±flank mini-<abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> (<code>samtools view -b region</code> in WASM, a few KB) and uploads only
+   that slice to a backend running the <strong>real pysam <code>BamConsensusSource</code></strong>.
+   Reuses the Python core verbatim; KB not GB; only reads near one locus leave
+   the machine.</li>
+</ol>
+<p><em>Reads (or a slice) transit your server:</em></p>
+<ol>
+<li><strong>Server-side ranged fetch from a user-provided URL</strong> — pysam/htslib opens a
+   <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>/CRAM over <code>https://</code>/<code>s3://</code> and reads only indexed byte ranges; the file
+   stays in the user's bucket (signed URL). IGV-style. <code>BamConsensusSource</code> works
+   with a URL instead of a path. Needs the <code>.bai</code> alongside + access.</li>
+<li><strong>GA4GH htsget</strong> — standardized authorized, region-scoped read streaming.
+   Purpose-built, but needs an htsget server to exist (most labs don't run one).</li>
+<li><strong>Full server-side upload</strong> — simplest to build (reuses everything), worst on
+   PHI and size; for single-variant, options 2–3 dominate it.</li>
+</ol>
+<p><em>Reads stay in the secure pipeline:</em></p>
+<ol>
+<li><strong>Pre-compute, serve the derived sequence</strong> — run consensus offline
+   (<abbr title="Command-Line Interface">CLI</abbr>/Nextflow) in the secure environment; the web tool consumes only the
+   already-masked per-variant sequence. Zero <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> in the app; not interactive for
+   new variants.</li>
+</ol>
+<p><em>Ruled out:</em> <strong>Pyodide + pysam</strong> in-browser (htslib C not readily available in
+Pyodide) — hence WASM uses samtools-wasm + a ported overlay, not Python.</p>
+<p><em>Cross-cutting:</em> <strong>CRAM</strong> (smaller, same indexed ranged access) helps 2–4.
+<strong>Host shape constrains the set</strong> — static Pages can do #1 (and #3 if the bucket
+sends CORS); a server unlocks #2–#6.</p>
+<h3 id="option-1-in-detail-wasm-resolves-the-privacy-tension">Option 1 in detail — WASM resolves the privacy tension<a class="headerlink" href="#option-1-in-detail-wasm-resolves-the-privacy-tension" title="Permanent link">¶</a></h3>
+<p>WASM lets you run <code>samtools</code> <strong>client-side in the browser</strong>, so reads never leave
+the user's machine.</p>
+<p><strong>Tooling:</strong> <a href="https://biowasm.com/">biowasm</a> compiles <code>samtools</code> (and htslib,
+<code>bcftools</code>, etc.) to WebAssembly; <a href="https://github.com/biowasm/aioli">Aioli</a> runs
+them in a WebWorker with a virtual filesystem and <strong>lazy byte-range reads of
+local files</strong>.</p>
+<p>Why this fits vflank specifically:</p>
+<ul>
+<li><strong>Tiny windows.</strong> vflank reads only ±<code>flank</code> bp (default 200) around the
+  variant. With the <code>.bai</code> index, samtools does a <em>ranged</em> read — a few KB of
+  BGZF blocks, not the whole <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>. Aioli's lazy local-file reads are the best case
+  for this access pattern; the whole <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> is never loaded into the tab.</li>
+<li><strong>Engine already pluggable.</strong> <code>bam-consensus.md</code> defines
+  <code>--bam-engine {samtools,pileup}</code> and delegates base-calling to
+  <code>samtools consensus</code>. A browser/WASM path is the <em>same samtools engine on a
+  different host</em>, not a new algorithm.</li>
+<li><strong>Overlay already pure.</strong> <code>apply_lowcov_overlay</code> / <code>mask_sequence</code> /
+  <code>normalise_chrom</code> were deliberately kept pure (CLAUDE.md: portable to Rust).
+  Porting the small overlay to JS or Rust→WASM is the move the design already
+  anticipated. Split: <code>samtools-wasm</code> does base-calling; the ported pure overlay
+  does the <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>-low-coverage layering and insertion masking.</li>
+</ul>
+<p>Caveats / things to confirm:</p>
+<ul>
+<li><strong>Confirm the WASM samtools build exposes the <code>consensus</code> subcommand.</strong> It
+  needs samtools ≥ 1.16 (where <code>consensus</code> was introduced); biowasm ships 1.17/
+  1.18 (verified below), so the version is sufficient — confirm the compiled
+  module includes the subcommand at runtime.</li>
+<li>You'd run <code>samtools-wasm</code> + a ported overlay in the browser, <strong>not</strong> vflank's
+  Python. The alternative — all of vflank via <strong>Pyodide</strong> (CPython-on-WASM) —
+  founders on pysam (htslib C wrapper, not readily available in Pyodide). Don't
+  lead with Pyodide; the biowasm-engine + ported-overlay route is lighter and
+  more proven.</li>
+</ul>
+<h2 id="4-hosting-options">4. Hosting options<a class="headerlink" href="#4-hosting-options" title="Permanent link">¶</a></h2>
+<p>Two fundamentally different shapes, driven by <strong>where the kernel runs</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>Model</th>
+<th>Runs the Python core?</th>
+<th>Cost / ops</th>
+<th>Fit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GitHub Pages / Netlify / Cloudflare Pages</strong></td>
+<td>Fully static</td>
+<td><strong>No</strong> — kernel must be ported to JS/WASM (or Pyodide)</td>
+<td>Free, zero infra, no server to scale</td>
+<td>Public demo / truly serverless <strong>end-state</strong>; biggest lift</td>
+</tr>
+<tr>
+<td><strong>Render / Fly.io / Railway / Cloud Run</strong></td>
+<td>Small server</td>
+<td><strong>Yes</strong> — keeps existing FastAPI + Python core</td>
+<td>Cheap; free tiers spin down (cold starts)</td>
+<td><strong>Fastest path</strong>; reuses all current code</td>
+</tr>
+<tr>
+<td><strong>Pages frontend + small <abbr title="Application Programming Interface">API</abbr> backend</strong></td>
+<td>Hybrid</td>
+<td>Yes (backend only)</td>
+<td>Free frontend + cheap backend</td>
+<td>Pragmatic middle for a public-facing tool</td>
+</tr>
+</tbody>
+</table>
+<p>Decision drivers:</p>
+<ul>
+<li><strong>Static-only (Pages) requires browser CORS on every external call.</strong> Verified
+  (below): <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> and <strong>Ensembl</strong> both send <code>Access-Control-Allow-Origin: *</code>, so
+  a static app can call both directly. <strong>UCSC apparently does not</strong> set CORS for
+  browser use — so a Pages app must use Ensembl for the reference, or proxy UCSC
+  (a proxy means a server, defeating Pages-only).</li>
+<li><strong>Static-only also requires porting the kernel</strong> (flank math + masking) to
+  JS/WASM. That's real work but keeps the pure-function discipline honest.</li>
+<li><strong>A server (Render et al.) sidesteps both:</strong> keep the Python kernel; server-side
+  <abbr title="Application Programming Interface">API</abbr> calls avoid CORS entirely; the server stays stateless because reference +
+  <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> are APIs.</li>
+<li><strong>The <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> step is client-side WASM regardless of host</strong> — so PHI never touches
+  the chosen platform. That's a strong property when hosting patient-adjacent
+  tooling on a third-party PaaS: no patient reads on Render/Pages, ever.</li>
+</ul>
+<h2 id="verification-log-2026-06-14">Verification log (2026-06-14)<a class="headerlink" href="#verification-log-2026-06-14" title="Permanent link">¶</a></h2>
+<p><strong>Environment limitation, stated up front.</strong> This session's network policy
+<strong>blocks direct egress</strong> to the genome/annotation <abbr title="Application Programming Interface">API</abbr> hosts — <code>curl</code> to
+<code>api.genome.ucsc.edu</code>, <code>rest.ensembl.org</code>, and <code>gnomad.broadinstitute.org</code> all
+returned <code>HTTP 403</code> (an egress proxy block, not the APIs themselves);
+<code>raw.githubusercontent.com</code> was reachable (<code>301</code>). So CORS could <strong>not</strong> be
+confirmed by capturing live response headers here. The findings below are from
+<strong>authoritative source/docs</strong>, which is conclusive for the source-backed items
+and strong (but not a live header capture) for the doc-backed ones. The one
+cheap final step — open a browser, run <code>fetch()</code> from a throwaway origin, read
+the <code>Access-Control-Allow-Origin</code> header in devtools — is noted per item.</p>
+<h3 id="confirmed-gnomad-api-is-browser-cors-safe">CONFIRMED — <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> is browser-CORS-safe<a class="headerlink" href="#confirmed-gnomad-api-is-browser-cors-safe" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Evidence (source):</strong> <code>broadinstitute/gnomad-browser</code>,
+  <code>graphql-api/src/app.ts</code> imports <code>cors</code> and calls <code>app.use(cors())</code> with no
+  arguments. The <code>cors</code> package's default config emits
+  <code>Access-Control-Allow-Origin: *</code>.</li>
+<li><strong>Conclusion:</strong> a static browser app can POST GraphQL to
+  <code>https://gnomad.broadinstitute.org/api</code> cross-origin. Rate limit (~10/60 s)
+  still applies but is irrelevant for single-variant interactive use.</li>
+<li><strong>Confidence:</strong> high (server source). Live header check optional.</li>
+</ul>
+<h3 id="confirmed-ensembl-rest-is-browser-cors-safe">CONFIRMED — Ensembl REST is browser-CORS-safe<a class="headerlink" href="#confirmed-ensembl-rest-is-browser-cors-safe" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Evidence (docs):</strong> the official Ensembl wiki page <em>CORS And JSONP</em>
+  (<code>Ensembl/ensembl-rest</code>) states Ensembl REST returns
+  <code>Access-Control-Allow-Origin: *</code> whenever an <code>Origin</code> request header is sent,
+  and calls CORS "the best way to access data in Ensembl REST from a browser."</li>
+<li><strong>Conclusion:</strong> Ensembl REST is usable directly from a static browser app.
+  Note: <abbr title="Genome Reference Consortium human build 37 (== hg19)">GRCh37</abbr> lives on <code>grch37.rest.ensembl.org</code> (separate host); 1-based
+  coordinates need a <code>+1</code> conversion vs. our 0-based half-open interface.</li>
+<li><strong>Confidence:</strong> high (vendor docs). Live header check optional.</li>
+</ul>
+<h3 id="likely-not-browser-cors-safe-ucsc-rest-api">LIKELY NOT browser-CORS-safe — UCSC REST <abbr title="Application Programming Interface">API</abbr><a class="headerlink" href="#likely-not-browser-cors-safe-ucsc-rest-api" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Evidence (community + docs):</strong> a UCSC <code>genome</code> mailing-list thread ("Our web
+  application got blocked by api.genome.ucsc.edu") and multiple community
+  write-ups indicate browser apps hit CORS blocking and/or aggressive
+  rate-limit blocking against <code>api.genome.ucsc.edu</code>, with a <strong>server-side proxy</strong>
+  given as the standard workaround. The UCSC <abbr title="Application Programming Interface">API</abbr> help page itself does not
+  advertise CORS support, and recommends ~1 request/second.</li>
+<li><strong>Conclusion / impact:</strong> UCSC is <strong>not</strong> a safe direct-from-browser reference
+  source. This <strong>changes the reference-<abbr title="Application Programming Interface">API</abbr> choice by host</strong> (see correction
+  below). It remains fine behind a server (server-side calls need no CORS).</li>
+<li><strong>Confidence:</strong> medium-high (community + absence of vendor CORS docs);
+  could not capture the header here (egress blocked). A live devtools/curl
+  check from an unrestricted network is the recommended final confirmation
+  before relying on it either way.</li>
+</ul>
+<h3 id="confirmed-biowasm-samtools-includes-consensus">CONFIRMED — biowasm samtools includes <code>consensus</code><a class="headerlink" href="#confirmed-biowasm-samtools-includes-consensus" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Evidence (build recipe):</strong> <code>biowasm/biowasm</code> <code>tools/samtools/compile.sh</code>
+  runs <code>emmake make samtools</code> with only <code>--without-curses</code> (disables the curses
+  TUI <code>tview</code>, <strong>not</strong> subcommands) — i.e. a full samtools build, no subcommand
+  exclusions. The CDN offers samtools <strong>1.17 / 1.18</strong>, both ≥ 1.16 where
+  <code>consensus</code> was introduced.</li>
+<li><strong>Conclusion:</strong> <code>samtools consensus</code> is compiled into the WASM module.</li>
+<li><strong>Confidence:</strong> high for "compiled in." A <strong>runtime smoke test</strong> (load the
+  module via Aioli and run <code>samtools consensus</code> on a tiny indexed <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> in a
+  WebWorker) is still worth doing once, to confirm behaviour end-to-end.</li>
+</ul>
+<h3 id="correction-this-verification-forces">Correction this verification forces<a class="headerlink" href="#correction-this-verification-forces" title="Permanent link">¶</a></h3>
+<p>The earlier lean toward <strong>UCSC</strong> as the reference <abbr title="Application Programming Interface">API</abbr> (in <code>genome-api.md</code>, for
+its 0-based coords and <code>hg19</code>/<code>hg38</code> names) holds <strong>only for a server host</strong>.
+For a <strong>static / GitHub Pages</strong> app the reference <abbr title="Application Programming Interface">API</abbr> must be browser-CORS-safe,
+and UCSC apparently is not — so the static-case reference source should be
+<strong>Ensembl</strong> (CORS <code>*</code>), accepting the <code>+1</code> coordinate conversion and the
+per-build host split. Summary:</p>
+<table>
+<thead>
+<tr>
+<th>Host shape</th>
+<th>Reference <abbr title="Application Programming Interface">API</abbr></th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server (Render etc.)</td>
+<td><strong>UCSC</strong></td>
+<td>server-side call, no CORS needed; nicer coords</td>
+</tr>
+<tr>
+<td>Static (Pages)</td>
+<td><strong>Ensembl</strong></td>
+<td>CORS <code>*</code> confirmed; UCSC needs a proxy</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why a server host removes the UCSC CORS problem:</strong> CORS is enforced <em>only by
+the browser</em> on cross-origin JavaScript requests; server-to-server HTTP is not
+subject to it. On a server host the call chain is browser → your backend (same
+origin) → UCSC (server-side, no CORS), so UCSC's missing CORS header never comes
+into play — exactly how <code>GnomadApiSource</code> already calls <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> server-side. What
+still does <em>not</em> work on any host is the <strong>browser</strong> calling UCSC directly;
+hosting location doesn't change that, because it's the request <em>origin</em> (server
+vs. browser), not where the frontend is served, that matters. Caveat for the
+server case: all users' UCSC calls share the server's IP, so honour UCSC's
+~1 req/s guidance with caching/throttling (it has blocked web apps that didn't),
+and Render's free tier cold-starts after idle.</p>
+<h3 id="still-open">Still open<a class="headerlink" href="#still-open" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>UCSC CORS — live header capture</strong> from an unrestricted network (devtools or
+  <code>curl -I</code> with an <code>Origin</code> header) to upgrade the UCSC finding from
+  "likely/medium-high" to confirmed.</li>
+<li><strong>Local <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> range-read ergonomics</strong> in Aioli for a user-picked <code>.bam</code> + <code>.bai</code>
+  (File System Access <abbr title="Application Programming Interface">API</abbr> vs. <code>File.slice</code>) on the target browsers.</li>
+</ul>
+<h2 id="scope-guardrail">Scope guardrail<a class="headerlink" href="#scope-guardrail" title="Permanent link">¶</a></h2>
+<p>Whatever the host, vflank stays the variant-aware masked-flank front-end: it
+serves target sequences and Olivar/Primer3 emit formats. A web surface does not
+justify growing a primer/probe design algorithm into this package (see
+ARCHITECTURE.md scope boundary).</p>
+<h2 id="sources">Sources<a class="headerlink" href="#sources" title="Permanent link">¶</a></h2>
+<ul>
+<li><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> CORS: <a href="https://github.com/broadinstitute/gnomad-browser/tree/main/graphql-api"><code>graphql-api</code></a>,
+  <a href="https://gnomad.broadinstitute.org/help/how-do-i-query-a-batch-of-variants-do-you-have-an-api"><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr> help</a></li>
+<li>WASM tooling: <a href="https://github.com/biowasm/biowasm">biowasm</a>,
+  <a href="https://github.com/biowasm/aioli">Aioli</a>
+
+</li>
+</ul>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 00:00:37 UTC"><span class="timeago" datetime="2026-06-15T00:00:37+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 00:00:37 UTC">2026-06-15</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 14, 2026 15:46:00 UTC"><span class="timeago" datetime="2026-06-14T15:46:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 14, 2026 15:46:00 UTC">2026-06-14</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="../indel-aware-consensus/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Indel-aware consensus (plan)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Indel-aware consensus (plan)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../DEVELOPER/" class="md-footer__link md-footer__link--next" aria-label="Next: Developer Guide">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Developer Guide
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2026 <a href="https://github.com/rhshah">Ronak Shah</a> — built with <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/rhshah/vFlank" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/vflank/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.path", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../js/timeago.min.js"></script>
+      
+        <script src="../../js/timeago_mkdocs_material.js"></script>
+      
+        <script src="../../assets/javascripts/panzoom.min.js"></script>
+      
+        <script src="../../assets/javascripts/zoompan.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
