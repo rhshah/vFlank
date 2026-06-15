@@ -3,23 +3,23 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="Variant-aware flanking-sequence extraction and masking for ddPCR assay design" name="description"/>
-<link href="https://rhshah.github.io/vFlank/dev/ARCHITECTURE/" rel="canonical"/>
-<link href="../reference/cli/" rel="prev"/>
-<link href="../reference/api/" rel="next"/>
-<link href="../assets/images/favicon.png" rel="icon"/>
+<link href="https://rhshah.github.io/vFlank/dev/getting-started/recommended-usage/" rel="canonical"/>
+<link href="../quickstart/" rel="prev"/>
+<link href="../../user-guide/small-variants/" rel="next"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6" name="generator"/>
-<title>Architecture - vflank</title>
-<link href="../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
-<link href="../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<title>Recommended Usage - vflank</title>
+<link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-<link href="../assets/_mkdocstrings.css" rel="stylesheet"/>
-<link href="../css/timeago.css" rel="stylesheet"/>
-<link href="../stylesheets/extra.css" rel="stylesheet"/>
-<link href="../assets/stylesheets/panzoom.css" rel="stylesheet"/>
-<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-<link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<link href="../../css/timeago.css" rel="stylesheet"/>
+<link href="../../stylesheets/extra.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/panzoom.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
             .gslide-desc { color: #666; user-select: text; }
@@ -36,7 +36,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#vflank-architecture-roadmap">
+<a class="md-skip" href="#recommended-usage">
           Skip to content
         </a>
 </div>
@@ -46,7 +46,7 @@
 </div>
 <header class="md-header md-header--shadow" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="vflank" class="md-header__button md-logo" data-md-component="logo" href=".." title="vflank">
+<a aria-label="vflank" class="md-header__button md-logo" data-md-component="logo" href="../.." title="vflank">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
@@ -62,7 +62,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Architecture
+              Recommended Usage
             
           </span>
 </div>
@@ -133,7 +133,7 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="vflank" class="md-nav__button md-logo" data-md-component="logo" href=".." title="vflank">
+<a aria-label="vflank" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="vflank">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"></path></svg>
 </a>
     vflank
@@ -150,7 +150,7 @@
 </div>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="..">
+<a class="md-nav__link" href="../..">
 <span class="md-ellipsis">
     
   
@@ -161,8 +161,8 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item md-nav__item--section md-nav__item--nested">
-<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
 <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
 <span class="md-ellipsis">
     
@@ -174,7 +174,7 @@
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<nav aria-expanded="true" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_2">
 <span class="md-nav__icon md-icon"></span>
             
@@ -185,7 +185,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../getting-started/installation/">
+<a class="md-nav__link" href="../installation/">
 <span class="md-ellipsis">
     
   
@@ -197,7 +197,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../getting-started/quickstart/">
+<a class="md-nav__link" href="../quickstart/">
 <span class="md-ellipsis">
     
   
@@ -208,8 +208,20 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../getting-started/recommended-usage/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    Recommended Usage
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
 <span class="md-ellipsis">
     
   
@@ -219,6 +231,68 @@
     
   </span>
 </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#which-mode-should-i-use">
+<span class="md-ellipsis">
+      
+        Which mode should I use?
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-two-recommended-setups">
+<span class="md-ellipsis">
+      
+        The two recommended setups
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#add-patient-consensus-best-assay-fidelity">
+<span class="md-ellipsis">
+      
+        Add patient consensus (best assay fidelity)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fusions">
+<span class="md-ellipsis">
+      
+        Fusions
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#hand-off-to-a-designer">
+<span class="md-ellipsis">
+      
+        Hand off to a designer
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-flags-worth-knowing">
+<span class="md-ellipsis">
+      
+        The flags worth knowing
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -247,7 +321,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../user-guide/small-variants/">
+<a class="md-nav__link" href="../../user-guide/small-variants/">
 <span class="md-ellipsis">
     
   
@@ -259,7 +333,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../user-guide/fusions/">
+<a class="md-nav__link" href="../../user-guide/fusions/">
 <span class="md-ellipsis">
     
   
@@ -271,7 +345,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../user-guide/masking/">
+<a class="md-nav__link" href="../../user-guide/masking/">
 <span class="md-ellipsis">
     
   
@@ -283,7 +357,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../user-guide/consensus/">
+<a class="md-nav__link" href="../../user-guide/consensus/">
 <span class="md-ellipsis">
     
   
@@ -298,7 +372,7 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../reference/cli/">
+<a class="md-nav__link" href="../../reference/cli/">
 <span class="md-ellipsis">
     
   
@@ -309,8 +383,8 @@
   </span>
 </a>
 </li>
-<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
 <span class="md-ellipsis">
     
@@ -322,7 +396,7 @@
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="true" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_5">
 <span class="md-nav__icon md-icon"></span>
             
@@ -332,20 +406,8 @@
 
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-<span class="md-ellipsis">
-    
-  
-    Architecture
-  
-
-    
-  </span>
-<span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../ARCHITECTURE/">
 <span class="md-ellipsis">
     
   
@@ -355,75 +417,9 @@
     
   </span>
 </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#what-vflank-is-and-is-not">
-<span class="md-ellipsis">
-      
-        What vflank is (and is not)
-      
-    </span>
-</a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#flank-source-strategy-modes">
-<span class="md-ellipsis">
-      
-        Flank source strategy (modes)
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#module-map">
-<span class="md-ellipsis">
-      
-        Module map
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#origin">
-<span class="md-ellipsis">
-      
-        Origin
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#roadmap">
-<span class="md-ellipsis">
-      
-        Roadmap
-      
-    </span>
-</a>
-<nav aria-label="Roadmap" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#top-risks">
-<span class="md-ellipsis">
-      
-        Top risks
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../reference/api/">
+<a class="md-nav__link" href="../../reference/api/">
 <span class="md-ellipsis">
     
   
@@ -435,7 +431,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../reference/glossary/">
+<a class="md-nav__link" href="../../reference/glossary/">
 <span class="md-ellipsis">
     
   
@@ -470,7 +466,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/emit-formats/">
+<a class="md-nav__link" href="../../research/emit-formats/">
 <span class="md-ellipsis">
     
   
@@ -482,7 +478,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/gnomad-api/">
+<a class="md-nav__link" href="../../research/gnomad-api/">
 <span class="md-ellipsis">
     
   
@@ -494,7 +490,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/genome-api/">
+<a class="md-nav__link" href="../../research/genome-api/">
 <span class="md-ellipsis">
     
   
@@ -506,7 +502,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/sv-vcf-input/">
+<a class="md-nav__link" href="../../research/sv-vcf-input/">
 <span class="md-ellipsis">
     
   
@@ -518,7 +514,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/bam-consensus/">
+<a class="md-nav__link" href="../../research/bam-consensus/">
 <span class="md-ellipsis">
     
   
@@ -530,7 +526,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/indel-aware-consensus/">
+<a class="md-nav__link" href="../../research/indel-aware-consensus/">
 <span class="md-ellipsis">
     
   
@@ -542,7 +538,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../research/web-app-and-hosting/">
+<a class="md-nav__link" href="../../research/web-app-and-hosting/">
 <span class="md-ellipsis">
     
   
@@ -583,7 +579,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../DEVELOPER/">
+<a class="md-nav__link" href="../../DEVELOPER/">
 <span class="md-ellipsis">
     
   
@@ -595,7 +591,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../changelog/">
+<a class="md-nav__link" href="../../changelog/">
 <span class="md-ellipsis">
     
   
@@ -624,62 +620,58 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#what-vflank-is-and-is-not">
+<a class="md-nav__link" href="#which-mode-should-i-use">
 <span class="md-ellipsis">
       
-        What vflank is (and is not)
+        Which mode should I use?
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#flank-source-strategy-modes">
+<a class="md-nav__link" href="#the-two-recommended-setups">
 <span class="md-ellipsis">
       
-        Flank source strategy (modes)
+        The two recommended setups
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#module-map">
+<a class="md-nav__link" href="#add-patient-consensus-best-assay-fidelity">
 <span class="md-ellipsis">
       
-        Module map
+        Add patient consensus (best assay fidelity)
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#origin">
+<a class="md-nav__link" href="#fusions">
 <span class="md-ellipsis">
       
-        Origin
+        Fusions
       
     </span>
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#roadmap">
+<a class="md-nav__link" href="#hand-off-to-a-designer">
 <span class="md-ellipsis">
       
-        Roadmap
-      
-    </span>
-</a>
-<nav aria-label="Roadmap" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#top-risks">
-<span class="md-ellipsis">
-      
-        Top risks
+        Hand off to a designer
       
     </span>
 </a>
 </li>
-</ul>
-</nav>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-flags-worth-knowing">
+<span class="md-ellipsis">
+      
+        The flags worth knowing
+      
+    </span>
+</a>
 </li>
 </ul>
 </nav>
@@ -690,125 +682,29 @@
 <nav aria-label="Navigation" class="md-path">
 <ol class="md-path__list">
 <li class="md-path__item">
-<a class="md-path__link" href="..">
+<a class="md-path__link" href="../..">
 <span class="md-ellipsis">
     Home
   </span>
 </a>
 </li>
 <li class="md-path__item">
-<a class="md-path__link" href="./">
+<a class="md-path__link" href="../installation/">
 <span class="md-ellipsis">
-    How It Works
+    Getting Started
   </span>
 </a>
 </li>
 </ol>
 </nav>
 <article class="md-content__inner md-typeset">
-<h1 id="vflank-architecture-roadmap">vflank — Architecture &amp; Roadmap<a class="headerlink" href="#vflank-architecture-roadmap" title="Permanent link">¶</a></h1>
-<h2 id="what-vflank-is-and-is-not">What vflank is (and is not)<a class="headerlink" href="#what-vflank-is-and-is-not" title="Permanent link">¶</a></h2>
-<p>vflank is the <strong>variant-aware, optionally patient-specific, masked-flank
-front-end</strong> of a <abbr title="digital droplet PCR — the partitioned PCR assay vflank's flanks feed into">ddPCR</abbr> assay-design pipeline. It extracts the sequence flanking
-each variant and masks positions that would compromise a primer/probe, then
-emits clean targets in designer-native formats.</p>
-<p>It is <strong>not</strong> a primer designer. Design is delegated downstream:</p>
-<table>
-<thead>
-<tr>
-<th>Path</th>
-<th>Designer</th>
-<th>Why</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Small variants (<abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr>/<abbr title="insertion or deletion">indel</abbr>)</td>
-<td><strong>Olivar</strong> (SADDLE, risk-array)</td>
-<td>Built for variant-aware multiplex/tiled amplicons.</td>
-</tr>
-<tr>
-<td>Fusion junction</td>
-<td><strong>Primer3</strong></td>
-<td>Single junction-spanning hybridisation probe.</td>
-</tr>
-</tbody>
-</table>
-<p>Olivar is <strong>GPL-3.0</strong> and pulls in BLAST/MAFFT/NumPy&lt;2, so it is invoked
-<strong>out-of-process</strong> (<abbr title="Command-Line Interface">CLI</abbr> / container), keeping vflank permissively licensed and
-the dependency graph clean. Orchestration across samples/tools is a <strong>Nextflow</strong>
-layer that wraps the stable CLIs in per-process containers — added last, never a
-prerequisite for the standalone <abbr title="Command-Line Interface">CLI</abbr>.</p>
-<div class="panzoom-box" data-key="none" id="panzoom0" oncontextmenu="return false;">
-<nav class="panzoom-nav">
-<button class="panzoom-reset panzoom-button">
-<svg class="panzoom-icon" viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path d="M125.7 160l50.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L48 224c-17.7 0-32-14.3-32-32L16 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"></path>
-</svg>
-</button><button class="panzoom-max panzoom-button">
-<svg class="panzoom-icon" viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"></path>
-</svg>
-</button><button class="panzoom-min panzoom-button panzoom-hidden">
-<svg class="panzoom-icon" viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-<path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 320c-17.7 0-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z"></path>
-</svg>
-</button>
-</nav>
-<pre class="mermaid"><code>flowchart LR
-    REF[("ref FASTA")] --&gt; VF
-    POP[("gnomAD VCFs")] --&gt; VF
-    BAM[("sample BAM<br/>optional")] --&gt; VF
-    subgraph VF["vflank front-end · flank + mask"]
-        SV["small variants<br/>FASTA + SNP CSV"]
-        FU["fusion junction"]
-    end
-    SV --&gt; OL["Olivar"] --&gt; DD["ddPCR assays"]
-    FU --&gt; P3["Primer3"] --&gt; DD
-</code></pre>
-<div class="panzoom-info-box panzoom-info-box-bottom">
-Use mouse to pan and zoom
-</div>
-</div>
-<h2 id="flank-source-strategy-modes">Flank source strategy (modes)<a class="headerlink" href="#flank-source-strategy-modes" title="Permanent link">¶</a></h2>
-<p>A <code>FlankSource</code> decides <em>where each flank base comes from</em>:</p>
-<table>
-<thead>
-<tr>
-<th>Mode</th>
-<th>Inputs</th>
-<th>Source</th>
-<th>Masking</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A Reference</td>
-<td><abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> + <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr></td>
-<td>reference</td>
-<td>none</td>
-</tr>
-<tr>
-<td>B Reference + pop-mask</td>
-<td>+ <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr></td>
-<td>reference</td>
-<td>common SNPs → N</td>
-</tr>
-<tr>
-<td>C Consensus</td>
-<td>+ <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr></td>
-<td>patient consensus, ref fallback</td>
-<td><abbr title="heterozygous — two different alleles at a locus">het</abbr> / low-cov → N/<abbr title="International Union of Pure and Applied Chemistry — degenerate base codes (R, Y, S, W, K, M…)">IUPAC</abbr></td>
-</tr>
-<tr>
-<td>D Consensus + pop-mask</td>
-<td>all</td>
-<td>patient consensus</td>
-<td><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> ∪ observed-<abbr title="heterozygous — two different alleles at a locus">het</abbr></td>
-</tr>
-</tbody>
-</table>
-<p>The mode is selected implicitly by which inputs are present:</p>
+<h1 id="recommended-usage">Recommended Usage<a class="headerlink" href="#recommended-usage" title="Permanent link">¶</a></h1>
+<p><code>vflank</code> exposes many flags, but a real run comes down to a <strong>few decisions</strong>.
+Good defaults cover the rest (<code>--genome-build hg19</code>, <code>--flank 200</code>,
+<code>--pop-data genome</code>, <code>--af-threshold 0.001</code>). This page gives the recommended
+command for each situation; reach for the <a href="../../reference/cli/"><abbr title="Command-Line Interface">CLI</abbr> reference</a>
+only when you need an override.</p>
+<h2 id="which-mode-should-i-use">Which mode should I use?<a class="headerlink" href="#which-mode-should-i-use" title="Permanent link">¶</a></h2>
 <div class="panzoom-box" data-key="none" id="panzoom0" oncontextmenu="return false;">
 <nav class="panzoom-nav">
 <button class="panzoom-reset panzoom-button">
@@ -826,211 +722,140 @@ Use mouse to pan and zoom
 </button>
 </nav>
 <pre class="mermaid"><code>flowchart TD
-    V["flank window"] --&gt; Q1{"--bam given?"}
-    Q1 --&gt;|no| Q2{"gnomAD given?"}
-    Q1 --&gt;|yes| C["patient consensus<br/>het / low-cov → N / IUPAC"] --&gt; Q3{"gnomAD given?"}
-    Q2 --&gt;|no| A["Mode A — reference, no mask"]
-    Q2 --&gt;|yes| B["Mode B — reference + SNP mask"]
-    Q3 --&gt;|no| MC["Mode C — consensus only"]
-    Q3 --&gt;|yes| MD["Mode D — consensus + SNP mask"]
+    START["Small variants (MAF)<br/>or fusions (TSV)?"] --&gt; Q1{Reference + gnomAD<br/>already on disk?}
+    Q1 --&gt;|"No / one-off / hosted"| API["APIs<br/>--ref-source api --pop-source api"]
+    Q1 --&gt;|"Yes / bulk / must be reproducible"| LOCAL["Local files<br/>-r ref.fa -d gnomad/"]
+    API --&gt; Q2{Patient BAM<br/>available?}
+    LOCAL --&gt; Q2
+    Q2 --&gt;|No| RUN["Run → raw + Masked FASTA"]
+    Q2 --&gt;|"Yes (best fidelity)"| BAM["add --bam-map samples.tsv"]
+    BAM --&gt; RUN
+    RUN --&gt; Q3{Feed a designer?}
+    Q3 --&gt;|Primer3| EMIT["add --emit-primer3 primers.txt"]
+    Q3 --&gt;|No| DONE["Done"]
+    EMIT --&gt; DONE
 </code></pre>
 <div class="panzoom-info-box panzoom-info-box-bottom">
 Use mouse to pan and zoom
 </div>
 </div>
-<p>Mode C/D is the differentiator: patient consensus catches <strong>private/rare</strong>
-variants <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> never sees — the ones that silently break a primer for one
-patient. Consensus is delegated to <code>samtools consensus</code> (in-process via
-<code>pysam.samtools</code>), kept reference-length, with a pure low-coverage overlay and
-insertion-site flagging on top. See <a href="../research/bam-consensus/">research/bam-consensus.md</a>.</p>
-<p><strong>All four modes are implemented</strong> (<code>ReferenceFlankSource</code> for A/B,
-<code>ConsensusFlankSource</code> for C/D). The population-mask backend is pluggable behind
-a duck-typed <code>get_positions</code> interface, with two interchangeable implementations
-selected by <code>--pop-source</code>: <code>GnomadStore</code> (local VCFs) and <code>GnomadApiSource</code>
-(<abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> GraphQL <abbr title="Application Programming Interface">API</abbr>, no download, rate-limited). Both honour
-<code>--pop-data {genome,exome,both}</code> (union for <code>both</code>). See
-<a href="../research/gnomad-api/">research/gnomad-api.md</a>.</p>
-<p>The <strong>reference source</strong> is likewise pluggable, selected by <code>--ref-source</code>:
-<code>ReferenceFasta</code> (local indexed <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>, default) and <code>ReferenceApiSource</code> (UCSC
-getData/sequence <abbr title="Application Programming Interface">API</abbr>, no download — for hosted/small runs where shipping a <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>
-is impractical). Both expose the <code>fetch(bare, s0, e0)</code> window contract
-<code>ReferenceFlankSource</code> depends on. See <a href="../research/genome-api/">research/genome-api.md</a>.</p>
-<h2 id="module-map">Module map<a class="headerlink" href="#module-map" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>src/vflank/
-<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>├── core/
-<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>│   ├── chrom.py       notation detect/normalise (pure)
-<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>│   ├── variant.py     Variant dataclass + validation (pure)
-<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>│   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
-<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>│   ├── popfreq.py     gnomAD VCF resolve + parse_common_snp_positions (pure) + GnomadStore
-<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>│   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource) + pure parser
-<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>│   ├── reference_api.py reference sequence via UCSC API (ReferenceApiSource) + pure parser
-<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>│   ├── consensus.py   BAM patient consensus (modes C/D): samtools engine, pure
-<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>│   │                  low-cov overlay, insertion-site flagging
-<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>│   ├── fusion.py      Breakpoint/Fusion model, reverse-complement junction builder
-<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>│   └── skips.py       categorised skip/he reporting helpers (pure)
-<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>├── io/
-<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>│   ├── maf.py         load/remap/validate, row → Variant
-<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>│   ├── reference.py   ReferenceFasta + genome-build guard
-<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>│   ├── fasta.py       header sanitise + record format/write
-<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>│   ├── breakpoints.py SV/fusion breakpoint-TSV reader (columns matched by name)
-<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>│   └── report.py      TSV run-report writer (flexible columns)
-<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>├── cli/
-<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>│   ├── app.py         root Typer, global -v/-q/--debug, version
-<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>│   ├── small.py       run · inspect · list-vcf (+ masking, BAM, coverage flags)
-<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>│   ├── fusion.py      run (+ masking, BAM flags)
-<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>│   ├── _bam.py        --bam/--bam-map resolver + ConsensusPolicy builder
-<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a>│   ├── _masking.py    shared gnomAD source wiring
-<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a>│   └── _ui.py         parameter-echo panel
-<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a>├── logging.py         Rich console + logger
-<a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a>└── errors.py          VflankError hierarchy
+<p>The first split is the one that matters most — <strong>where the data comes from</strong> —
+and there is no single right answer; it depends on your situation.</p>
+<h2 id="the-two-recommended-setups">The two recommended setups<a class="headerlink" href="#the-two-recommended-setups" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"/><input id="__tabbed_1_2" name="__tabbed_1" type="radio"/><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 2v11h3v9l7-12h-4l4-8z"></path></svg></span> Quick / hosted / small cohort</label><label for="__tabbed_1_2"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4M4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4m0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4"></path></svg></span> Reproducible / bulk / offline</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>No local data, small inputs, or a hosted/one-off check. Fetch the reference
+and <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> over the network — <strong>nothing to download</strong>:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span>--ref-source<span class="w"> </span>api<span class="w"> </span>--pop-source<span class="w"> </span>api
 </code></pre></div>
-<p>The hot kernels (<code>parse_common_snp_positions</code>, <code>mask_sequence</code>, the consensus
-overlay) are pure
-functions over plain iterables — the natural seam to later accelerate with Rust
-(rust-htslib for consensus parity with samtools; noodles for pure-Rust <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>
-scanning). Lock correctness in Python first; port the proven bottleneck only.</p>
-<p>The layering enforces a one-way <strong>dependency rule</strong> — <code>core/</code> stays pure so its
-kernels remain unit-testable without pysam and portable to Rust:</p>
-<div class="panzoom-box" data-key="none" id="panzoom0" oncontextmenu="return false;">
-<nav class="panzoom-nav">
-<button class="panzoom-reset panzoom-button">
-<svg class="panzoom-icon" viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path d="M125.7 160l50.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L48 224c-17.7 0-32-14.3-32-32L16 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"></path>
-</svg>
-</button><button class="panzoom-max panzoom-button">
-<svg class="panzoom-icon" viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"></path>
-</svg>
-</button><button class="panzoom-min panzoom-button panzoom-hidden">
-<svg class="panzoom-icon" viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-<path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 320c-17.7 0-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z"></path>
-</svg>
-</button>
-</nav>
-<pre class="mermaid"><code>flowchart LR
-    cli["cli/<br/>Typer apps"] --&gt;|uses| io["io/<br/>file access · pysam · pandas"]
-    cli --&gt;|uses| core["core/<br/>pure domain kernels"]
-    io --&gt;|uses| core
-    core --&gt;|depends on| std(["stdlib only"])
-</code></pre>
-<div class="panzoom-info-box panzoom-info-box-bottom">
-Use mouse to pan and zoom
+<p><strong>Use when:</strong> a handful of variants, an ad-hoc check, a <abbr title="Continuous Integration">CI</abbr>/demo, or a hosted
+service with no reference on disk.</p>
+<ul>
+<li><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"></path></svg></span> Zero setup; both builds supported.</li>
+<li><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"></path></svg></span> Rate-limited (~1 req/s reference, ~10/min <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr>) → small
+  inputs only. Needs network, and the served data can change over time
+  (<strong>not</strong> reproducible) — record the run for provenance.</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p>Real cohort work, an HPC node, or anything that must be auditable and
+repeatable. Use a <strong>local indexed <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> + local <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> VCFs</strong>:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">    </span>--ref-genome<span class="w"> </span>GRCh37.fasta<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span>--pop-vcf-dir<span class="w"> </span>gnomad_v2.1.1/<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">    </span>--genome-build<span class="w"> </span>hg19
+</code></pre></div>
+<p><strong>Use when:</strong> more than a few dozen variants, a pipeline, or results you must
+reproduce later.</p>
+<ul>
+<li><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"></path></svg></span> Offline, unlimited scale, reproducible (pin the data
+  version); the build is sanity-checked against the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr>'s chr1 length.</li>
+<li><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"></path></svg></span> Requires the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> (<code>.fai</code> alongside) and per-chromosome
+  <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> VCFs on disk — see <a href="../installation/">Installation</a> and
+  <a href="../../user-guide/masking/"><abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> Masking</a> for download commands.</li>
+</ul>
 </div>
 </div>
-<h2 id="origin">Origin<a class="headerlink" href="#origin" title="Permanent link">¶</a></h2>
-<p>vflank began as two scripts: <code>get_flanking_sequence.py</code> (small variants, fully
-ported in M2 with the output format preserved) and <code>design_fusion_primers.py</code> +
-<code>config_ES_CTDNA_03.cfg</code> (a legacy Python-2 fusion script that didn't run and
-embedded a junction-corrupting <code>"-"</code>). Both have been ported / re-implemented and
-removed; the conventions recovered from them (the corrected fusion-junction
-model, iCallSV strand mapping) are captured in
-<a href="../research/sv-vcf-input/">research/sv-vcf-input.md</a>.</p>
-<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">¶</a></h2>
-<p>Shipped through <strong>v0.2.0</strong> (on PyPI + <abbr title="GitHub Container Registry">GHCR</abbr>):</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Mix and match</p>
+<p>The two backends are independent: <code>--ref-source</code> and <code>--pop-source</code> can each
+be <code>file</code> or <code>api</code>. A common middle ground is a <strong>local <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr></strong> with the
+<strong><abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> <abbr title="Application Programming Interface">API</abbr></strong> for masking (<code>-r ref.fa --pop-source api</code>), or vice versa.</p>
+</div>
+<h2 id="add-patient-consensus-best-assay-fidelity">Add patient consensus (best assay fidelity)<a class="headerlink" href="#add-patient-consensus-best-assay-fidelity" title="Permanent link">¶</a></h2>
+<p>When you have the patient's reads, build the flank from them so primers match the
+real template (catches private/rare variants <abbr title="Genome Aggregation Database — the population-frequency reference">gnomAD</abbr> never saw). Add one flag to
+either setup above:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>vflank<span class="w"> </span>small<span class="w"> </span>run<span class="w"> </span>variants.maf<span class="w"> </span>-r<span class="w"> </span>GRCh37.fasta<span class="w"> </span>-d<span class="w"> </span>gnomad_v2.1.1/<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">    </span>--bam-map<span class="w"> </span>samples.tsv<span class="w">          </span><span class="c1"># sample&lt;TAB&gt;bam_path</span>
+</code></pre></div>
+<p>Output becomes one record per (variant, sample). See <a href="../../user-guide/consensus/"><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> Consensus</a>.</p>
+<h2 id="fusions">Fusions<a class="headerlink" href="#fusions" title="Permanent link">¶</a></h2>
+<p>Identical decisions, different input (a breakpoint TSV):</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>vflank<span class="w"> </span>fusion<span class="w"> </span>run<span class="w"> </span>breakpoints.tsv<span class="w"> </span>-r<span class="w"> </span>GRCh37.fasta<span class="w"> </span>-g<span class="w"> </span>hg19<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">    </span>--pop-source<span class="w"> </span>api<span class="w">               </span><span class="c1"># optional: mask the junction flanks</span>
+</code></pre></div>
+<h2 id="hand-off-to-a-designer">Hand off to a designer<a class="headerlink" href="#hand-off-to-a-designer" title="Permanent link">¶</a></h2>
+<p>Add <code>--emit-primer3 primers.txt</code> to either command to also write a Primer3
+Boulder-IO file alongside the <abbr title="text format for nucleotide sequences (`&gt;header` + sequence lines)">FASTA</abbr> — ready for probe/primer design. See
+<a href="../../user-guide/small-variants/#emit-for-primer3">Small Variants → Emit for Primer3</a>.</p>
+<h2 id="the-flags-worth-knowing">The flags worth knowing<a class="headerlink" href="#the-flags-worth-knowing" title="Permanent link">¶</a></h2>
+<p>Everything else is an override with a sensible default. These are the ones you
+might actually change:</p>
 <table>
 <thead>
 <tr>
-<th>M</th>
-<th>Deliverable</th>
-<th>State</th>
+<th>Flag</th>
+<th>Default</th>
+<th>Change it when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>M1</td>
-<td>Scaffold (src-layout, pyproject/Hatch, Typer root, logging)</td>
-<td>✅ done</td>
+<td><code>--genome-build</code> / <code>-g</code></td>
+<td><code>hg19</code></td>
+<td>your data is <abbr title="Genome Reference Consortium human build 38 (== hg38)">GRCh38</abbr> → <code>hg38</code></td>
 </tr>
 <tr>
-<td>M2</td>
-<td>Small-variant port (behaviour-preserving, testable)</td>
-<td>✅ done</td>
+<td><code>--flank</code> / <code>-f</code></td>
+<td><code>200</code></td>
+<td>you need longer/shorter design windows</td>
 </tr>
 <tr>
-<td>M3</td>
-<td>Tests + provenance (unit + integration, build guard)</td>
-<td>✅ done</td>
+<td><code>--pop-data</code></td>
+<td><code>genome</code></td>
+<td>masking near exons → <code>both</code> (genome ∪ exome)</td>
 </tr>
 <tr>
-<td>M4</td>
-<td>Fusion rewrite (Python 3, breakpoint-TSV input)</td>
-<td>✅ done</td>
+<td><code>--af-threshold</code></td>
+<td><code>0.001</code></td>
+<td>you want stricter/looser <abbr title="Single-Nucleotide Polymorphism — a common single-base population variant">SNP</abbr> masking</td>
 </tr>
 <tr>
-<td>M4.5</td>
-<td><abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr> consensus (modes C/D) + insertion flagging</td>
-<td>✅ done (0.2.0)</td>
-</tr>
-<tr>
-<td>M5</td>
-<td>MkDocs (Material + mkdocstrings, versioned via mike)</td>
-<td>✅ done</td>
-</tr>
-<tr>
-<td>M6</td>
-<td>Release (PyPI via <abbr title="OpenID Connect — the token flow used for PyPI Trusted Publishing">OIDC</abbr>; <abbr title="GitHub Container Registry">GHCR</abbr> image)</td>
-<td>✅ done (0.1.0, 0.2.0)</td>
+<td><code>--report</code></td>
+<td>off</td>
+<td>you want a per-variant TSV + skip breakdown</td>
 </tr>
 </tbody>
 </table>
-<p>Next, in priority order (each has a design note in <code>research/</code>):</p>
-<table>
-<thead>
-<tr>
-<th>Next</th>
-<th>Deliverable</th>
-<th>Design note</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>M4.5-emit</strong></td>
-<td><code>--emit olivar,primer3</code> designer-native output formats</td>
-<td><a href="../research/emit-formats/">emit-formats.md</a></td>
-</tr>
-<tr>
-<td>M-vcf</td>
-<td><abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> input — small-variant <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>, then Delly <code>CT</code>/<code>BND</code> <abbr title="Structural Variant — a large rearrangement (deletion, duplication, inversion, translocation, fusion)">SV</abbr> <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr></td>
-<td><a href="../research/sv-vcf-input/">sv-vcf-input.md</a></td>
-</tr>
-<tr>
-<td>M-<abbr title="insertion or deletion">indel</abbr></td>
-<td>Indel-aware (length-changing) consensus — option 3</td>
-<td><a href="../research/indel-aware-consensus/"><abbr title="insertion or deletion">indel</abbr>-aware-consensus.md</a></td>
-</tr>
-<tr>
-<td>M7</td>
-<td>Nextflow / nf-core pipeline (containerised)</td>
-<td>—</td>
-</tr>
-<tr>
-<td>M-rust</td>
-<td>Port the proven hot kernels to Rust (optional)</td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-<h3 id="top-risks">Top risks<a class="headerlink" href="#top-risks" title="Permanent link">¶</a></h3>
-<ol>
-<li>Reference build mismatch → silent wrong sequence — guarded in <code>reference.py</code>.</li>
-<li>pysam wheel fragility — <abbr title="Continuous Integration">CI</abbr> matrix Linux+macOS; document WSL/conda.</li>
-<li>Indel coordinate edge cases — insertion flagging shipped; length-changing
-   consensus is deferred to M-<abbr title="insertion or deletion">indel</abbr> with its own test matrix.</li>
-<li>Olivar input-schema drift — pin a version and assert columns in the emitter
-   (M4.5-emit); the dependency itself stays out-of-process (GPL isolation).</li>
-</ol>
+<p>The remaining flags (<abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> column remapping, <abbr title="Binary Alignment Map — compressed aligned-read file">BAM</abbr>-consensus tuning, sample
+filtering) are grouped into panels in <code>vflank small run --help</code> — you rarely need
+them.</p>
 <aside class="md-source-file">
 <span class="md-source-file__fact">
 <span class="md-icon" title="Last update">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 01:42:09 UTC"><span class="timeago" datetime="2026-06-15T01:42:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 01:42:09 UTC">2026-06-15</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 11:47:34 UTC"><span class="timeago" datetime="2026-06-15T11:47:34+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 11:47:34 UTC">2026-06-15</span>
 </span>
 <span class="md-source-file__fact">
 <span class="md-icon" title="Created">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
 </span>
-<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 12, 2026 14:53:47 UTC"><span class="timeago" datetime="2026-06-12T14:53:47+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 12, 2026 14:53:47 UTC">2026-06-12</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 15, 2026 11:47:34 UTC"><span class="timeago" datetime="2026-06-15T11:47:34+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 15, 2026 11:47:34 UTC">2026-06-15</span>
 </span>
 </aside>
 </article>
@@ -1045,7 +870,7 @@ model, iCallSV strand mapping) are captured in
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: CLI Reference" class="md-footer__link md-footer__link--prev" href="../reference/cli/">
+<a aria-label="Previous: Quick Start" class="md-footer__link md-footer__link--prev" href="../quickstart/">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
 </div>
@@ -1054,17 +879,17 @@ model, iCallSV strand mapping) are captured in
                 Previous
               </span>
 <div class="md-ellipsis">
-                CLI Reference
+                Quick Start
               </div>
 </div>
 </a>
-<a aria-label="Next: Python API" class="md-footer__link md-footer__link--next" href="../reference/api/">
+<a aria-label="Next: Small Variants" class="md-footer__link md-footer__link--next" href="../../user-guide/small-variants/">
 <div class="md-footer__title">
 <span class="md-footer__direction">
                 Next
               </span>
 <div class="md-ellipsis">
-                Python API
+                Small Variants
               </div>
 </div>
 <div class="md-footer__button md-icon">
@@ -1094,12 +919,12 @@ model, iCallSV strand mapping) are captured in
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.path", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
-<script src="../js/timeago.min.js"></script>
-<script src="../js/timeago_mkdocs_material.js"></script>
-<script src="../assets/javascripts/panzoom.min.js"></script>
-<script src="../assets/javascripts/zoompan.js"></script>
+<script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.path", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+<script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+<script src="../../js/timeago.min.js"></script>
+<script src="../../js/timeago_mkdocs_material.js"></script>
+<script src="../../assets/javascripts/panzoom.min.js"></script>
+<script src="../../assets/javascripts/zoompan.js"></script>
 <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
 document$.subscribe(()=>{ lightbox.reload(); });
 </script><script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
