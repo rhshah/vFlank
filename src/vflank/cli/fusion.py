@@ -23,11 +23,17 @@ from ..io import breakpoints as bp_io
 from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io.breakpoints import SvColumns
-from ..io.reference import ReferenceFasta
 from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
-from ._ui import echo_parameters
+from ._reference import make_reference_source, validate_ref_source
+from ._ui import (
+    PANEL_BAM,
+    PANEL_MASKING,
+    PANEL_REFERENCE,
+    PANEL_SV_COLS,
+    echo_parameters,
+)
 
 app = typer.Typer(no_args_is_help=True)
 log = get_logger()
@@ -38,8 +44,15 @@ def run(
     sv_file: Path = typer.Argument(
         ..., exists=True, help="Breakpoint TSV (chr1 pos1 str1 chr2 pos2 str2)."
     ),
-    ref_genome: Path = typer.Option(
-        ..., "--ref-genome", "-r", help="Indexed reference FASTA (.fai required)."
+    ref_genome: Path | None = typer.Option(
+        None, "--ref-genome", "-r",
+        help="Indexed reference FASTA (.fai required). Required unless --ref-source api.",
+        rich_help_panel=PANEL_REFERENCE,
+    ),
+    ref_source: str = typer.Option(
+        "file", "--ref-source",
+        help="Reference backend: file (local FASTA, default) or api (UCSC, no download).",
+        rich_help_panel=PANEL_REFERENCE,
     ),
     genome_build: str = typer.Option("hg19", "--genome-build", "-g", help="hg19 or hg38."),
     flank: int = typer.Option(
@@ -49,15 +62,19 @@ def run(
     pop_vcf_dir: Path | None = typer.Option(
         None, "--pop-vcf-dir", "-d",
         help="Directory of gnomAD VCFs to mask junction flanks. Omit to skip masking.",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_data: str = typer.Option(
-        "genome", "--pop-data", help="gnomAD data to mask against: genome, exome, or both."
+        "genome", "--pop-data", help="gnomAD data to mask against: genome, exome, or both.",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_source: str = typer.Option(
-        "vcf", "--pop-source", help="Masking backend: vcf or api (no download)."
+        "vcf", "--pop-source", help="Masking backend: vcf or api (no download).",
+        rich_help_panel=PANEL_MASKING,
     ),
     af_threshold: float = typer.Option(
-        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP."
+        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP.",
+        rich_help_panel=PANEL_MASKING,
     ),
     output: Path = typer.Option(
         Path("fusion_junctions.fasta"), "--output", "-o", help="Output FASTA file."
@@ -67,27 +84,32 @@ def run(
         help="Also write a Primer3 Boulder-IO input file (one record per junction).",
     ),
     bam: Path | None = typer.Option(
-        None, "--bam", help="Single-sample BAM for patient consensus of the junction flanks."
+        None, "--bam", help="Single-sample BAM for patient consensus of the junction flanks.",
+        rich_help_panel=PANEL_BAM,
     ),
     bam_map: Path | None = typer.Option(
-        None, "--bam-map", help="TSV (sample<TAB>bam_path) for per-fusion consensus."
+        None, "--bam-map", help="TSV (sample<TAB>bam_path) for per-fusion consensus.",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_depth: int = typer.Option(20, "--bam-min-depth"),
-    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract"),
-    bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
+    bam_min_depth: int = typer.Option(20, "--bam-min-depth", rich_help_panel=PANEL_BAM),
+    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract", rich_help_panel=PANEL_BAM),
+    bam_het_char: str = typer.Option(
+        "N", "--bam-het-char", help="Het output: N or iupac.", rich_help_panel=PANEL_BAM
+    ),
     bam_lowcov: str = typer.Option(
-        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad."
+        "gnomad", "--bam-lowcov", help="Low-coverage base: n | reference | gnomad.",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
-    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
-    chr1_col: str = typer.Option(SvColumns.chr1, "--chr1-col"),
-    pos1_col: str = typer.Option(SvColumns.pos1, "--pos1-col"),
-    str1_col: str = typer.Option(SvColumns.str1, "--str1-col"),
-    chr2_col: str = typer.Option(SvColumns.chr2, "--chr2-col"),
-    pos2_col: str = typer.Option(SvColumns.pos2, "--pos2-col"),
-    str2_col: str = typer.Option(SvColumns.str2, "--str2-col"),
-    name_col: str = typer.Option(SvColumns.name, "--name-col"),
-    sample_col: str = typer.Option(SvColumns.sample, "--sample-col"),
+    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq", rich_help_panel=PANEL_BAM),
+    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq", rich_help_panel=PANEL_BAM),
+    chr1_col: str = typer.Option(SvColumns.chr1, "--chr1-col", rich_help_panel=PANEL_SV_COLS),
+    pos1_col: str = typer.Option(SvColumns.pos1, "--pos1-col", rich_help_panel=PANEL_SV_COLS),
+    str1_col: str = typer.Option(SvColumns.str1, "--str1-col", rich_help_panel=PANEL_SV_COLS),
+    chr2_col: str = typer.Option(SvColumns.chr2, "--chr2-col", rich_help_panel=PANEL_SV_COLS),
+    pos2_col: str = typer.Option(SvColumns.pos2, "--pos2-col", rich_help_panel=PANEL_SV_COLS),
+    str2_col: str = typer.Option(SvColumns.str2, "--str2-col", rich_help_panel=PANEL_SV_COLS),
+    name_col: str = typer.Option(SvColumns.name, "--name-col", rich_help_panel=PANEL_SV_COLS),
+    sample_col: str = typer.Option(SvColumns.sample, "--sample-col", rich_help_panel=PANEL_SV_COLS),
 ):
     """Build fusion-junction sequences for a breakpoint table and write a FASTA."""
     cols = SvColumns(
@@ -98,20 +120,22 @@ def run(
             bam_min_depth, bam_call_fract, bam_het_char, bam_lowcov, bam_min_baseq, bam_min_mapq
         )
         bam_resolver, _n_bam = load_bam_resolver(bam, bam_map)
-        _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
+        _run(sv_file, ref_genome, ref_source, genome_build, flank, pop_vcf_dir, pop_data,
              pop_source, af_threshold, output, emit_primer3, cols, bam_resolver, policy)
     except VflankError as exc:
         console.print(f"[bold red]ERROR:[/bold red] {exc}")
         raise typer.Exit(1) from exc
 
 
-def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
+def _run(sv_file, ref_genome, ref_source, genome_build, flank, pop_vcf_dir, pop_data,
          pop_source, af_threshold, output, emit_primer3, cols: SvColumns, bam_resolver, policy):
     t0 = time.time()
     console.rule("[bold blue]vflank fusion run[/bold blue]")
     echo_parameters({
         "vflank version": __version__,
-        "Breakpoints": sv_file, "Reference": ref_genome, "Genome build": genome_build,
+        "Breakpoints": sv_file,
+        "Reference": (ref_genome if ref_source == "file" else "UCSC API"),
+        "Genome build": genome_build,
         "Flank": f"{flank} bp/partner", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
                     else "none"),
@@ -123,6 +147,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
     })
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
+    validate_ref_source(ref_source)
     validate_pop_options(pop_source, pop_data)
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
@@ -131,8 +156,9 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
     df = bp_io.load_sv_table(sv_file, cols)
     console.print(f"  {len(df):,} fusion(s)")
 
-    reference = ReferenceFasta(ref_genome)
-    console.print(f"[bold]Reference:[/bold] {ref_genome}  [dim]({genome_build})[/dim]")
+    reference = make_reference_source(ref_source, ref_genome, genome_build)
+    ref_label = "UCSC API" if ref_source == "api" else ref_genome
+    console.print(f"[bold]Reference:[/bold] {ref_label}  [dim]({genome_build})[/dim]")
     build_warn = reference.check_build(genome_build)
     if build_warn:
         console.print(f"  [bold yellow]⚠ {build_warn}[/bold yellow]")
@@ -230,6 +256,7 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
             "N": jr.n_masked, "Trunc": truncated,
         })
 
+    ref_api_requests = getattr(reference, "request_count", None) if ref_source == "api" else None
     reference.close()
     if gnomad is not None:
         gnomad.close()
@@ -260,12 +287,16 @@ def _run(sv_file, ref_genome, genome_build, flank, pop_vcf_dir, pop_data,
 
     mask_line = f"[bold]Bases masked:[/bold] {n_masked_total:>6,}\n" if n_masked_total else ""
     consensus_line = f"[bold]BAM consensus:[/bold] {n_consensus:>6,}\n" if bam_mode else ""
+    ref_api_line = (
+        f"[bold]Reference API req:[/bold] {ref_api_requests:>5,}\n"
+        if ref_api_requests is not None else ""
+    )
     console.print(
         f"\n[bold]Fusions:[/bold]   {len(df):>6,}\n"
         + consensus_line +
         f"[bold]Records:[/bold]   {len(records):>6,} [dim](raw + masked per fusion)[/dim]\n"
         f"[bold]Skipped:[/bold]   {skipped:>6,}\n"
-        + mask_line +
+        + mask_line + ref_api_line +
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  "
         f"[dim]({time.time() - t0:.1f}s)[/dim]"
     )

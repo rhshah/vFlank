@@ -6,6 +6,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-14
+
+### Added
+- **No-download reference via the UCSC API** (`--ref-source api`) for both
+  `small` and `fusion`: fetch each flank window from
+  `api.genome.ucsc.edu/getData/sequence` instead of a local FASTA, so a run needs
+  no multi-GB reference on disk (the prerequisite for hosting vflank as a
+  service). `--ref-source` defaults to `file`; `--ref-genome` is now optional and
+  required only for the file backend (clear error otherwise — no silent
+  fallback). The UCSC backend uses 0-based half-open coordinates (identical to
+  the local path, so flank math is unchanged), throttles to ~1 request/second,
+  caches per window, retries transient failures, and surfaces a reference-API
+  request count in the run summary and `--report` stats. See
+  `docs/research/genome-api.md`.
+
+### Changed
+- `--help` for `small`/`fusion` now groups options into labelled panels
+  (input, reference, masking, BAM, output) for readability.
+
+### Docs
+- Added a **Recommended Usage** page, a web-app/hosting design note
+  (`docs/research/web-app-and-hosting.md`), and the reference-API note
+  (`docs/research/genome-api.md`); recorded the pluggable reference source in the
+  architecture and developer guides; added PyPI/GHCR/DeepWiki badges to the
+  README and docs landing page.
+
 ## [0.3.0] - 2026-06-14
 
 ### Added
@@ -72,7 +98,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   categorised skip summary + optional TSV run report.
 - Documentation site (MkDocs Material) and GitHub Actions CI.
 
-[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/rhshah/vFlank/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rhshah/vFlank/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rhshah/vFlank/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rhshah/vFlank/releases/tag/v0.1.0

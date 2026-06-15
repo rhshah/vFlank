@@ -132,6 +132,7 @@ nav:
   - Getting Started:
       - Installation: getting-started/installation.md
       - Quick Start: getting-started/quickstart.md
+      - Recommended Usage: getting-started/recommended-usage.md
   - User Guide:
       - Small Variants: user-guide/small-variants.md
       - Fusions: user-guide/fusions.md
@@ -145,9 +146,11 @@ nav:
       - Research notes:
           - Emit formats (Olivar/Primer3): research/emit-formats.md
           - gnomAD API: research/gnomad-api.md
+          - Reference (genome) API: research/genome-api.md
           - SV / VCF input: research/sv-vcf-input.md
           - BAM consensus: research/bam-consensus.md
           - Indel-aware consensus (plan): research/indel-aware-consensus.md
+          - Web app & hosting (plan): research/web-app-and-hosting.md
   - Development:
       - Developer Guide: DEVELOPER.md
       - Changelog: changelog.md

@@ -30,11 +30,19 @@ from ..io import fasta as fasta_io
 from ..io import maf as maf_io
 from ..io import report as report_io
 from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
-from ..io.reference import ReferenceFasta
 from ..logging import console, get_logger
 from ._bam import build_consensus_policy, load_bam_resolver
 from ._masking import make_pop_source, validate_pop_options
-from ._ui import echo_parameters
+from ._reference import make_reference_source, validate_ref_source
+from ._ui import (
+    PANEL_ADVANCED,
+    PANEL_BAM,
+    PANEL_FILTER,
+    PANEL_MAF_COLS,
+    PANEL_MASKING,
+    PANEL_REFERENCE,
+    echo_parameters,
+)
 
 app = typer.Typer(no_args_is_help=True)
 log = get_logger()
@@ -63,12 +71,20 @@ def run(
     maf_file: Path = typer.Argument(
         ..., help="Input MAF (tab-separated, TCGA/MSK).", exists=True
     ),
-    ref_genome: Path = typer.Option(
-        ..., "--ref-genome", "-r", help="Indexed reference FASTA (.fai required)."
+    ref_genome: Path | None = typer.Option(
+        None, "--ref-genome", "-r",
+        help="Indexed reference FASTA (.fai required). Required unless --ref-source api.",
+        rich_help_panel=PANEL_REFERENCE,
+    ),
+    ref_source: str = typer.Option(
+        "file", "--ref-source",
+        help="Reference backend: file (local FASTA, default) or api (UCSC, no download).",
+        rich_help_panel=PANEL_REFERENCE,
     ),
     pop_vcf_dir: Path | None = typer.Option(
         None, "--pop-vcf-dir", "-d",
         help="Directory of per-chromosome gnomAD VCF bgz files. Omit to skip masking.",
+        rich_help_panel=PANEL_MASKING,
     ),
     genome_build: str = typer.Option(
         "hg19", "--genome-build", "-g",
@@ -78,15 +94,18 @@ def run(
         200, "--flank", "-f", min=1, max=10_000, help="Bases on each side of the variant."
     ),
     af_threshold: float = typer.Option(
-        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP."
+        0.001, "--af-threshold", min=0.0, max=1.0, help="Min population AF to mask a SNP.",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_data: str = typer.Option(
         "genome", "--pop-data",
         help="gnomAD data to mask against: genome (default), exome, or both (union).",
+        rich_help_panel=PANEL_MASKING,
     ),
     pop_source: str = typer.Option(
         "vcf", "--pop-source",
         help="Masking backend: vcf (local gnomAD VCFs) or api (gnomAD GraphQL, no download).",
+        rich_help_panel=PANEL_MASKING,
     ),
     output: Path = typer.Option(
         Path("flanking_sequences.fasta"), "--output", "-o", help="Output FASTA file."
@@ -102,46 +121,62 @@ def run(
     samples: str | None = typer.Option(
         None, "--samples", "-s",
         help="Comma-separated Tumor_Sample_Barcode IDs to include.",
+        rich_help_panel=PANEL_FILTER,
     ),
     samples_file: Path | None = typer.Option(
         None, "--samples-file",
         help="File of sample IDs, one per line (# comments allowed).",
+        rich_help_panel=PANEL_FILTER,
     ),
-    chrom_col: str = typer.Option(MafColumns.chrom, "--chrom-col"),
-    start_col: str = typer.Option(MafColumns.start, "--start-col"),
-    end_col: str = typer.Option(MafColumns.end, "--end-col"),
-    ref_col: str = typer.Option(MafColumns.ref, "--ref-col"),
-    alt_col: str = typer.Option(MafColumns.alt, "--alt-col"),
-    gene_col: str = typer.Option(MafColumns.gene, "--gene-col"),
-    prot_col: str = typer.Option(MafColumns.protein, "--prot-col"),
-    cdna_col: str = typer.Option(MafColumns.cdna, "--cdna-col"),
-    sample_col: str = typer.Option(MafColumns.sample, "--sample-col"),
+    chrom_col: str = typer.Option(MafColumns.chrom, "--chrom-col", rich_help_panel=PANEL_MAF_COLS),
+    start_col: str = typer.Option(MafColumns.start, "--start-col", rich_help_panel=PANEL_MAF_COLS),
+    end_col: str = typer.Option(MafColumns.end, "--end-col", rich_help_panel=PANEL_MAF_COLS),
+    ref_col: str = typer.Option(MafColumns.ref, "--ref-col", rich_help_panel=PANEL_MAF_COLS),
+    alt_col: str = typer.Option(MafColumns.alt, "--alt-col", rich_help_panel=PANEL_MAF_COLS),
+    gene_col: str = typer.Option(MafColumns.gene, "--gene-col", rich_help_panel=PANEL_MAF_COLS),
+    prot_col: str = typer.Option(MafColumns.protein, "--prot-col", rich_help_panel=PANEL_MAF_COLS),
+    cdna_col: str = typer.Option(MafColumns.cdna, "--cdna-col", rich_help_panel=PANEL_MAF_COLS),
+    sample_col: str = typer.Option(
+        MafColumns.sample, "--sample-col", rich_help_panel=PANEL_MAF_COLS
+    ),
     uppercase: bool = typer.Option(
-        True, "--uppercase/--no-uppercase", help="Uppercase flanking sequences."
+        True, "--uppercase/--no-uppercase", help="Uppercase flanking sequences.",
+        rich_help_panel=PANEL_ADVANCED,
     ),
     dedup: bool = typer.Option(
         True, "--dedup/--no-dedup",
         help="Emit one record per unique variant (CHR_POS_REF_ALT), collapsing samples.",
+        rich_help_panel=PANEL_ADVANCED,
     ),
     bam: Path | None = typer.Option(
-        None, "--bam", help="Single-sample BAM for patient consensus (modes C/D)."
+        None, "--bam", help="Single-sample BAM for patient consensus (modes C/D).",
+        rich_help_panel=PANEL_BAM,
     ),
     bam_map: Path | None = typer.Option(
         None, "--bam-map",
         help="TSV (Tumor_Sample_Barcode<TAB>bam_path) for cohort consensus.",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_depth: int = typer.Option(20, "--bam-min-depth", help="Min depth to trust a base."),
-    bam_call_fract: float = typer.Option(0.9, "--bam-call-fract", help="Fraction to call a base."),
-    bam_het_char: str = typer.Option("N", "--bam-het-char", help="Het output: N or iupac."),
+    bam_min_depth: int = typer.Option(
+        20, "--bam-min-depth", help="Min depth to trust a base.", rich_help_panel=PANEL_BAM
+    ),
+    bam_call_fract: float = typer.Option(
+        0.9, "--bam-call-fract", help="Fraction to call a base.", rich_help_panel=PANEL_BAM
+    ),
+    bam_het_char: str = typer.Option(
+        "N", "--bam-het-char", help="Het output: N or iupac.", rich_help_panel=PANEL_BAM
+    ),
     bam_lowcov: str = typer.Option(
         "gnomad", "--bam-lowcov",
         help="Low-coverage base: n (mask) | reference | gnomad (default: REF + gnomAD).",
+        rich_help_panel=PANEL_BAM,
     ),
-    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq"),
-    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq"),
+    bam_min_baseq: int = typer.Option(20, "--bam-min-baseq", rich_help_panel=PANEL_BAM),
+    bam_min_mapq: int = typer.Option(20, "--bam-min-mapq", rich_help_panel=PANEL_BAM),
     require_coverage: float = typer.Option(
         0.0, "--require-coverage", min=0.0, max=1.0,
         help="Flag BAM-consensus variants whose flanks are < this fraction covered (0=off).",
+        rich_help_panel=PANEL_BAM,
     ),
 ):
     """Extract flanking sequences for every variant in a MAF and write a FASTA.
@@ -158,7 +193,7 @@ def run(
         )
         bam_resolver, n_bam = load_bam_resolver(bam, bam_map)
         _run(
-            maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
+            maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_threshold,
             pop_data, pop_source, output, report, emit_primer3, samples, samples_file,
             MafColumns(chrom_col, start_col, end_col, ref_col, alt_col,
                        gene_col, prot_col, cdna_col, sample_col),
@@ -169,7 +204,7 @@ def run(
         raise typer.Exit(1) from exc
 
 
-def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
+def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_threshold,
          pop_data, pop_source, output, report, emit_primer3, samples, samples_file,
          cols: MafColumns, uppercase: bool, dedup: bool,
          bam_resolver, n_bam, policy, require_coverage):
@@ -179,7 +214,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     bam_mode = bam_resolver is not None
     echo_parameters({
         "vflank version": __version__,
-        "MAF": maf_file, "Reference": ref_genome, "Genome build": genome_build,
+        "MAF": maf_file,
+        "Reference": (ref_genome if ref_source == "file" else "UCSC API"),
+        "Genome build": genome_build,
         "Flank": f"±{flank} bp", "AF threshold": af_threshold,
         "Masking": (f"{pop_source} ({pop_data})" if (pop_vcf_dir or pop_source == "api")
                     else "none"),
@@ -197,6 +234,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
 
     if genome_build not in ("hg19", "hg38"):
         raise VflankError(f"--genome-build must be 'hg19' or 'hg38', got '{genome_build}'")
+    validate_ref_source(ref_source)
     validate_pop_options(pop_source, pop_data)
     if pop_vcf_dir is not None and not pop_vcf_dir.is_dir():
         raise VflankError(f"--pop-vcf-dir is not a directory: {pop_vcf_dir}")
@@ -226,9 +264,10 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         if df.empty:
             raise VflankError("No variants remain after sample filtering.")
 
-    # --- Reference FASTA + build guard ---
-    reference = ReferenceFasta(ref_genome)
-    console.print(f"[bold]Reference:[/bold] {ref_genome}  [dim]({genome_build})[/dim]")
+    # --- Reference source (local FASTA or UCSC API) + build guard ---
+    reference = make_reference_source(ref_source, ref_genome, genome_build)
+    ref_label = "UCSC API" if ref_source == "api" else ref_genome
+    console.print(f"[bold]Reference:[/bold] {ref_label}  [dim]({genome_build})[/dim]")
     build_warn = reference.check_build(genome_build)
     if build_warn:
         console.print(f"  [bold yellow]⚠ {build_warn}[/bold yellow]")
@@ -268,7 +307,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         )
     console.print(f"[bold]Flank:[/bold] ±{flank} bp")
 
-    ref_source = ReferenceFlankSource(reference, gnomad, flank=flank, af_threshold=af_threshold)
+    ref_flank_source = ReferenceFlankSource(
+        reference, gnomad, flank=flank, af_threshold=af_threshold
+    )
 
     # --- BAM consensus mode (per-sample patient sequence) ---
     # Default low-coverage behaviour is REF + gnomAD masking: where the BAM is
@@ -291,7 +332,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
     def _source_for(variant):
         """Pick the flank source for a variant (consensus per-sample, or reference)."""
         if not bam_mode:
-            return ref_source, False
+            return ref_flank_source, False
         sample = variant.sample
         if sample in consensus_cache:
             cached = consensus_cache[sample]
@@ -301,8 +342,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             if sample not in bam_warned:
                 log.warning("No BAM for sample %s — using reference + gnomAD masking", sample)
                 bam_warned.add(sample)
-            consensus_cache[sample] = ref_source
-            return ref_source, False
+            consensus_cache[sample] = ref_flank_source
+            return ref_flank_source, False
         try:
             src = ConsensusFlankSource(
                 reference, BamConsensusSource(bam_path, policy), gnomad,
@@ -312,8 +353,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             if sample not in bam_warned:
                 log.warning("BAM unusable for %s (%s) — reference + gnomAD", sample, exc)
                 bam_warned.add(sample)
-            consensus_cache[sample] = ref_source
-            return ref_source, False
+            consensus_cache[sample] = ref_flank_source
+            return ref_flank_source, False
         consensus_cache[sample] = src
         return src, True
 
@@ -423,6 +464,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
                 n_inserted_total += fr.inserted or 0
             summary_rows.append(row_detail)
 
+    ref_api_requests = getattr(reference, "request_count", None) if ref_source == "api" else None
     reference.close()
     api_requests = getattr(gnomad, "request_count", None) if gnomad is not None else None
     if gnomad is not None:
@@ -480,7 +522,11 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]Truncated flanks:[/bold] {n_truncated:>6,}\n" if n_truncated else ""
     )
     api_line = (
-        f"[bold]API requests:[/bold]     {api_requests:>6,}\n" if api_requests is not None else ""
+        f"[bold]gnomAD API req:[/bold]   {api_requests:>6,}\n" if api_requests is not None else ""
+    )
+    ref_api_line = (
+        f"[bold]Reference API req:[/bold] {ref_api_requests:>5,}\n"
+        if ref_api_requests is not None else ""
     )
     dup_line = (
         f"[bold]Dup. collapsed:[/bold]   {n_duplicate:>6,} [dim](other samples)[/dim]\n"
@@ -505,7 +551,7 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
         f"[bold]Skipped:[/bold]          {skipped:>6,}\n"
         + dup_line + truncated_line + consensus_line + inserted_line + flagged_line +
         f"[bold]Bases masked:[/bold]     {n_masked_total:>6,}\n"
-        + api_line +
+        + api_line + ref_api_line +
         f"[bold]FASTA records:[/bold]    {len(records):>6,} [dim](2 per variant)[/dim]\n"
         f"[bold]Output:[/bold] [cyan]{output.resolve()}[/cyan]  [dim]({elapsed:.1f}s)[/dim]"
     )
@@ -516,7 +562,9 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             # provenance
             "vflank_version": __version__,
             # run parameters (what was set)
-            "maf": maf_file, "reference": ref_genome, "genome_build": genome_build,
+            "maf": maf_file,
+            "reference": (str(ref_genome) if ref_source == "file" else "UCSC API"),
+            "ref_source": ref_source, "genome_build": genome_build,
             "flank": flank, "af_threshold": af_threshold,
             "pop_source": pop_source, "pop_data": pop_data, "dedup": dedup,
             # outcomes (what happened)
@@ -532,6 +580,8 @@ def _run(maf_file, ref_genome, pop_vcf_dir, genome_build, flank, af_threshold,
             stats["primer3_records"] = len(primer3_records)
         if api_requests is not None:
             stats["api_requests"] = api_requests
+        if ref_api_requests is not None:
+            stats["reference_api_requests"] = ref_api_requests
         if bam_mode:
             stats["bam_consensus_records"] = n_consensus
             stats["bam_min_depth"] = policy.min_depth

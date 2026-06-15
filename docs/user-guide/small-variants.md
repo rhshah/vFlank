@@ -39,6 +39,15 @@ vflank small run variants.maf \
 4.  Optional machine-readable run summary: per-variant masked/corrected counts,
     skips grouped by reason, and the full parameter set.
 
+!!! tip "No local FASTA? Use `--ref-source api`"
+    `--ref-source api` fetches each flank window from the UCSC API instead of a
+    local FASTA, so `--ref-genome` becomes optional — handy for one-off or hosted
+    runs with no reference on disk. It is throttled (~1 request/second), so it
+    suits small inputs; use a local FASTA for bulk. Note the chr1-length build
+    guard applies only to a local FASTA; with the API the requested
+    `--genome-build` is trusted (a wrong build surfaces as a UCSC error, not
+    silent wrong sequence).
+
 ## Output
 
 Two records per **unique** variant — raw and `Masked__` — with the variant shown

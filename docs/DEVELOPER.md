@@ -38,6 +38,7 @@ src/vflank/
 │   ├── flanks.py      FlankSource protocol, ReferenceFlankSource, mask_sequence
 │   ├── popfreq.py     gnomAD resolve + parse_common_snp_positions + GnomadStore
 │   ├── popfreq_api.py gnomAD GraphQL API source (GnomadApiSource)
+│   ├── reference_api.py reference sequence via the UCSC API (ReferenceApiSource)
 │   ├── consensus.py   BAM patient consensus (modes C/D) + insertion flagging
 │   ├── fusion.py      Breakpoint/Fusion model + reverse-complement junction builder
 │   └── skips.py       categorised skip-reason helpers
@@ -79,6 +80,9 @@ vflank small run variants.maf \
 
 # No-download masking via the gnomAD API instead of local VCFs:
 vflank small run variants.maf -r /path/GRCh37.fasta -g hg19 --pop-source api
+
+# Fully no-download: reference from the UCSC API too (no local FASTA needed):
+vflank small run variants.maf -g hg19 --ref-source api --pop-source api
 
 # Preview MAF columns before a run (catches column-name mismatches)
 vflank small inspect variants.maf
@@ -218,6 +222,24 @@ implementations already exist and are interchangeable:
 
 Both honour `--pop-data` via `kinds_for(...)`. To add another source (dbSNP,
 1000G), implement the same `get_positions` and add a `--pop-source` branch.
+
+### Add a new reference source
+
+`ReferenceFlankSource` depends (duck-typed) on a reference exposing
+`fetch(bare, start_0based, end_0based) -> str` (0-based half-open) plus
+`check_build(declared) -> str | None`, `has_chr`, and `close()`. Two
+implementations exist, selected by `--ref-source` via `cli/_reference.make_reference_source`:
+
+- `io/reference.ReferenceFasta` — local indexed FASTA (`--ref-source file`,
+  default); fingerprints the build by chr1 length.
+- `core/reference_api.ReferenceApiSource` — UCSC getData/sequence API
+  (`--ref-source api`, no download). Pure kernels `build_url` /
+  `parse_sequence_response`; HTTP/throttle/clock injected for offline tests;
+  trusts the requested build (no local sequence to fingerprint); exposes
+  `request_count` for monitoring. See [research/genome-api.md](research/genome-api.md).
+
+A short window off a contig end must return a **short string** (not raise) —
+truncation is reported by the CLI, matching the pysam contract.
 
 ### Add a new CLI subcommand or sub-app
 
