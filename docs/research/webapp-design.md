@@ -37,7 +37,8 @@ request/response models; **no database**. `pip install "vflank>=0.5"`. Stateless
 
 | Method · path | Purpose |
 |---|---|
-| `GET /` | the single-page form (server-rendered) |
+| `GET /` | the single-page app (grid + upload, server-rendered shell) |
+| `POST /api/validate` | **parse-only** (no sequence fetches): per-row skip reasons for live grid validation |
 | `POST /api/run` | run the pipeline → JSON `{records, rows, skips, stats}` |
 | `GET /api/run.fasta` *(or `?format=fasta`)* | same, returned as a FASTA download |
 | `GET /healthz` | liveness (for keep-warm pings) |
@@ -136,16 +137,27 @@ sequenceDiagram
    from the docs for brand continuity.
 2. **Mode** — a segmented toggle: **Small variant** ↔ **Fusion**.
 3. **Build** — GRCh37/hg19 ↔ GRCh38/hg38.
-4. **Input** — two tabs:
-   - **Structured (default, the nice single-variant UX):** for *small*, four
-     fields `chr · pos · ref · alt` (+ optional gene); for *fusion*, two
-     breakpoints `chr:pos:strand`. A **"＋ add row"** lets you enter a handful.
-     The browser assembles a minimal MAF/breakpoint-TSV string and posts it —
-     **so v1 gets the structured form with no library change** (no `make_variant`
-     needed; the table is built client-side). A **"Load example"** button fills
-     a known variant (e.g. BRAF V600E).
-   - **Paste / upload:** a textarea (paste a small MAF/TSV) or file picker, for
-     people who already have a file.
+4. **Input — an editable grid + file upload (one unified component).** An
+   **[Tabulator](https://tabulator.info)** grid (MIT, one CDN `<script>`, no
+   build step) is the primary input — one row = a single variant, a handful of
+   rows = a small batch, so it subsumes the old "structured form / + add row".
+   - **Three ways in, all landing in the same grid:** type directly; **paste a
+     block from Excel** (Tabulator's clipboard module); or **upload a MAF/TSV
+     file**, which *populates the grid* so the user can review and **edit** it
+     before running. A **"Load example"** button seeds a known variant
+     (BRAF V600E).
+   - **Columns switch by mode:** small → `Chromosome · Start · End · Ref · Alt ·
+     Gene`; fusion → `chr1 · pos1 · str1 · chr2 · pos2 · str2 · name`.
+   - **Validate before submit (no duplicated logic):** Tabulator does cheap
+     client-side hints (numeric position, `ACGT`/`-` allele, non-empty chrom) for
+     instant per-cell feedback; a debounced **`POST /api/validate`** runs
+     vflank's *own* `load_maf` + `parse_variant_row` (parse-only — **no** UCSC/
+     gnomAD fetches) and returns authoritative per-row reasons, which the grid
+     paints onto the offending cells. So validation is vflank-correct, feels
+     instant, and is **not reimplemented** in JS. On Run, `table.validate()`
+     gates the POST; the server's skips remain the final word.
+   - The browser assembles the MAF/breakpoint TSV from the grid and posts it —
+     **no `make_variant` library change needed.**
 5. **Advanced (collapsed):** flank size (slider 10–400, default 200), AF
    threshold, pop-data (genome/exome/both), "also emit Primer3", dedup.
 6. **Run** button → loading state ("Querying reference + gnomAD…", a spinner;
@@ -171,22 +183,52 @@ sequenceDiagram
   regions get a mark **and** an underline); respects reduced-motion.
 - **Responsive.** The form is small; works on a phone.
 
-## Starter repo layout (vFlank-webapp)
+## Complete repo layout (vFlank-webapp)
+
+Built to the **same quality bar as vflank** — git-flow, a ruff/mypy/pytest gate,
+CI, docs, containerised — right-sized for an *app* (no PyPI publish; "release" =
+a Render deploy).
 
 ```
 vFlank-webapp/
 ├── app/
-│   ├── main.py            FastAPI app: GET / , POST /api/run , /healthz
-│   ├── models.py          RunRequest / RunResponse (Pydantic)
-│   ├── service.py         thin wrapper over vflank.run_small/run_fusion + the cap/cache
-│   ├── templates/         index.html (Jinja2) + the results partial (htmx swap)
-│   └── static/            style.css (slate+amber), a little htmx + vanilla JS
-├── tests/                 endpoint tests (TestClient): happy path, cap, bad input, skips
-├── pyproject.toml         deps: fastapi, uvicorn, jinja2, vflank>=0.5  (+ slowapi)
-├── render.yaml            Render web service
-├── Dockerfile             optional (parity with GHCR pattern)
-└── README.md              this design, condensed
+│   ├── __init__.py        __version__
+│   ├── main.py            FastAPI app + routes (/, /api/validate, /api/run, /healthz)
+│   ├── models.py          RunRequest / RunResponse / ValidateResponse (Pydantic)
+│   ├── service.py         thin layer over vflank.run_small/run_fusion: cap, cache, error map
+│   ├── validate.py        parse-only validation (vflank load_maf + parse_*_row, no fetches)
+│   ├── grid.py            grid-rows <-> MAF/TSV text assembly (+ column schema per mode)
+│   ├── settings.py        env config (max records, body size, cache size, rate limit)
+│   ├── templates/         index.html (Jinja2 shell) + results/_partial.html (htmx swap)
+│   └── static/            style.css (slate+amber), app.js (Tabulator init + htmx glue),
+│                          vendored tabulator.min.js/css, htmx.min.js
+├── tests/
+│   ├── test_api.py        TestClient: happy path, ≤10 cap (422), bad input, skips surfaced
+│   ├── test_validate.py   /api/validate row reasons match vflank's parse output
+│   ├── test_grid.py       grid<->TSV assembly round-trips (unit, no server)
+│   └── conftest.py        a tiny indexed FASTA fixture / mock the API sources
+├── docs/                  (MkDocs Material — mirrors vflank, or a strong README only)
+│   ├── index.md  ·  deploy.md  ·  api.md  ·  developer.md
+├── .github/workflows/
+│   ├── ci.yml             ruff + mypy + pytest (push to main/develop + PRs)
+│   └── docs.yml           (optional) build/deploy the docs
+├── pyproject.toml         deps: fastapi, uvicorn[standard], jinja2, python-multipart,
+│                          vflank>=0.5,<0.6, slowapi ; dev: pytest, httpx, ruff, mypy
+├── render.yaml            Render web service (IaC)
+├── Dockerfile             container (local parity; optional GHCR image)
+├── .dockerignore · .gitignore
+├── CLAUDE.md              working guide for this repo (gate, git-flow, deploy)
+├── CONTRIBUTING.md · CHANGELOG.md · LICENSE (Apache-2.0, matches vflank)
+└── README.md              what it is, run locally, deploy, link to the docs
 ```
+
+**Conventions carried over from vflank:** git-flow (`main` = deployed,
+`develop` = integration), the **ruff + mypy + pytest gate** before any change,
+typed code, `__version__` + a CHANGELOG, the slate+amber palette. **Dropped
+(not applicable to an app):** PyPI/OIDC publish and versioned `mike` docs —
+deploys are continuous via Render on push to `main`; a Docker image to GHCR is
+optional for portability. `vflank` is pinned to a compatible range
+(`>=0.5,<0.6`) and bumped deliberately.
 
 ## Phasing
 - **v1** — the above: structured/paste input, modes A/B, API sources, downloads.
