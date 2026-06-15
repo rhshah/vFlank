@@ -21,7 +21,7 @@ itself — it prepares clean, masked target sequences to hand to a designer.
 flowchart LR
     MAF["MAF<br/>small variants"] --> FL
     BP["Breakpoints<br/>fusions / SVs"] --> FL
-    REF[("Reference FASTA")] --> FL
+    REF[("Reference<br/>FASTA / API")] --> FL
     POP[("gnomAD<br/>VCF / API")] --> MK
     BAM[("Sample BAM<br/>optional")] --> MK
     subgraph vflank["vflank · front-end"]
@@ -41,6 +41,8 @@ flowchart LR
   junction sequence from a breakpoint table (iCallSV / iAnnotateSV format).
 - :material-filter: **SNP masking, two ways** — local gnomAD VCFs *or* the gnomAD
   GraphQL API (no download), each with `genome` / `exome` / `both`.
+- :material-database-search: **Reference, two ways** — a local indexed FASTA *or*
+  the UCSC API (`--ref-source api`, no download).
 - :material-shield-check: **No silent failures** — build-mismatch guard, flank
   truncation detection, and a categorised skip summary.
 

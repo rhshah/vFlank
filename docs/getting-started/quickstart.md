@@ -25,6 +25,13 @@ Add SNP masking with **no download** via the gnomAD API:
 vflank small run variants.maf -r GRCh37.fasta -g hg19 --pop-source api
 ```
 
+Or skip the local FASTA too — fetch the reference from the UCSC API with
+`--ref-source api` (then `--ref-genome` is not needed):
+
+```bash
+vflank small run variants.maf -g hg19 --ref-source api --pop-source api
+```
+
 !!! tip "Preview your MAF first"
     `vflank small inspect variants.maf` shows the columns and flags missing
     required fields before a full run.
