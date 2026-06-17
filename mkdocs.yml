@@ -133,6 +133,7 @@ nav:
       - Installation: getting-started/installation.md
       - Quick Start: getting-started/quickstart.md
       - Recommended Usage: getting-started/recommended-usage.md
+  - Web tool: web-tool.md
   - User Guide:
       - Small Variants: user-guide/small-variants.md
       - Fusions: user-guide/fusions.md

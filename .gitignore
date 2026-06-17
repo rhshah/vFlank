@@ -37,3 +37,6 @@ flanking_sequences.fasta
 
 # Claude Code local (per-user) settings
 .claude/settings.local.json
+
+# mkdocs build output
+site/
