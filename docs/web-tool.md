@@ -28,9 +28,9 @@ SNPs masked. Download the FASTA or a Primer3 input.
 
 <div class="video-embed">
   <video controls preload="metadata" playsinline poster="">
-    <source src="assets/small-variant-demo.mp4" type="video/mp4">
+    <source src="../assets/small-variant-demo.mp4" type="video/mp4">
     Your browser does not support embedded video.
-    <a href="assets/small-variant-demo.mp4">Download the demo (MP4)</a>.
+    <a href="../assets/small-variant-demo.mp4">Download the demo (MP4)</a>.
   </video>
 </div>
 
@@ -42,9 +42,9 @@ the probe avoids them, and returns the junction sequence to download.
 
 <div class="video-embed">
   <video controls preload="metadata" playsinline poster="">
-    <source src="assets/fusion-demo.mp4" type="video/mp4">
+    <source src="../assets/fusion-demo.mp4" type="video/mp4">
     Your browser does not support embedded video.
-    <a href="assets/fusion-demo.mp4">Download the demo (MP4)</a>.
+    <a href="../assets/fusion-demo.mp4">Download the demo (MP4)</a>.
   </video>
 </div>
 
