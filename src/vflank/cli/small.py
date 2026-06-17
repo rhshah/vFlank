@@ -461,7 +461,7 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
             # provenance
             "vflank_version": __version__,
             # run parameters (what was set)
-            "maf": maf_file,
+            "input": maf_file,
             "reference": (str(ref_genome) if ref_source == "file" else "UCSC API"),
             "ref_source": ref_source, "genome_build": genome_build,
             "flank": flank, "af_threshold": af_threshold,

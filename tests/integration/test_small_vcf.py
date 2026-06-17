@@ -73,6 +73,23 @@ def test_run_vcf_deletion_coordinates(tmp_path):
     assert lines[1] == f"{seq[35:40].upper()}[TG/-]{seq[42:47].upper()}"
 
 
+def test_run_vcf_insertion_coordinates(tmp_path):
+    fasta, seq = _write_reference(tmp_path)
+    # A->ATG insertion anchored at POS 40 -> Start=40, End=41, ref '-', alt 'TG'.
+    vcf = _write_vcf(tmp_path, "7\t40\t.\tA\tATG\t.\t.\t.")
+    out = tmp_path / "out.fasta"
+
+    result = runner.invoke(app, [
+        "small", "run", str(vcf), "--ref-genome", str(fasta),
+        "-g", "hg19", "--flank", "5", "--output", str(out),
+    ])
+    assert result.exit_code == 0, result.output
+    lines = out.read_text().splitlines()
+    assert lines[0] == ">UNKNOWN__.__.__7_40_-_TG"
+    # left = ref[34:39] (ends before start-1=39), right = ref[41:46] (from end=41).
+    assert lines[1] == f"{seq[34:39].upper()}[-/TG]{seq[41:46].upper()}"
+
+
 def test_run_vcf_multiallelic_emits_both(tmp_path):
     fasta, _ = _write_reference(tmp_path)
     vcf = _write_vcf(tmp_path, "7\t40\t.\tA\tG,C\t.\t.\t.")
