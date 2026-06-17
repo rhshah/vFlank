@@ -1,0 +1,72 @@
+/* vflank brand palette — "Highlighter": a neutral slate primary (the masked /
+   common genomic background) with a warm amber accent (the variant / flank that
+   pops out). The theme palette is set to `custom`, so Material defines no
+   built-in color and these :root variables win without a specificity fight. */
+:root {
+  --md-primary-fg-color:        #455a64;  /* blue-grey 700 */
+  --md-primary-fg-color--light: #607d8b;  /* blue-grey 500 */
+  --md-primary-fg-color--dark:  #37474f;  /* blue-grey 800 */
+  --md-accent-fg-color:         #e8730c;  /* amber */
+  --md-accent-fg-color--transparent: rgba(232, 115, 12, 0.1);
+  --md-code-bg-color:           rgba(69, 90, 100, 0.06);
+}
+
+/* Dark scheme: lift the slate so it reads on the dark background. */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #78909c;  /* blue-grey 400 */
+  --md-primary-fg-color--light: #90a4ae;  /* blue-grey 300 */
+  --md-primary-fg-color--dark:  #546e7a;  /* blue-grey 600 */
+  --md-accent-fg-color:         #ffb454;
+  --md-accent-fg-color--transparent: rgba(255, 180, 84, 0.12);
+  --md-default-bg-color:        #11181c;
+  --md-code-bg-color:           rgba(144, 164, 174, 0.12);
+}
+
+/* A subtle gradient header for a bit of polish. */
+.md-header {
+  background: linear-gradient(90deg, var(--md-primary-fg-color--dark), var(--md-primary-fg-color));
+}
+
+/* Material icons used inline (e.g. :material-dna:) — align nicely with text. */
+.md-typeset .twemoji svg {
+  vertical-align: text-bottom;
+  height: 1.15em;
+}
+
+/* Abbreviation tooltips (def_list/abbr) — make the dotted hint obvious. */
+.md-typeset abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+/* ==highlight== (pymdownx.mark): theme to the amber accent so masked regions /
+   variants literally glow against the sequence. Used for `==N==` and `[REF/ALT]`
+   inside DNA blocks. */
+.md-typeset mark {
+  background-color: var(--md-accent-fg-color--transparent);
+  box-shadow: 0 0 0 0.12em var(--md-accent-fg-color--transparent);
+  color: inherit;
+  border-radius: 0.15em;
+}
+
+/* Give DNA sequences room to breathe — a touch of letter-spacing so A/C/G/T/N
+   read cleanly in inline code and code blocks tagged as sequences. */
+.md-typeset code,
+.md-typeset pre code {
+  letter-spacing: 0.02em;
+}
+
+/* Demo videos (web-tool page) — responsive, framed to match the app chrome. */
+.video-embed {
+  margin: 1.2em 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
+  background: #0e1417; /* matches the app's dark frame on letterboxing */
+}
+.video-embed video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
