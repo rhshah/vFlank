@@ -6,6 +6,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **VCF/BCF input for small variants** (`vflank small run variants.vcf.gz`). The
+  input format is auto-detected by extension — no new command or flag. Read
+  sites-only; anchor-base `REF`/`ALT` is normalised to MAF `[Start, End]`;
+  multi-allelic records expand per `ALT`; symbolic/SV/BND alleles are skipped;
+  gene/HGVS come best-effort from a VEP `CSQ` / SnpEff `ANN` field. `--samples`
+  doesn't apply to a (sites-only) VCF and is ignored with a warning;
+  `vflank small inspect` previews the normalised variants. New `io/vcf.py`
+  (`is_vcf_path`, `vcf_to_maf_coords`, `load_vcf`); `run_small` accepts a VCF
+  path too. SV-VCF (Delly `CT` / Manta–GRIDSS `BND`) remains a follow-up.
+
 ## [0.5.0] - 2026-06-15
 
 ### Added

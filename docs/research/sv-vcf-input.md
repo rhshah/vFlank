@@ -2,7 +2,9 @@
 
 Captures the breakpoint/strand conventions, the **corrected** fusion-junction
 model, and what VCF support requires for both small variants and SVs. Status:
-**design; not implemented.** Some items pending user confirmation (flagged ⮕).
+**small-variant VCF implemented** (`io/vcf.py`, auto-detected by `vflank small
+run`); **SV-VCF (Delly `CT` / Manta–GRIDSS `BND`) not yet implemented.** Some
+items pending user confirmation (flagged ⮕).
 
 ## Input formats to support
 
@@ -119,5 +121,8 @@ parsed by column name (above).
 3. `vflank fusion` sub-app + golden test.
 4. Small-variant dedup + `Position_REF_ALT` header change.
 
-**Phase 2 (later): VCF.** Small-variant VCF, then Delly-CT / BND SV VCF
+**Phase 2: VCF.** Small-variant VCF ✅ done (`io/vcf.py`: `vcf_to_maf_coords`
+normalises anchor-base REF/ALT → MAF `[Start, End]`; sites-only; multi-allelic
+expansion; symbolic/SV/BND ALTs skipped; best-effort VEP `CSQ` / SnpEff `ANN`
+gene+HGVS; auto-detected by `vflank small run`). Next: Delly-CT / BND SV VCF
 (per the BND strategy above).
