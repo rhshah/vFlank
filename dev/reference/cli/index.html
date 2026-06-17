@@ -75,7 +75,7 @@
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
         </style><meta name="panzoom-theme" content="material">
-<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
+<meta name="panzoom-data" content='{"selectors": [".d2", ".mermaid"], "initial_zoom_level": 1.0}'> </head>
   
   
     
@@ -1450,7 +1450,7 @@ auto-detected from the <abbr title="text format for nucleotide sequences (`&gt;h
 $ vflank small run [OPTIONS] MAF_FILE</code></p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>MAF_FILE</code>: Input <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> (tab-separated, TCGA/MSK).  [required]</li>
+<li><code>MAF_FILE</code>: Input variants: a <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> (TCGA/MSK TSV) or a <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr>/BCF (.vcf/.vcf.gz/.bcf, auto-detected, read sites-only).  [required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
@@ -1496,7 +1496,7 @@ $ vflank small run [OPTIONS] MAF_FILE</code></p>
 $ vflank small inspect [OPTIONS] MAF_FILE</code></p>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>MAF_FILE</code>: <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> file to preview  [required]</li>
+<li><code>MAF_FILE</code>: <abbr title="Mutation Annotation Format — TSV of called variants (1-based, fully closed)">MAF</abbr> or <abbr title="Variant Call Format — tab-delimited variant file (1-based positions)">VCF</abbr> file to preview  [required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
