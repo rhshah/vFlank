@@ -55,3 +55,18 @@
 .md-typeset pre code {
   letter-spacing: 0.02em;
 }
+
+/* Demo videos (web-tool page) — responsive, framed to match the app chrome. */
+.video-embed {
+  margin: 1.2em 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
+  background: #0e1417; /* matches the app's dark frame on letterboxing */
+}
+.video-embed video {
+  display: block;
+  width: 100%;
+  height: auto;
+}

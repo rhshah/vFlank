@@ -35,6 +35,7 @@ from .io import breakpoints as bp_io
 from .io import emit_primer3 as primer3_io
 from .io import fasta as fasta_io
 from .io import maf as maf_io
+from .io import vcf as vcf_io
 from .io.breakpoints import SvColumns, SvInput
 from .io.maf import MAF_CHR, MafColumns, MafInput
 from .logging import get_logger
@@ -415,8 +416,10 @@ def run_small(
     """Run the small-variant pipeline end to end and return a :class:`RunResult`.
 
     Builds the reference and (optional) gnomAD sources from the given options,
-    loads the MAF (a path or an open buffer), runs the per-variant orchestration,
-    closes the sources, and returns records + per-variant rows + skips + counts.
+    loads the input, runs the per-variant orchestration, closes the sources, and
+    returns records + per-variant rows + skips + counts. The input is a MAF or a
+    VCF/BCF: a VCF *path* is auto-detected by extension and read sites-only
+    (``cols`` overrides do not apply); an open buffer always reads as MAF.
     Presentation-free: raises :class:`VflankError` on bad options; never prints.
     BAM consensus is a CLI-only path for now and is not exposed here.
     """
@@ -430,7 +433,13 @@ def run_small(
         if build_warn:
             log.warning("%s", build_warn)
 
-        df = maf_io.load_maf(maf, cols)
+        if vcf_io.is_vcf_path(maf):
+            df = vcf_io.load_vcf(maf)
+            if sample_filter is not None:
+                log.warning("--samples ignored for VCF input (sites-only).")
+                sample_filter = None
+        else:
+            df = maf_io.load_maf(maf, cols)
         if sample_filter is not None:
             if cols.sample not in df.columns:
                 raise VflankError(f"Sample column '{cols.sample}' not found; cannot filter.")

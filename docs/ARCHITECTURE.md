@@ -157,7 +157,7 @@ Next, in priority order (each has a design note in `research/`):
 | Next | Deliverable | Design note |
 |------|-------------|-------------|
 | **M4.5-emit** | `--emit olivar,primer3` designer-native output formats | [emit-formats.md](research/emit-formats.md) |
-| M-vcf | VCF input — small-variant VCF, then Delly `CT`/`BND` SV VCF | [sv-vcf-input.md](research/sv-vcf-input.md) |
+| M-vcf | VCF input — small-variant VCF ✅ done; Delly `CT`/`BND` SV VCF next | [sv-vcf-input.md](research/sv-vcf-input.md) |
 | M-indel | Indel-aware (length-changing) consensus — option 3 | [indel-aware-consensus.md](research/indel-aware-consensus.md) |
 | M7 | Nextflow / nf-core pipeline (containerised) | — |
 | M-rust | Port the proven hot kernels to Rust (optional) | — |

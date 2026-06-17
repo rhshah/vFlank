@@ -5,17 +5,33 @@ writes a FASTA suitable for ddPCR assay design.
 
 ## Input
 
-A tab-separated **MAF** (TCGA/MSK style). Required columns:
-`Chromosome`, `Start_Position`, `End_Position`, `Reference_Allele`,
-`Tumor_Seq_Allele2`. Optional metadata used in headers: `Hugo_Symbol`,
-`HGVSp_Short`, `HGVSc`. Column names can be remapped with `--chrom-col`,
-`--start-col`, … if your file differs.
+A tab-separated **MAF** (TCGA/MSK style) **or** a **VCF/BCF**. The two are
+auto-detected by file extension, so `vflank small run` takes either:
+
+=== "MAF"
+
+    Required columns: `Chromosome`, `Start_Position`, `End_Position`,
+    `Reference_Allele`, `Tumor_Seq_Allele2`. Optional metadata used in headers:
+    `Hugo_Symbol`, `HGVSp_Short`, `HGVSc`. Column names can be remapped with
+    `--chrom-col`, `--start-col`, … if your file differs.
+
+=== "VCF / BCF"
+
+    `.vcf`, `.vcf.gz`, or `.bcf` (auto-detected). Read **sites-only** — sample
+    genotypes are ignored. Each record's anchor-base `REF`/`ALT` is normalised to
+    the MAF `[Start, End]` convention; **multi-allelic** records expand to one
+    record per `ALT`; **symbolic / SV / BND** alleles (`<DEL>`, `A[2:123[`, `*`)
+    are skipped (this is the small-variant path — SV-VCF is a separate feature).
+    Gene and HGVS are pulled best-effort from a VEP `CSQ` or SnpEff `ANN` INFO
+    field when present, and left blank otherwise. The column-remap flags don't
+    apply to VCF. No index is needed (the file is read sequentially).
 
 Chromosome notation (`chr7` vs `7`) is auto-detected and normalised, including
 numeric (`23`→X) and float (`17.0`→`17`, common when a column has blanks) forms.
 
 ```bash
 vflank small inspect variants.maf      # preview columns + flag missing fields
+vflank small inspect variants.vcf.gz   # preview the normalised small variants
 ```
 
 ## Run
@@ -38,6 +54,13 @@ vflank small run variants.maf \
     `2 × flank` bp, shorter at a contig end).
 4.  Optional machine-readable run summary: per-variant masked/corrected counts,
     skips grouped by reason, and the full parameter set.
+
+The same command takes a VCF — only the input path changes (sites-only;
+`--samples` doesn't apply and is ignored with a warning):
+
+```bash
+vflank small run variants.vcf.gz --ref-source api --pop-source api -o out.fasta
+```
 
 !!! tip "No local FASTA? Use `--ref-source api`"
     `--ref-source api` fetches each flank window from the UCSC API instead of a

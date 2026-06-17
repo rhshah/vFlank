@@ -6,6 +6,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-17
+
+### Added
+- **VCF/BCF input for small variants** (`vflank small run variants.vcf.gz`). The
+  input format is auto-detected by extension — no new command or flag. Read
+  sites-only; anchor-base `REF`/`ALT` is normalised to MAF `[Start, End]`;
+  multi-allelic records expand per `ALT`; symbolic/SV/BND alleles are skipped;
+  gene/HGVS come best-effort from a VEP `CSQ` / SnpEff `ANN` field. `--samples`
+  doesn't apply to a (sites-only) VCF and is ignored with a warning;
+  `vflank small inspect` previews the normalised variants. New `io/vcf.py`
+  (`is_vcf_path`, `vcf_to_maf_coords`, `load_vcf`); `run_small` accepts a VCF
+  path too. SV-VCF (Delly `CT` / Manta–GRIDSS `BND`) remains a follow-up.
+
 ## [0.5.0] - 2026-06-15
 
 ### Added
@@ -116,7 +129,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   categorised skip summary + optional TSV run report.
 - Documentation site (MkDocs Material) and GitHub Actions CI.
 
-[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/rhshah/vFlank/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/rhshah/vFlank/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rhshah/vFlank/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rhshah/vFlank/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rhshah/vFlank/compare/v0.2.0...v0.3.0

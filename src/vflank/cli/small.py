@@ -25,7 +25,18 @@ from ..io import emit_primer3 as primer3_io
 from ..io import fasta as fasta_io
 from ..io import maf as maf_io
 from ..io import report as report_io
-from ..io.maf import MAF_CHR, MAF_SAMPLE, REQUIRED_MAF_COLS, MafColumns
+from ..io import vcf as vcf_io
+from ..io.maf import (
+    MAF_ALT,
+    MAF_CHR,
+    MAF_END,
+    MAF_GENE,
+    MAF_REF,
+    MAF_SAMPLE,
+    MAF_START,
+    REQUIRED_MAF_COLS,
+    MafColumns,
+)
 from ..logging import console
 from ..sources import make_pop_source, make_reference_source, validate_run_options
 from ._bam import build_consensus_policy, load_bam_resolver
@@ -63,7 +74,10 @@ def _load_sample_filter(
 @app.command()
 def run(
     maf_file: Path = typer.Argument(
-        ..., help="Input MAF (tab-separated, TCGA/MSK).", exists=True
+        ...,
+        help="Input variants: a MAF (TCGA/MSK TSV) or a VCF/BCF "
+             "(.vcf/.vcf.gz/.bcf, auto-detected, read sites-only).",
+        exists=True,
     ),
     ref_genome: Path | None = typer.Option(
         None, "--ref-genome", "-r",
@@ -205,10 +219,11 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
     t0 = time.time()
     console.rule("[bold blue]vflank small run[/bold blue]")
 
+    is_vcf = vcf_io.is_vcf_path(maf_file)
     bam_mode = bam_resolver is not None
     echo_parameters({
         "vflank version": __version__,
-        "MAF": maf_file,
+        ("VCF" if is_vcf else "MAF"): maf_file,
         "Reference": (ref_genome if ref_source == "file" else "UCSC API"),
         "Genome build": genome_build,
         "Flank": f"±{flank} bp", "AF threshold": af_threshold,
@@ -229,12 +244,17 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
     validate_run_options(genome_build, ref_source, pop_source, pop_data, pop_vcf_dir)
 
     sample_filter = _load_sample_filter(samples, samples_file)
-    if sample_filter is not None:
+    # VCF is read sites-only (no per-sample genotypes), so sample filtering does
+    # not apply — surface that rather than silently emptying the run.
+    if sample_filter is not None and is_vcf:
+        console.print("[yellow]⚠ --samples ignored for VCF input (sites-only).[/yellow]")
+        sample_filter = None
+    elif sample_filter is not None:
         console.print(f"[bold]Sample filter:[/bold] {len(sample_filter)} ID(s)")
 
-    # --- Load + filter MAF ---
-    console.print(f"[bold]Loading MAF:[/bold] {maf_file}")
-    df = maf_io.load_maf(maf_file, cols)
+    # --- Load + filter input (MAF or VCF) ---
+    console.print(f"[bold]Loading {'VCF' if is_vcf else 'MAF'}:[/bold] {maf_file}")
+    df = vcf_io.load_vcf(maf_file) if is_vcf else maf_io.load_maf(maf_file, cols)
     n_total = len(df)
     console.print(f"  {n_total:,} variants before filtering")
 
@@ -441,7 +461,7 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
             # provenance
             "vflank_version": __version__,
             # run parameters (what was set)
-            "maf": maf_file,
+            "input": maf_file,
             "reference": (str(ref_genome) if ref_source == "file" else "UCSC API"),
             "ref_source": ref_source, "genome_build": genome_build,
             "flank": flank, "af_threshold": af_threshold,
@@ -473,12 +493,40 @@ def _run(maf_file, ref_genome, ref_source, pop_vcf_dir, genome_build, flank, af_
         console.print(f"[bold]Report:[/bold] [cyan]{report.resolve()}[/cyan]")
 
 
+def _inspect_vcf(vcf_file: Path, n_rows: int) -> None:
+    """Preview the first ``n_rows`` small variants a VCF normalises to."""
+    df = vcf_io.load_vcf(vcf_file, n_rows=n_rows)
+    console.print(Panel(
+        f"[bold cyan]{vcf_file.name}[/bold cyan]  "
+        f"[dim]VCF · sites-only · first {len(df)} small variant(s)[/dim]",
+        title="VCF Inspect",
+    ))
+    table = Table(show_header=True, header_style="bold magenta", show_lines=True)
+    table.add_column("#", style="dim", width=4)
+    for col in (MAF_CHR, MAF_START, MAF_END, MAF_REF, MAF_ALT, MAF_GENE):
+        table.add_column(col, overflow="fold")
+    for i in range(len(df)):
+        r = df.iloc[i]
+        table.add_row(
+            str(i + 1), str(r[MAF_CHR]), str(r[MAF_START]), str(r[MAF_END]),
+            str(r[MAF_REF])[:12], str(r[MAF_ALT])[:12], str(r[MAF_GENE]),
+        )
+    console.print(table)
+    console.print(
+        "\n[bold green]✓ VCF columns are fixed — run `vflank small run` directly "
+        "(no --*-col overrides needed).[/bold green]"
+    )
+
+
 @app.command()
 def inspect(
-    maf_file: Path = typer.Argument(..., help="MAF file to preview", exists=True),
+    maf_file: Path = typer.Argument(..., help="MAF or VCF file to preview", exists=True),
     n_rows: int = typer.Option(3, "--rows", "-n", min=1, max=20, help="Data rows to show."),
 ):
     """Print column names and a data preview without running any analysis."""
+    if vcf_io.is_vcf_path(maf_file):
+        _inspect_vcf(maf_file, n_rows)
+        return
     df = maf_io.read_maf(maf_file, n_rows=n_rows)
     console.print(Panel(
         f"[bold cyan]{maf_file.name}[/bold cyan]  "
